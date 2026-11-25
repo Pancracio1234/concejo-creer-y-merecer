@@ -245,13 +245,16 @@
                 </div>
 
                 <!-- Control de Sesión Plenaria -->
-                <div class="flex flex-wrap items-center gap-3 bg-[#0a1120] p-2.5 rounded-2xl border border-[#c9a24b]/30 shadow-inner">
+                <div class="flex flex-wrap items-center gap-2.5 bg-[#0a1120] p-2.5 rounded-2xl border border-[#c9a24b]/30 shadow-inner">
                     <div class="flex flex-col px-2.5">
                         <span class="text-[9px] uppercase font-bold tracking-[0.2em] text-[#c9a24b]">Sesión Convocada</span>
-                        <select id="select-sesion" onchange="cambiarSesion()" class="bg-transparent text-sm font-bold text-white min-w-[230px] focus:outline-none cursor-pointer mt-0.5">
+                        <select id="select-sesion" onchange="cambiarSesion()" class="bg-transparent text-sm font-bold text-white min-w-[210px] focus:outline-none cursor-pointer mt-0.5">
                             <option value="" class="bg-slate-900">-- Seleccionar Sesión --</option>
                         </select>
                     </div>
+                    <button type="button" id="btn-eliminar-sesion" onclick="eliminarSesionActual()" title="Eliminar sesión seleccionada" class="hidden bg-rose-500/15 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/35 px-3 py-3 rounded-xl text-xs font-bold transition cursor-pointer">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
                     <button type="button" onclick="abrirModalSesion()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold text-xs uppercase tracking-wider px-4 py-3 rounded-xl transition shadow-lg shadow-amber-950/40 cursor-pointer border border-[#f5dc99]/40">
                         <i class="fa-solid fa-gavel mr-1.5"></i> Abrir Sesión
                     </button>
@@ -1389,7 +1392,7 @@
         }
 
         // =====================================================================
-        // 2. SESIONES
+        // 2. SESIONES (CON ELIMINACIÓN)
         // =====================================================================
         function abrirModalSesion() {
             const modal = document.getElementById('modal-sesion');
@@ -1407,6 +1410,7 @@
         async function cargarSesiones() {
             const select = document.getElementById('select-sesion');
             const alerta = document.getElementById('alerta-sin-sesion');
+            const btnEliminar = document.getElementById('btn-eliminar-sesion');
             try {
                 const res = await fetch('/api/sesiones');
                 if (!res.ok) throw new Error('Error al consultar sesiones en PostgreSQL');
@@ -1416,12 +1420,16 @@
                 if (sesiones.length === 0) {
                     select.innerHTML = '<option value="" class="bg-slate-900">-- Sin sesiones convocadas --</option>';
                     alerta.classList.remove('hidden');
+                    if (btnEliminar) btnEliminar.classList.add('hidden');
                     sesionActual = null;
+                    asistenciasGlobal = [];
                     renderizarBancadasAsistencia([]);
+                    renderizarTableroComisiones();
                     return;
                 }
 
                 alerta.classList.add('hidden');
+                if (btnEliminar) btnEliminar.classList.remove('hidden');
                 sesiones.forEach(s => {
                     select.innerHTML += `<option value="${s.id_sesion}" class="bg-slate-900">${s.titulo} (${s.tipo_sesion})</option>`;
                 });
@@ -1431,6 +1439,7 @@
             } catch (err) {
                 select.innerHTML = '<option value="" class="bg-slate-900">-- Error de conexión BD --</option>';
                 alerta.classList.remove('hidden');
+                if (btnEliminar) btnEliminar.classList.add('hidden');
             }
         }
 
@@ -1456,13 +1465,40 @@
                 notificar('✅ Sesión del Concejo instalada');
                 await cargarSesiones();
             } catch (err) {
-                alert('Error de red con el servidor local: ' + err.message);
+                alert('Error de red con el servidor: ' + err.message);
+            }
+        }
+
+        async function eliminarSesionActual() {
+            const select = document.getElementById('select-sesion');
+            if (!sesionActual || !select.value) return alert('No hay ninguna sesión seleccionada para eliminar.');
+
+            const nombreSesion = select.options[select.selectedIndex].text;
+            if (!confirm(`¿Confirma eliminar definitivamente la sesión "${nombreSesion}" junto con su llamado a lista e intervenciones?`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/sesiones/${sesionActual}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (!res.ok) {
+                    return alert('Error al eliminar la sesión: ' + (data.error || 'Desconocido'));
+                }
+                notificar('🗑️ Sesión eliminada');
+                await cargarSesiones();
+            } catch (err) {
+                alert('Error de red al eliminar sesión: ' + err.message);
             }
         }
 
         async function cambiarSesion() {
             sesionActual = document.getElementById('select-sesion').value;
-            if (!sesionActual) return;
+            const btnEliminar = document.getElementById('btn-eliminar-sesion');
+            if (!sesionActual) {
+                if (btnEliminar) btnEliminar.classList.add('hidden');
+                return;
+            }
+            if (btnEliminar) btnEliminar.classList.remove('hidden');
             await cargarAsistencias();
             await cargarIntervenciones();
         }
