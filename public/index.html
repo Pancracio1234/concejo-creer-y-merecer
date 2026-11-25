@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secretaría General • Concejo Municipal de Ibagué | Fundación Creer y Merecer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --azul-recinto: #060b16;
+            --azul-panel: #0b1222;
+            --azul-tarjeta: #0f172a;
+            --oro-institucional: #c9a24b;
+            --oro-brillante: #e5c16c;
+            --borde-oro: rgba(201, 162, 75, 0.28);
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--azul-recinto);
+            background-image:
+                radial-gradient(ellipse at 50% -10%, rgba(201, 162, 75, 0.14) 0%, transparent 60%),
+                radial-gradient(circle at 85% 90%, rgba(14, 42, 85, 0.35) 0%, transparent 50%),
+                linear-gradient(180deg, #050912 0%, #081020 50%, #050811 100%);
+            color: #f1f5f9;
+        }
+        .font-solemne {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.05em;
+        }
+        .font-editorial {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .font-mono-digital {
+            font-family: 'JetBrains Mono', monospace;
+            font-variant-numeric: tabular-nums;
+        }
+        .cinta-republica {
+            background: linear-gradient(90deg, #FCD116 0%, #FCD116 50%, #003893 50%, #003893 75%, #CE1126 75%, #CE1126 100%);
+            height: 4px;
+        }
+        .filete-oro {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(201, 162, 75, 0.65) 50%, transparent 100%);
+        }
+        /* MARCA DE AGUA PURA GRABADA EN EL FONDO DEL RECINTO */
+        #marca-agua-fondo {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        #img-marca-agua {
+            width: 560px;
+            height: 560px;
+            max-width: 82vw;
+            max-height: 82vh;
+            object-fit: contain;
+            opacity: 0.11;
+            /* Fusión de luz: elimina fondos negros y convierte el logo en relieve dorado/sutil */
+            mix-blend-mode: screen;
+            filter: grayscale(100%) contrast(135%) brightness(1.05) sepia(45%) hue-rotate(8deg);
+            /* Difuminado radial en los bordes para que nunca se note un recuadro */
+            -webkit-mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 46%, rgba(0, 0, 0, 0) 74%);
+            mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 46%, rgba(0, 0, 0, 0) 74%);
+            transition: opacity 0.25s ease, width 0.25s ease, height 0.25s ease, filter 0.25s ease;
+            user-select: none;
+        }
+        /* PANELES CON TRANSPARENCIA SUTIL PARA DEJAR RESPIRAR LA MARCA DE AGUA */
+        .panel-institucional {
+            background: linear-gradient(180deg, rgba(14, 22, 40, 0.84) 0%, rgba(8, 13, 25, 0.88) 100%);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(201, 162, 75, 0.24);
+            box-shadow: 0 24px 50px -12px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        .curul-institucional {
+            background: linear-gradient(145deg, rgba(17, 27, 48, 0.86) 0%, rgba(10, 16, 30, 0.90) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .curul-institucional:hover {
+            border-color: rgba(201, 162, 75, 0.55);
+            box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.75);
+            transform: translateY(-1px);
+        }
+        /* CAJÓN LATERAL OCULTO PARA SUBIR MARCA DE AGUA */
+        #drawer-marca-agua {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%) translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 60;
+        }
+        #drawer-marca-agua.abierto {
+            transform: translateY(-50%) translateX(0);
+        }
+        .anillo-progreso {
+            transition: stroke-dashoffset 0.45s ease, stroke 0.35s ease;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .led-glow-green { box-shadow: 0 0 10px rgba(16, 185, 129, 0.55); }
+        .led-glow-amber { box-shadow: 0 0 10px rgba(245, 158, 11, 0.55); }
+        .led-glow-red { box-shadow: 0 0 10px rgba(244, 63, 94, 0.55); }
+        .led-glow-purple { box-shadow: 0 0 10px rgba(168, 85, 247, 0.55); }
+
+        .doc-render p { margin-bottom: 0.9rem; }
+        .doc-render h1, .doc-render h2, .doc-render h3 { font-weight: 800; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #0f172a; }
+        .doc-render table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        .doc-render td, .doc-render th { border: 1px solid #cbd5e1; padding: 0.5rem; }
+        .doc-render ul { list-style: disc; margin-left: 1.5rem; margin-bottom: 0.9rem; }
+        .doc-render ol { list-style: decimal; margin-left: 1.5rem; margin-bottom: 0.9rem; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-[#c9a24b] selection:text-black relative">
+
+    <!-- INPUT OCULTO PARA CARGAR LOGO / MARCA DE AGUA DESDE EL PC -->
+    <input type="file" id="input-logo-pc" accept="image/*" class="hidden" onchange="cargarLogoDesdePC(event)">
+
+    <!-- ===================================================================== -->
+    <!-- CAPA DE MARCA DE AGUA PURA (CREER Y MERECER)                          -->
+    <!-- ===================================================================== -->
+    <div id="marca-agua-fondo" aria-hidden="true">
+        <img id="img-marca-agua" src="/logo-creer-y-merecer.png" alt="" class="hidden" onload="mostrarMarcaAgua()" onerror="ocultarMarcaAgua()">
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- PESTAÑA LATERAL DISCRETA (OCULTA EN EL BORDE DERECHO)                 -->
+    <!-- ===================================================================== -->
+    <div id="drawer-marca-agua">
+        <button type="button" onclick="toggleDrawerMarcaAgua()" title="Configurar marca de agua de fondo" class="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 bg-[#0b1222]/90 hover:bg-[#c9a24b] text-[#e5c16c] hover:text-slate-950 border border-r-0 border-[#c9a24b]/45 py-3.5 px-2 rounded-l-xl shadow-2xl transition flex flex-col items-center gap-1.5 backdrop-blur-md">
+            <i class="fa-solid fa-stamp text-xs"></i>
+            <span class="text-[9px] font-extrabold uppercase tracking-widest [writing-mode:vertical-rl] rotate-180">Fondo</span>
+        </button>
+
+        <div class="w-72 bg-[#091020]/95 backdrop-blur-xl border-l border-y border-[#c9a24b]/50 rounded-l-2xl p-5 shadow-2xl">
+            <div class="flex justify-between items-center pb-3 mb-4 border-b border-white/10">
+                <div>
+                    <span class="text-[9px] font-bold uppercase tracking-[0.2em] text-[#c9a24b] block">Personalización</span>
+                    <h4 class="font-solemne text-sm uppercase font-bold text-white">Marca de Agua</h4>
+                </div>
+                <button type="button" onclick="toggleDrawerMarcaAgua()" class="text-slate-400 hover:text-white text-sm p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <button type="button" onclick="document.getElementById('input-logo-pc').click()" class="w-full bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold text-xs uppercase tracking-wider py-2.5 px-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Subir Logo de Fondo
+                </button>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 mb-1">Acabado de Grabado</label>
+                    <select id="select-estilo-marca" onchange="cambiarEstiloMarcaAgua(this.value)" class="w-full bg-[#060a14] border border-white/15 text-white text-xs font-semibold rounded-xl px-2.5 py-2 focus:border-[#c9a24b] focus:outline-none">
+                        <option value="oro">Relieve Dorado (Fondo Negro)</option>
+                        <option value="plata">Relieve Plata / Blanco (Fondo Negro)</option>
+                        <option value="claro">Grabado Invertido (Si la imagen tiene fondo blanco)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-[11px] font-bold text-slate-300 mb-1">
+                        <span>Sutileza (Opacidad)</span>
+                        <span id="valor-opacidad-marca" class="text-[#e5c16c] font-mono-digital">11%</span>
+                    </div>
+                    <input type="range" id="slider-opacidad-marca" min="3" max="30" value="11" oninput="ajustarOpacidadMarcaAgua(this.value)" class="w-full accent-[#c9a24b] cursor-pointer">
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-[11px] font-bold text-slate-300 mb-1">
+                        <span>Tamaño del Sello</span>
+                        <span id="valor-tamano-marca" class="text-[#e5c16c] font-mono-digital">560px</span>
+                    </div>
+                    <input type="range" id="slider-tamano-marca" min="280" max="860" step="20" value="560" oninput="ajustarTamanoMarcaAgua(this.value)" class="w-full accent-[#c9a24b] cursor-pointer">
+                </div>
+
+                <button type="button" onclick="quitarMarcaAgua()" class="w-full bg-white/5 hover:bg-rose-900/40 text-slate-400 hover:text-rose-300 border border-white/10 text-[11px] font-bold uppercase tracking-wider py-2 rounded-xl transition">
+                    <i class="fa-solid fa-eye-slash mr-1"></i> Ocultar Marca de Agua
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- ENCABEZADO SOLEMNE • CONCEJO MUNICIPAL DE IBAGUÉ                      -->
+    <!-- ===================================================================== -->
+    <header class="bg-[#050914]/92 backdrop-blur-md sticky top-0 z-40 border-b border-[#c9a24b]/35 shadow-2xl">
+        <div class="cinta-republica w-full"></div>
+
+        <!-- Barra de Protocolo Institucional -->
+        <div class="bg-[#080e1d] border-b border-white/5 py-1.5 px-4">
+            <div class="max-w-[1440px] mx-auto flex flex-wrap justify-between items-center text-[11px] tracking-[0.16em] uppercase font-semibold">
+                <div class="flex items-center gap-3 text-[#e5c16c]">
+                    <span class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        REPÚBLICA DE COLOMBIA • DEPARTAMENTO DEL TOLIMA
+                    </span>
+                    <span class="hidden md:inline text-slate-600">|</span>
+                    <span class="hidden md:inline text-slate-300">SECRETARÍA GENERAL Y MESA DIRECTIVA</span>
+                </div>
+                <div class="flex items-center gap-4 text-slate-300 font-mono-digital text-xs">
+                    <span id="fecha-protocolo-hoy" class="hidden sm:inline text-slate-400 uppercase font-sans text-[10px] tracking-widest"></span>
+                    <span class="text-slate-600 hidden sm:inline">•</span>
+                    <span id="reloj-sistema-vivo" class="text-[#e5c16c] font-bold">--:--:--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bloque Principal de Identidad Parlamentaria -->
+        <div class="max-w-[1440px] mx-auto px-4 py-4">
+            <div class="flex flex-wrap justify-between items-center gap-5">
+                
+                <!-- Escudo Institucional + Títulos Oficiales -->
+                <div class="flex items-center gap-5">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-black/90 border-2 border-[#c9a24b] shadow-[0_0_28px_rgba(201,162,75,0.35)] overflow-hidden flex items-center justify-center shrink-0 relative ring-4 ring-[#c9a24b]/10">
+                        <img id="img-logo-header" src="/logo-creer-y-merecer.png" alt="Emblema" class="w-full h-full object-cover hidden" onload="mostrarImagenLogo()" onerror="ocultarImagenLogo()">
+                        <div id="placeholder-logo-header" class="flex flex-col items-center justify-center text-center p-1">
+                            <i class="fa-solid fa-landmark text-[#c9a24b] text-2xl"></i>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-2.5 flex-wrap">
+                            <span class="bg-[#c9a24b]/15 text-[#e5c16c] border border-[#c9a24b]/45 text-[10px] font-bold uppercase px-3 py-0.5 rounded tracking-[0.18em]">
+                                Fundación Creer y Merecer • Modelo Concejo
+                            </span>
+                            <span class="hidden sm:inline-block font-editorial italic text-sm text-slate-300">
+                                “Coherencia, Independencia y Liderazgo”
+                            </span>
+                        </div>
+                        <h1 class="font-solemne text-2xl md:text-4xl font-bold uppercase text-white leading-tight mt-1 drop-shadow">
+                            CONCEJO MUNICIPAL DE IBAGUÉ
+                        </h1>
+                        <p class="text-xs text-slate-400 font-medium tracking-wide mt-0.5">
+                            Sistema Electrónico de Llamado a Lista, Quórum Reglamentario, Comisiones Permanentes y Orden del Día
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Control de Sesión Plenaria -->
+                <div class="flex flex-wrap items-center gap-3 bg-[#0a1120] p-2.5 rounded-2xl border border-[#c9a24b]/30 shadow-inner">
+                    <div class="flex flex-col px-2.5">
+                        <span class="text-[9px] uppercase font-bold tracking-[0.2em] text-[#c9a24b]">Sesión Convocada</span>
+                        <select id="select-sesion" onchange="cambiarSesion()" class="bg-transparent text-sm font-bold text-white min-w-[230px] focus:outline-none cursor-pointer mt-0.5">
+                            <option value="" class="bg-slate-900">-- Seleccionar Sesión --</option>
+                        </select>
+                    </div>
+                    <button type="button" onclick="abrirModalSesion()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold text-xs uppercase tracking-wider px-4 py-3 rounded-xl transition shadow-lg shadow-amber-950/40 cursor-pointer border border-[#f5dc99]/40">
+                        <i class="fa-solid fa-gavel mr-1.5"></i> Abrir Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="filete-oro w-full"></div>
+
+        <!-- Barra de Navegación Parlamentaria -->
+        <nav class="bg-[#04070f]/95">
+            <div class="max-w-[1440px] mx-auto px-4 flex space-x-1 md:space-x-4 overflow-x-auto">
+                <button onclick="mostrarTab('asistencia')" class="tab-btn py-3.5 px-3.5 border-b-2 border-[#c9a24b] text-[#e5c16c] font-bold text-xs uppercase tracking-[0.12em] whitespace-nowrap transition flex items-center gap-2" data-tab="asistencia">
+                    <i class="fa-solid fa-landmark"></i> Quórum y Bancadas
+                </button>
+                <button onclick="mostrarTab('comisiones')" class="tab-btn py-3.5 px-3.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-xs uppercase tracking-[0.12em] whitespace-nowrap transition flex items-center gap-2" data-tab="comisiones">
+                    <i class="fa-solid fa-sitemap"></i> Comisiones Permanentes
+                </button>
+                <button onclick="mostrarTab('intervenciones')" class="tab-btn py-3.5 px-3.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-xs uppercase tracking-[0.12em] whitespace-nowrap transition flex items-center gap-2" data-tab="intervenciones">
+                    <i class="fa-solid fa-microphone-lines"></i> Uso de la Palabra
+                </button>
+                <button onclick="mostrarTab('proyectos')" class="tab-btn py-3.5 px-3.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-xs uppercase tracking-[0.12em] whitespace-nowrap transition flex items-center gap-2" data-tab="proyectos">
+                    <i class="fa-solid fa-scale-balanced"></i> Orden del Día y Proyectos
+                </button>
+                <button onclick="mostrarTab('integrantes')" class="tab-btn py-3.5 px-3.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-xs uppercase tracking-[0.12em] whitespace-nowrap transition flex items-center gap-2" data-tab="integrantes">
+                    <i class="fa-solid fa-id-card-clip"></i> Curules (<span id="nav-total-integrantes">21</span>)
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <div id="toast" class="fixed bottom-5 right-5 bg-[#0b1222] text-white px-5 py-3.5 rounded-xl shadow-2xl text-sm hidden z-50 border border-[#c9a24b]/60 border-l-4 border-l-[#c9a24b] font-semibold"></div>
+
+    <main class="max-w-[1440px] mx-auto px-4 py-6 flex-1 w-full relative z-10">
+
+        <!-- BANNER DE RECINTO EN RECESO -->
+        <div id="alerta-sin-sesion" class="hidden panel-institucional border-l-4 border-l-[#c9a24b] p-6 rounded-2xl mb-6 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-[#c9a24b]/10 border border-[#c9a24b]/35 flex items-center justify-center text-[#e5c16c] text-xl">
+                    <i class="fa-solid fa-landmark"></i>
+                </div>
+                <div>
+                    <p class="font-solemne text-xl md:text-2xl uppercase text-[#e5c16c]">Recinto del Concejo Municipal en Receso</p>
+                    <p class="text-sm text-slate-300 mt-0.5">Presione <strong>“Abrir Sesión”</strong> en el panel superior para dar inicio al llamado a lista y verificación de quórum.</p>
+                </div>
+            </div>
+            <button type="button" onclick="abrirModalSesion()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-widest shadow-lg">
+                + Convocar Sesión
+            </button>
+        </div>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 1: TABLERO ELECTRÓNICO DE QUÓRUM POR BANCADAS                     -->
+        <!-- ===================================================================== -->
+        <section id="tab-asistencia" class="tab-content">
+            
+            <div class="panel-institucional rounded-2xl p-6 mb-6">
+                <div class="flex flex-wrap justify-between items-center gap-4 mb-5 pb-4 border-b border-white/10">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#c9a24b] block mb-1">
+                            Verificación Reglamentaria
+                        </span>
+                        <h2 class="font-solemne text-2xl uppercase text-white">Tablero Electrónico de Quórum y Asistencia</h2>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <button onclick="mostrarTab('integrantes')" class="bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl border border-white/15 transition">
+                            <i class="fa-solid fa-users-gear mr-1.5 text-[#c9a24b]"></i> Administrar Curules
+                        </button>
+                        <button onclick="marcarTodosPresentes()" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-extrabold uppercase tracking-wider px-5 py-2.5 rounded-xl border border-emerald-400/30 shadow-lg transition">
+                            <i class="fa-solid fa-check-double mr-1.5"></i> Confirmar Quórum Pleno
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Indicadores Numéricos de Quórum -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-[#060a14]/85 p-4 rounded-xl border border-emerald-500/30 flex justify-between items-center">
+                        <div>
+                            <p class="text-[11px] text-emerald-400 uppercase font-extrabold tracking-widest">Presentes</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">En curul / Habilitados</p>
+                        </div>
+                        <p id="stat-presentes" class="font-mono-digital text-4xl md:text-5xl font-extrabold text-emerald-400">0</p>
+                    </div>
+
+                    <div class="bg-[#060a14]/85 p-4 rounded-xl border border-amber-500/30 flex justify-between items-center">
+                        <div>
+                            <p class="text-[11px] text-amber-400 uppercase font-extrabold tracking-widest">Con Retardo</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Ingreso posterior</p>
+                        </div>
+                        <p id="stat-retardos" class="font-mono-digital text-4xl md:text-5xl font-extrabold text-amber-400">0</p>
+                    </div>
+
+                    <div class="bg-[#060a14]/85 p-4 rounded-xl border border-rose-500/30 flex justify-between items-center">
+                        <div>
+                            <p class="text-[11px] text-rose-400 uppercase font-extrabold tracking-widest">Ausentes</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Sin registro en sesión</p>
+                        </div>
+                        <p id="stat-ausentes" class="font-mono-digital text-4xl md:text-5xl font-extrabold text-rose-400">0</p>
+                    </div>
+
+                    <div class="bg-[#060a14]/85 p-4 rounded-xl border border-purple-500/30 flex justify-between items-center">
+                        <div>
+                            <p class="text-[11px] text-purple-400 uppercase font-extrabold tracking-widest">Excusa Oficial</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Radicada en Secretaría</p>
+                        </div>
+                        <p id="stat-excusas" class="font-mono-digital text-4xl md:text-5xl font-extrabold text-purple-400">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="contenedor-bancadas-asistencia" class="grid lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 2: COMISIONES PERMANENTES                                         -->
+        <!-- ===================================================================== -->
+        <section id="tab-comisiones" class="tab-content hidden">
+            
+            <div class="panel-institucional rounded-2xl p-6 mb-6">
+                <div class="flex flex-wrap justify-between items-center gap-4">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-[0.22em] text-[#c9a24b] block mb-1">
+                            Reglamento Interno del Concejo Municipal
+                        </span>
+                        <h2 class="font-solemne text-2xl md:text-3xl uppercase text-white">
+                            Conformación de Comisiones Permanentes
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1">
+                            Distribución oficial de los Honorables Concejales por comisión constitucional, bancada política y estado en sesión.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="buscar-en-comisiones" onkeyup="renderizarTableroComisiones()" placeholder="Buscar Honorable Concejal..." class="bg-[#060a14] border border-white/15 text-white text-xs rounded-xl pl-9 pr-3.5 py-2.5 w-60 focus:border-[#c9a24b] focus:outline-none">
+                        </div>
+                        <button onclick="mostrarTab('integrantes')" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded-xl shadow transition">
+                            <i class="fa-solid fa-user-plus mr-1.5"></i> Gestionar Curules
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Resumen Institucional de Comisiones -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-5 border-t border-white/10">
+                    <div class="bg-[#060a14]/85 p-4 rounded-xl border border-[#c9a24b]/35 flex justify-between items-center">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#c9a24b]">Plan de Desarrollo y Bienes</span>
+                            <h3 class="font-solemne text-lg uppercase font-bold text-white mt-0.5">Comisión Primera</h3>
+                        </div>
+                        <div class="text-right">
+                            <span id="total-comision-1" class="font-mono-digital text-3xl font-extrabold text-[#e5c16c]">0</span>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Miembros</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#060a14]/85 p-4 rounded-xl border border-sky-500/35 flex justify-between items-center">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-sky-400">Presupuesto y Hacienda Pública</span>
+                            <h3 class="font-solemne text-lg uppercase font-bold text-white mt-0.5">Comisión Segunda</h3>
+                        </div>
+                        <div class="text-right">
+                            <span id="total-comision-2" class="font-mono-digital text-3xl font-extrabold text-sky-300">0</span>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Miembros</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#060a14]/85 p-4 rounded-xl border border-slate-600/40 flex justify-between items-center">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Pendientes de Designación</span>
+                            <h3 class="font-solemne text-lg uppercase font-bold text-white mt-0.5">Sin Comisión</h3>
+                        </div>
+                        <div class="text-right">
+                            <span id="total-comision-0" class="font-mono-digital text-3xl font-extrabold text-slate-300">0</span>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Miembros</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="contenedor-columnas-comisiones" class="grid lg:grid-cols-2 gap-6"></div>
+            <div id="contenedor-sin-comision" class="mt-6"></div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 3: CONTROL DE USO DE LA PALABRA (CON FILTRO POR NOMBRE)           -->
+        <!-- ===================================================================== -->
+        <section id="tab-intervenciones" class="tab-content hidden">
+            <div class="grid lg:grid-cols-12 gap-6 items-start">
+                
+                <div id="panel-cronometro" class="lg:col-span-7 panel-institucional p-7 md:p-9 rounded-3xl flex flex-col items-center justify-between text-center border border-[#c9a24b]/45 relative overflow-hidden">
+                    
+                    <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-48 bg-[#c9a24b]/12 blur-3xl pointer-events-none"></div>
+
+                    <div class="w-full flex flex-wrap justify-between items-center gap-2 z-10">
+                        <div class="flex items-center gap-2 bg-white/[0.04] border border-[#c9a24b]/30 px-3.5 py-1.5 rounded-full">
+                            <span id="indicador-estado-reloj" class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+                            <span class="text-[11px] uppercase tracking-[0.16em] font-bold text-[#e5c16c]">
+                                Consola de Audio y Curul • Concejo Municipal
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="probarSonidos()" class="bg-white/5 hover:bg-white/10 text-[#e5c16c] text-xs font-bold px-3 py-1.5 rounded-xl border border-white/10 transition">
+                                <i class="fa-solid fa-bell mr-1"></i> Timbre
+                            </button>
+                            <button onclick="togglePantallaCompletaCrono()" class="bg-white/5 hover:bg-white/10 text-white text-xs font-bold px-3 py-1.5 rounded-xl border border-white/10 transition">
+                                <i class="fa-solid fa-expand mr-1"></i> Proyectar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 mb-2 z-10">
+                        <span id="crono-tipo-badge" class="hidden inline-block text-[10px] font-bold uppercase tracking-[0.2em] px-3.5 py-1 rounded-full bg-[#c9a24b]/15 text-[#e5c16c] border border-[#c9a24b]/40 mb-2">
+                            Intervención
+                        </span>
+                        <h3 id="crono-nombre" class="font-solemne text-3xl md:text-4xl uppercase font-bold text-white">
+                            En Espera de Orador
+                        </h3>
+                        <p id="crono-bancada" class="text-xs md:text-sm text-slate-400 font-medium mt-1.5">
+                            Seleccione un Honorable Concejal del orden de oradores o asigne tiempo reglamentario
+                        </p>
+                    </div>
+
+                    <div id="crono-alerta-visual" class="hidden w-full max-w-md py-1.5 px-4 rounded-xl font-extrabold text-xs uppercase tracking-widest my-1 z-10"></div>
+
+                    <div class="relative w-64 h-64 md:w-72 md:h-72 my-3 flex items-center justify-center z-10">
+                        <svg class="w-full h-full drop-shadow-[0_0_25px_rgba(201,162,75,0.22)]" viewBox="0 0 260 260">
+                            <circle cx="130" cy="130" r="114" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.08)" stroke-width="9"/>
+                            <circle cx="130" cy="130" r="102" fill="none" stroke="rgba(201,162,75,0.28)" stroke-width="1" stroke-dasharray="2,6"/>
+                            <circle id="anillo-tiempo" class="anillo-progreso" cx="130" cy="130" r="114" fill="none" stroke="#c9a24b" stroke-width="9" stroke-linecap="round" stroke-dasharray="716.28" stroke-dashoffset="0"/>
+                        </svg>
+
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span class="text-[10px] uppercase tracking-[0.25em] text-slate-400 font-bold mb-1">Tiempo Restante</span>
+                            <div id="crono-display" class="font-mono-digital text-6xl md:text-7xl font-extrabold text-[#e5c16c] tracking-tight select-none leading-none">
+                                03:00
+                            </div>
+                            <span id="crono-subtitulo-tiempo" class="text-[11px] text-slate-400 font-semibold mt-2.5">
+                                Reglamentario: 03:00
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center items-center gap-2 mb-5 bg-white/[0.03] p-3 rounded-2xl border border-white/10 w-full z-10">
+                        <button onclick="ajustarTiempo(-60)" class="bg-[#060a14] hover:bg-slate-900 text-rose-400 border border-rose-500/25 font-bold text-xs px-3 py-2 rounded-xl transition">-1m</button>
+                        <button onclick="ajustarTiempo(-30)" class="bg-[#060a14] hover:bg-slate-900 text-rose-300 border border-rose-500/25 font-bold text-xs px-3 py-2 rounded-xl transition">-30s</button>
+                        
+                        <div class="flex items-center gap-1.5 bg-black/70 px-3 py-1.5 rounded-xl border border-[#c9a24b]/30">
+                            <input type="number" id="edit-minutos" min="0" max="60" value="3" class="w-12 bg-transparent text-center text-sm font-extrabold text-white focus:outline-none" title="Minutos">
+                            <span class="font-bold text-[#c9a24b]">:</span>
+                            <input type="number" id="edit-segundos" min="0" max="59" value="0" class="w-12 bg-transparent text-center text-sm font-extrabold text-white focus:outline-none" title="Segundos">
+                            <button onclick="aplicarTiempoManual()" class="bg-[#1e3a8a] hover:bg-blue-700 text-white text-[11px] uppercase font-bold px-2.5 py-1 rounded-lg ml-1 transition">Fijar</button>
+                        </div>
+
+                        <button onclick="ajustarTiempo(30)" class="bg-[#060a14] hover:bg-slate-900 text-emerald-300 border border-emerald-500/25 font-bold text-xs px-3 py-2 rounded-xl transition">+30s</button>
+                        <button onclick="ajustarTiempo(60)" class="bg-[#060a14] hover:bg-slate-900 text-emerald-400 border border-emerald-500/25 font-bold text-xs px-3 py-2 rounded-xl transition">+1m</button>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3 w-full z-10">
+                        <button onclick="iniciarCrono()" class="bg-emerald-700 hover:bg-emerald-600 text-white py-3.5 px-4 rounded-2xl text-xs md:text-sm uppercase font-extrabold tracking-wider border border-emerald-400/25 shadow-lg transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-play"></i> Conceder
+                        </button>
+                        <button onclick="pausarCrono()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 py-3.5 px-4 rounded-2xl text-xs md:text-sm uppercase font-extrabold tracking-wider shadow-lg transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-pause"></i> Suspender
+                        </button>
+                        <button onclick="finalizarTurnoActual()" class="bg-rose-800 hover:bg-rose-700 text-white py-3.5 px-4 rounded-2xl text-xs md:text-sm uppercase font-extrabold tracking-wider border border-rose-400/25 shadow-lg transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-microphone-slash"></i> Cerrar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- COLUMNA DERECHA: INSCRIPCIÓN Y COLA CON FILTROS POR NOMBRE -->
+                <div class="lg:col-span-5 panel-institucional p-6 rounded-3xl flex flex-col">
+                    <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+                        <div>
+                            <h3 class="font-solemne text-lg uppercase font-bold text-white">Orden de Uso de la Palabra</h3>
+                            <p class="text-xs text-slate-400">Inscripción reglamentaria ante Presidencia.</p>
+                        </div>
+                        <span class="bg-[#c9a24b]/15 text-[#e5c16c] border border-[#c9a24b]/40 text-xs font-extrabold px-3 py-1 rounded-lg">
+                            <span id="contador-turnos">0</span> inscritos
+                        </span>
+                    </div>
+                    
+                    <div class="space-y-3 mb-5 bg-[#060a14]/85 p-4 rounded-2xl border border-white/10">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-xs font-bold uppercase text-slate-400">Honorable Concejal</label>
+                                <span id="contador-oradores-disponibles" class="text-[10px] font-bold text-[#c9a24b]"></span>
+                            </div>
+                            <div class="relative mb-2">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="filtro-nombre-orador" oninput="filtrarSelectOradores()" placeholder="Filtrar concejal por nombre..." class="w-full border border-white/15 rounded-xl pl-8 pr-7 py-2 text-xs bg-[#0b1222] text-white placeholder-slate-500 focus:border-[#c9a24b] focus:outline-none">
+                                <button type="button" id="btn-limpiar-filtro-orador" onclick="limpiarFiltroSelectOradores()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs" title="Limpiar búsqueda">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <select id="select-orador" class="w-full border border-white/15 rounded-xl px-3 py-2.5 text-sm bg-[#0b1222] text-white font-medium focus:border-[#c9a24b] focus:outline-none"></select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Modalidad</label>
+                                <select id="select-tipo-intervencion" onchange="autocompletarSegundos()" class="w-full border border-white/15 rounded-xl px-3 py-2 text-sm bg-[#0b1222] text-white">
+                                    <option value="Ordinaria" data-seg="180">Ordinaria (3 min)</option>
+                                    <option value="Vocero Bancada" data-seg="300">Vocero Bancada (5 min)</option>
+                                    <option value="Réplica" data-seg="120">Réplica (2 min)</option>
+                                    <option value="Moción" data-seg="60">Moción (1 min)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Tiempo (Segundos)</label>
+                                <input type="number" id="input-segundos" value="180" min="5" class="w-full border border-white/15 rounded-xl px-3 py-2 text-sm font-bold bg-[#0b1222] text-[#e5c16c]">
+                            </div>
+                        </div>
+                        <button onclick="agregarIntervencion()" class="w-full bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg transition">
+                            <i class="fa-solid fa-plus mr-1"></i> Inscribir en el Orden de Oradores
+                        </button>
+                    </div>
+
+                    <div class="flex flex-wrap justify-between items-center gap-2 mb-2.5">
+                        <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider">Turnos Inscritos</h4>
+                        <div class="relative w-48">
+                            <i class="fa-solid fa-filter absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-[10px]"></i>
+                            <input type="text" id="filtro-cola-intervenciones" oninput="renderizarListaIntervenciones()" placeholder="Buscar en turnos..." class="w-full bg-[#060a14] border border-white/15 rounded-lg pl-7 pr-6 py-1.5 text-xs text-white placeholder-slate-500 focus:border-[#c9a24b] focus:outline-none">
+                            <button type="button" id="btn-limpiar-cola" onclick="limpiarFiltroCola()" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-[10px]" title="Limpiar filtro">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="lista-intervenciones" class="space-y-2.5 overflow-y-auto max-h-[380px] pr-1"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 4: PROYECTOS DE ACUERDO Y PROPOSICIONES CON VISOR DIRECTO         -->
+        <!-- ===================================================================== -->
+        <section id="tab-proyectos" class="tab-content hidden">
+            
+            <div class="panel-institucional p-4 rounded-2xl mb-6 flex flex-wrap justify-between items-center gap-3 border-b-2 border-b-[#c9a24b]">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="font-solemne text-base uppercase text-[#e5c16c] mr-2">
+                        <i class="fa-solid fa-filter mr-1.5"></i>Comisión:
+                    </span>
+                    <button onclick="filtrarProyectos('TODOS')" id="filtro-TODOS" class="filtro-proy-btn bg-[#c9a24b] text-slate-950 font-extrabold text-xs uppercase px-4 py-2 rounded-xl">Todos</button>
+                    <button onclick="filtrarProyectos('Primera')" id="filtro-Primera" class="filtro-proy-btn bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-xs uppercase px-4 py-2 rounded-xl border border-white/10">Comisión Primera</button>
+                    <button onclick="filtrarProyectos('Segunda')" id="filtro-Segunda" class="filtro-proy-btn bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-xs uppercase px-4 py-2 rounded-xl border border-white/10">Comisión Segunda</button>
+                    <button onclick="filtrarProyectos('Plenaria')" id="filtro-Plenaria" class="filtro-proy-btn bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-xs uppercase px-4 py-2 rounded-xl border border-white/10">Plenaria</button>
+                </div>
+
+                <button onclick="toggleFormularioProyecto()" class="bg-[#1e3a8a] hover:bg-blue-800 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-blue-400/30 transition shadow-lg">
+                    <i class="fa-solid fa-file-signature mr-1.5"></i> Radicar Proyecto / Proposición
+                </button>
+            </div>
+
+            <div id="panel-form-proyecto" class="hidden panel-institucional p-6 rounded-2xl mb-6 border border-[#c9a24b]">
+                <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+                    <h3 class="font-solemne text-xl uppercase font-bold text-[#e5c16c]">Radicación Oficial en Secretaría General</h3>
+                    <button onclick="toggleFormularioProyecto()" class="text-slate-400 hover:text-white text-sm font-bold"><i class="fa-solid fa-xmark"></i> Cerrar</button>
+                </div>
+                <div class="grid md:grid-cols-4 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Tipo de Acto</label>
+                        <select id="proy-tipo" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm font-semibold">
+                            <option value="Proyecto de Acuerdo">Proyecto de Acuerdo</option>
+                            <option value="Proposición">Proposición</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Número de Radicado</label>
+                        <input type="text" id="proy-codigo" placeholder="Ej: PA-001-2026" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Comisión Asignada</label>
+                        <select id="proy-comision" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm font-semibold">
+                            <option value="1">Comisión Primera</option>
+                            <option value="2">Comisión Segunda</option>
+                            <option value="">Plenaria (General)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Concejal Ponente / Autor</label>
+                        <select id="proy-autor" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm"></select>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Epígrafe / Título Oficial</label>
+                        <input type="text" id="proy-titulo" placeholder="Por medio del cual se..." class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Documento Adjunto (PDF, .docx o .txt)</label>
+                        <input type="file" id="proy-archivo" accept=".pdf,.docx,.txt" class="w-full border border-white/15 bg-[#060a14] text-slate-300 rounded-xl px-3 py-1.5 text-sm">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Articulado o Texto de la Proposición (Opcional si adjunta archivo)</label>
+                    <textarea id="proy-descripcion" rows="4" placeholder="Transcriba o pegue el contenido..." class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm"></textarea>
+                </div>
+
+                <div class="flex justify-end">
+                    <button onclick="crearProyecto()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 rounded-xl px-6 py-2.5 text-xs uppercase tracking-wider font-extrabold shadow-lg">
+                        <i class="fa-solid fa-save mr-1.5"></i> Radicar y Proyectar
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-4 space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 px-1">
+                        Documentos en Trámite (<span id="contador-docs">0</span>)
+                    </h4>
+                    <div id="lista-lateral-proyectos" class="space-y-3 max-h-[82vh] overflow-y-auto pr-1"></div>
+                </div>
+
+                <div id="visor-directo-container" class="lg:col-span-8 bg-white rounded-2xl shadow-2xl border border-[#c9a24b]/50 overflow-hidden flex flex-col min-h-[75vh]">
+                    <div class="bg-[#060a14] text-white p-4 border-b-2 border-[#c9a24b] flex flex-wrap justify-between items-center gap-3">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span id="visor-badge" class="bg-[#c9a24b] text-slate-950 text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded">DOCUMENTO</span>
+                                <span id="visor-comision" class="text-xs text-[#e5c16c] font-bold">Comisión</span>
+                            </div>
+                            <h3 id="visor-titulo" class="font-solemne text-lg md:text-xl uppercase font-bold text-white">Seleccione un documento del orden del día</h3>
+                            <p id="visor-autor" class="text-xs text-slate-400 mt-0.5">--</p>
+                        </div>
+
+                        <div class="flex items-center gap-2 flex-wrap" id="visor-acciones"></div>
+                    </div>
+
+                    <div id="visor-contenido" class="flex-1 bg-slate-100 p-6 overflow-y-auto flex justify-center items-start">
+                        <div class="text-center text-slate-400 my-auto py-20">
+                            <i class="fa-solid fa-file-lines text-5xl mb-3 text-slate-300"></i>
+                            <p class="font-bold text-slate-600">Sin documentos seleccionados en el visor.</p>
+                            <p class="text-xs mt-1">Utilice el botón “Radicar Proyecto / Proposición” para incorporar un texto.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 5: ADMINISTRACIÓN DE CURULES Y CONCEJALES                         -->
+        <!-- ===================================================================== -->
+        <section id="tab-integrantes" class="tab-content hidden">
+            <div class="panel-institucional p-6 rounded-2xl mb-6 border-t-4 border-t-[#c9a24b]">
+                <h3 class="font-solemne text-xl uppercase font-bold text-white mb-1">Acreditación de Curul / Honorable Concejal</h3>
+                <p class="text-xs text-slate-400 mb-4">El registro se sincroniza automáticamente con el tablero de quórum y las comisiones permanentes.</p>
+
+                <div class="grid md:grid-cols-12 gap-4 items-end">
+                    <div class="md:col-span-4">
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Nombres y Apellidos</label>
+                        <input type="text" id="nuevo-int-nombre" placeholder="Ej: Juan Sebastián Pérez" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm">
+                    </div>
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Bancada Política</label>
+                        <select id="nuevo-int-bancada" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm font-semibold">
+                            <option value="3">Independientes</option>
+                            <option value="1">Gobierno</option>
+                            <option value="2">Oposición</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Comisión Permanente</label>
+                        <select id="nuevo-int-comision" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm font-semibold">
+                            <option value="1">Comisión Primera</option>
+                            <option value="2">Comisión Segunda</option>
+                            <option value="">Sin Comisión</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2 flex items-center gap-2 pb-2">
+                        <input type="checkbox" id="nuevo-int-directiva" class="w-4 h-4 accent-[#c9a24b]">
+                        <label for="nuevo-int-directiva" class="text-xs font-bold uppercase text-slate-300 cursor-pointer">Mesa Directiva (P)</label>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex justify-end">
+                    <button onclick="agregarIntegrante()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-lg">
+                        <i class="fa-solid fa-user-plus mr-1.5"></i> Acreditar Curul
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel-institucional rounded-2xl overflow-hidden">
+                <div class="bg-[#060a14] p-4 border-b border-white/10 flex flex-wrap justify-between items-center gap-3">
+                    <div>
+                        <h3 class="font-solemne text-lg uppercase text-white">Libro Oficial de Curules, Bancadas y Comisiones</h3>
+                        <p class="text-xs text-slate-400">Toda modificación en los selectores se guarda en tiempo real.</p>
+                    </div>
+                    <input type="text" id="buscar-integrante" onkeyup="renderizarGestionIntegrantes()" placeholder="Filtrar por nombre..." class="bg-[#0b1222] border border-white/15 text-white text-xs rounded-xl px-3.5 py-2.5 w-64 focus:border-[#c9a24b] focus:outline-none">
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-[#050811] text-[11px] uppercase font-bold text-[#e5c16c] border-b border-white/10 tracking-wider">
+                            <tr>
+                                <th class="p-4">Honorable Concejal</th>
+                                <th class="p-4">Bancada</th>
+                                <th class="p-4">Comisión Permanente</th>
+                                <th class="p-4 text-center">Mesa Directiva (P)</th>
+                                <th class="p-4 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-gestion-integrantes" class="divide-y divide-white/5 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PIE DE PÁGINA INSTITUCIONAL -->
+    <footer class="bg-[#04070f]/95 text-slate-400 text-xs py-4 px-4 border-t border-[#c9a24b]/25 mt-10 relative z-10">
+        <div class="max-w-[1440px] mx-auto flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <img id="img-logo-footer" src="/logo-creer-y-merecer.png" alt="Emblema" class="w-8 h-8 rounded-full border border-[#c9a24b]/60 object-cover hidden">
+                <div>
+                    <p class="font-solemne font-bold text-white text-xs uppercase tracking-wider">Concejo Municipal de Ibagué • Fundación Creer y Merecer</p>
+                    <p class="text-[11px] text-slate-500">Colectivo Juvenil • Formación Democrática y Control Político</p>
+                </div>
+            </div>
+            <p class="uppercase tracking-[0.18em] text-[10px] font-bold text-[#c9a24b]/80">Ibagué, Tolima • República de Colombia</p>
+        </div>
+    </footer>
+
+    <!-- MODAL ABRIR SESIÓN -->
+    <div id="modal-sesion" class="fixed inset-0 bg-black/85 hidden items-center justify-center p-4 z-50 backdrop-blur-md">
+        <div class="panel-institucional rounded-2xl max-w-md w-full p-6 border border-[#c9a24b]">
+            <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#c9a24b]">Secretaría General</span>
+            <h3 class="font-solemne text-2xl uppercase font-bold text-white mt-0.5 mb-4">Convocar Nueva Sesión</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Denominación de la Sesión</label>
+                    <input type="text" id="nueva-sesion-titulo" placeholder="Ej: Sesión Plenaria Ordinaria No. 01" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Naturaleza de la Sesión</label>
+                    <input type="text" id="nueva-sesion-tipo" list="sugerencias-tipo" value="Plenaria" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm">
+                    <datalist id="sugerencias-tipo">
+                        <option value="Plenaria">
+                        <option value="Comisión Primera">
+                        <option value="Comisión Segunda">
+                        <option value="Sesión Conjunta">
+                        <option value="Control Político">
+                    </datalist>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Curules Convocadas al Llamado a Lista</label>
+                    <select id="nueva-sesion-comision" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm">
+                        <option value="">Plenaria (Todos los Honorables Concejales)</option>
+                        <option value="1">Exclusivamente Comisión Primera</option>
+                        <option value="2">Exclusivamente Comisión Segunda</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-white/10">
+                    <button type="button" onclick="cerrarModalSesion()" class="px-4 py-2 text-xs font-bold uppercase text-slate-400 hover:text-white rounded-xl">Cancelar</button>
+                    <button type="button" onclick="guardarSesion()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg">Instalar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sesionActual = null;
+        let integrantesGlobal = [];
+        let asistenciasGlobal = [];
+        let proyectosGlobal = [];
+        let intervencionesGlobal = [];
+        let filtroComisionActual = 'TODOS';
+        let proyectoSeleccionadoId = null;
+        let zoomTexto = 18;
+
+        let timerInterval = null;
+        let segundosRestantes = 180;
+        let segundosBase = 180;
+        let intervencionActivaId = null;
+        let audioCtx = null;
+        const CIRCUNFERENCIA_ANILLO = 2 * Math.PI * 114;
+
+        // =====================================================================
+        // GESTIÓN DE MARCA DE AGUA PURA Y CAJÓN LATERAL OCULTO
+        // =====================================================================
+        function toggleDrawerMarcaAgua() {
+            const drawer = document.getElementById('drawer-marca-agua');
+            if (drawer) drawer.classList.toggle('abierto');
+        }
+
+        function mostrarMarcaAgua() {
+            const img = document.getElementById('img-marca-agua');
+            if (img) img.classList.remove('hidden');
+        }
+
+        function ocultarMarcaAgua() {
+            const img = document.getElementById('img-marca-agua');
+            if (img) img.classList.add('hidden');
+        }
+
+        function cambiarEstiloMarcaAgua(estilo) {
+            const img = document.getElementById('img-marca-agua');
+            if (!img) return;
+            if (estilo === 'plata') {
+                img.style.filter = 'grayscale(100%) contrast(145%) brightness(1.1)';
+            } else if (estilo === 'claro') {
+                img.style.filter = 'grayscale(100%) invert(100%) contrast(140%) brightness(1.05) sepia(45%) hue-rotate(8deg)';
+            } else {
+                img.style.filter = 'grayscale(100%) contrast(135%) brightness(1.05) sepia(45%) hue-rotate(8deg)';
+            }
+            try { localStorage.setItem('marca_agua_estilo', estilo); } catch (e) {}
+        }
+
+        function ajustarOpacidadMarcaAgua(valorPorcentaje) {
+            const img = document.getElementById('img-marca-agua');
+            const label = document.getElementById('valor-opacidad-marca');
+            if (img) img.style.opacity = (valorPorcentaje / 100).toFixed(2);
+            if (label) label.innerText = `${valorPorcentaje}%`;
+            try { localStorage.setItem('marca_agua_opacidad', valorPorcentaje); } catch (e) {}
+        }
+
+        function ajustarTamanoMarcaAgua(valorPx) {
+            const img = document.getElementById('img-marca-agua');
+            const label = document.getElementById('valor-tamano-marca');
+            if (img) {
+                img.style.width = `${valorPx}px`;
+                img.style.height = `${valorPx}px`;
+            }
+            if (label) label.innerText = `${valorPx}px`;
+            try { localStorage.setItem('marca_agua_tamano', valorPx); } catch (e) {}
+        }
+
+        function quitarMarcaAgua() {
+            ocultarMarcaAgua();
+            ocultarImagenLogo();
+            try { localStorage.removeItem('logo_creer_y_merecer_base64'); } catch (e) {}
+            notificar('Marca de agua ocultada');
+        }
+
+        function aplicarLogoGuardado() {
+            const opacidadGuardada = localStorage.getItem('marca_agua_opacidad') || '11';
+            const tamanoGuardado = localStorage.getItem('marca_agua_tamano') || '560';
+            const estiloGuardado = localStorage.getItem('marca_agua_estilo') || 'oro';
+            const sliderOp = document.getElementById('slider-opacidad-marca');
+            const sliderTam = document.getElementById('slider-tamano-marca');
+            const selEstilo = document.getElementById('select-estilo-marca');
+            if (sliderOp) sliderOp.value = opacidadGuardada;
+            if (sliderTam) sliderTam.value = tamanoGuardado;
+            if (selEstilo) selEstilo.value = estiloGuardado;
+            ajustarOpacidadMarcaAgua(opacidadGuardada);
+            ajustarTamanoMarcaAgua(tamanoGuardado);
+            cambiarEstiloMarcaAgua(estiloGuardado);
+
+            const logoGuardado = localStorage.getItem('logo_creer_y_merecer_base64');
+            if (logoGuardado) {
+                const imgHeader = document.getElementById('img-logo-header');
+                const imgFooter = document.getElementById('img-logo-footer');
+                const imgMarca = document.getElementById('img-marca-agua');
+                imgHeader.src = logoGuardado;
+                imgFooter.src = logoGuardado;
+                imgMarca.src = logoGuardado;
+                mostrarImagenLogo();
+                mostrarMarcaAgua();
+            }
+        }
+
+        function mostrarImagenLogo() {
+            document.getElementById('img-logo-header').classList.remove('hidden');
+            document.getElementById('placeholder-logo-header').classList.add('hidden');
+            document.getElementById('img-logo-footer').classList.remove('hidden');
+        }
+
+        function ocultarImagenLogo() {
+            document.getElementById('img-logo-header').classList.add('hidden');
+            document.getElementById('placeholder-logo-header').classList.remove('hidden');
+            document.getElementById('img-logo-footer').classList.add('hidden');
+        }
+
+        function cargarLogoDesdePC(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                try {
+                    localStorage.setItem('logo_creer_y_merecer_base64', base64);
+                } catch (err) {}
+                document.getElementById('img-logo-header').src = base64;
+                document.getElementById('img-logo-footer').src = base64;
+                document.getElementById('img-marca-agua').src = base64;
+                mostrarImagenLogo();
+                mostrarMarcaAgua();
+                notificar('✅ Marca de agua grabada en el fondo');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function actualizarRelojYFecha() {
+            const ahora = new Date();
+            const elReloj = document.getElementById('reloj-sistema-vivo');
+            const elFecha = document.getElementById('fecha-protocolo-hoy');
+            if (elReloj) elReloj.innerText = ahora.toLocaleTimeString('es-CO', { hour12: false });
+            if (elFecha) {
+                elFecha.innerText = ahora.toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            }
+        }
+        setInterval(actualizarRelojYFecha, 1000);
+        actualizarRelojYFecha();
+
+        // =====================================================================
+        // AUDIO DEL RECINTO
+        // =====================================================================
+        function obtenerAudioContext() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function sonarAdvertencia10Seg() {
+            try {
+                const ctx = obtenerAudioContext();
+                const ahora = ctx.currentTime;
+                [0, 0.22].forEach((offset) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(880, ahora + offset);
+                    gain.gain.setValueAtTime(0.001, ahora + offset);
+                    gain.gain.exponentialRampToValueAtTime(0.45, ahora + offset + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ahora + offset + 0.16);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ahora + offset);
+                    osc.stop(ahora + offset + 0.17);
+                });
+            } catch (e) {}
+        }
+
+        function sonarTiempoFinalizado() {
+            try {
+                const ctx = obtenerAudioContext();
+                const ahora = ctx.currentTime;
+                const frecuencias = [523.25, 659.25, 392.00];
+                frecuencias.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = idx === 2 ? 'triangle' : 'sine';
+                    osc.frequency.setValueAtTime(freq, ahora);
+                    gain.gain.setValueAtTime(0.001, ahora);
+                    gain.gain.exponentialRampToValueAtTime(0.4, ahora + 0.04);
+                    gain.gain.exponentialRampToValueAtTime(0.0008, ahora + 1.85);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ahora);
+                    osc.stop(ahora + 1.9);
+                });
+            } catch (e) {}
+        }
+
+        function probarSonidos() {
+            sonarAdvertencia10Seg();
+            notificar('🔔 Probando timbre reglamentario de 10s y cierre de curul...');
+            setTimeout(() => sonarTiempoFinalizado(), 900);
+        }
+
+        function notificar(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3200);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                cerrarModalSesion();
+                const drawer = document.getElementById('drawer-marca-agua');
+                if (drawer) drawer.classList.remove('abierto');
+            }
+        });
+
+        window.onload = async () => {
+            aplicarLogoGuardado();
+            await cargarIntegrantes();
+            await cargarProyectos();
+            await cargarSesiones();
+            actualizarDisplayCrono();
+        };
+
+        function mostrarTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-[#c9a24b]', 'text-[#e5c16c]');
+                btn.classList.add('border-transparent', 'text-slate-400');
+            });
+            const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+            activeBtn.classList.add('border-[#c9a24b]', 'text-[#e5c16c]');
+            activeBtn.classList.remove('border-transparent', 'text-slate-400');
+        }
+
+        // =====================================================================
+        // 1. CONCEJALES, FILTRO DE ORADORES Y COMISIONES PERMANENTES
+        // =====================================================================
+        function normalizarTexto(txt) {
+            return (txt || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        }
+
+        function filtrarSelectOradores() {
+            const input = document.getElementById('filtro-nombre-orador');
+            const selectOrador = document.getElementById('select-orador');
+            const btnLimpiar = document.getElementById('btn-limpiar-filtro-orador');
+            const contadorEl = document.getElementById('contador-oradores-disponibles');
+            if (!selectOrador) return;
+
+            const termino = normalizarTexto(input ? input.value.trim() : '');
+            if (btnLimpiar) {
+                btnLimpiar.classList.toggle('hidden', termino.length === 0);
+            }
+
+            const valorPrevio = selectOrador.value;
+            const filtrados = integrantesGlobal.filter(i =>
+                normalizarTexto(i.nombre_completo).includes(termino)
+            );
+
+            selectOrador.innerHTML = '';
+            if (filtrados.length === 0) {
+                selectOrador.innerHTML = '<option value="" class="bg-slate-900">-- Sin coincidencias para ese nombre --</option>';
+            } else {
+                filtrados.forEach(i => {
+                    selectOrador.innerHTML += `<option value="${i.id_integrante}" class="bg-slate-900">H.C. ${i.nombre_completo} — ${i.bancada} (${i.comision})</option>`;
+                });
+                if (filtrados.some(i => String(i.id_integrante) === String(valorPrevio))) {
+                    selectOrador.value = valorPrevio;
+                }
+            }
+
+            if (contadorEl) {
+                contadorEl.innerText = termino
+                    ? `${filtrados.length} de ${integrantesGlobal.length}`
+                    : `${integrantesGlobal.length} disponibles`;
+            }
+        }
+
+        function limpiarFiltroSelectOradores() {
+            const input = document.getElementById('filtro-nombre-orador');
+            if (input) {
+                input.value = '';
+                filtrarSelectOradores();
+                input.focus();
+            }
+        }
+
+        async function cargarIntegrantes() {
+            try {
+                const res = await fetch('/api/integrantes');
+                if (!res.ok) return;
+                integrantesGlobal = await res.json();
+                
+                document.getElementById('nav-total-integrantes').innerText = integrantesGlobal.length;
+
+                filtrarSelectOradores();
+
+                const selectAutor = document.getElementById('proy-autor');
+                selectAutor.innerHTML = '<option value="" class="bg-slate-900">-- Mesa Directiva / Bancada --</option>';
+
+                integrantesGlobal.forEach(i => {
+                    selectAutor.innerHTML += `<option value="${i.id_integrante}" class="bg-slate-900">H.C. ${i.nombre_completo} (${i.bancada})</option>`;
+                });
+
+                renderizarGestionIntegrantes();
+                renderizarTableroComisiones();
+            } catch (e) {
+                console.error('Error cargando concejales:', e);
+            }
+        }
+
+        function renderizarTableroComisiones() {
+            const contenedor = document.getElementById('contenedor-columnas-comisiones');
+            const contenedorSin = document.getElementById('contenedor-sin-comision');
+            if (!contenedor) return;
+
+            const busqueda = normalizarTexto(document.getElementById('buscar-en-comisiones')?.value || '');
+
+            const comision1 = integrantesGlobal.filter(i => i.id_comision === 1 && normalizarTexto(i.nombre_completo).includes(busqueda));
+            const comision2 = integrantesGlobal.filter(i => i.id_comision === 2 && normalizarTexto(i.nombre_completo).includes(busqueda));
+            const sinComision = integrantesGlobal.filter(i => !i.id_comision && normalizarTexto(i.nombre_completo).includes(busqueda));
+
+            document.getElementById('total-comision-1').innerText = integrantesGlobal.filter(i => i.id_comision === 1).length;
+            document.getElementById('total-comision-2').innerText = integrantesGlobal.filter(i => i.id_comision === 2).length;
+            document.getElementById('total-comision-0').innerText = integrantesGlobal.filter(i => !i.id_comision).length;
+
+            const generarTarjetaConcejalComision = (i, idx) => {
+                const regAsistencia = asistenciasGlobal.find(a => a.id_integrante === i.id_integrante);
+                const estadoAsis = regAsistencia ? regAsistencia.estado : null;
+
+                const badgeBancada = i.id_bancada === 1 
+                    ? 'bg-emerald-500/12 text-emerald-300 border-emerald-500/35' 
+                    : i.id_bancada === 2 
+                        ? 'bg-rose-500/12 text-rose-300 border-rose-500/35' 
+                        : 'bg-purple-500/12 text-purple-300 border-purple-500/35';
+
+                const badgeAsistenciaHtml = estadoAsis ? `
+                    <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded border ${
+                        estadoAsis === 'Presente' ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40' :
+                        estadoAsis === 'Retardo' ? 'bg-amber-500/15 text-amber-300 border-amber-500/40' :
+                        estadoAsis === 'Excusa' ? 'bg-purple-500/15 text-purple-300 border-purple-500/40' :
+                        'bg-rose-500/15 text-rose-300 border-rose-500/40'
+                    }">${estadoAsis}</span>
+                ` : '';
+
+                return `
+                    <div class="curul-institucional p-4 rounded-xl flex flex-wrap justify-between items-center gap-3">
+                        <div class="flex items-center gap-3 min-w-0 flex-1">
+                            <span class="w-8 h-8 rounded-lg bg-[#060a14] border border-[#c9a24b]/35 flex items-center justify-center font-mono-digital text-xs font-bold text-[#e5c16c] shrink-0">
+                                ${String(idx + 1).padStart(2, '0')}
+                            </span>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-bold text-sm md:text-[15px] text-white">H.C. ${i.nombre_completo}</span>
+                                    ${i.es_directiva ? '<span class="bg-[#c9a24b] text-slate-950 text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded">Mesa Directiva (P)</span>' : ''}
+                                </div>
+                                <div class="flex items-center gap-2 flex-wrap mt-1.5">
+                                    <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded border ${badgeBancada}">
+                                        Bancada ${i.bancada}
+                                    </span>
+                                    ${badgeAsistenciaHtml}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 shrink-0">
+                            <select onchange="recolocarIntegrante(${i.id_integrante}, 'comision', this.value)" title="Reasignar comisión" class="bg-[#060a14] border border-white/15 text-slate-200 text-[11px] font-semibold rounded-lg px-2.5 py-1.5 focus:border-[#c9a24b] focus:outline-none">
+                                <option value="1" ${i.id_comision === 1 ? 'selected' : ''}>Comisión Primera</option>
+                                <option value="2" ${i.id_comision === 2 ? 'selected' : ''}>Comisión Segunda</option>
+                                <option value="" ${!i.id_comision ? 'selected' : ''}>Sin Comisión</option>
+                            </select>
+
+                            <button onclick="inscribirRapidoDesdeComision(${i.id_integrante})" class="bg-white/5 hover:bg-[#c9a24b] text-[#e5c16c] hover:text-slate-950 border border-[#c9a24b]/40 px-2.5 py-1.5 rounded-lg text-xs font-bold transition" title="Inscribir en Uso de la Palabra">
+                                <i class="fa-solid fa-microphone-lines"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            };
+
+            const seccionesComisiones = [
+                {
+                    titulo: 'Comisión Primera Permanente',
+                    subtitulo: 'Plan de Desarrollo, Ordenamiento Territorial, Educación, Cultura y Asuntos Sociales',
+                    gradiente: 'from-[#1a160b] via-[#131826] to-[#090e1a] border-[#c9a24b]',
+                    icono: 'fa-landmark',
+                    colorAcento: 'text-[#e5c16c]',
+                    lista: comision1
+                },
+                {
+                    titulo: 'Comisión Segunda Permanente',
+                    subtitulo: 'Presupuesto, Hacienda Pública, Crédito Municipal, Impuestos y Control Fiscal',
+                    gradiente: 'from-[#0b192c] via-[#10192b] to-[#090e1a] border-sky-500/80',
+                    icono: 'fa-scale-balanced',
+                    colorAcento: 'text-sky-300',
+                    lista: comision2
+                }
+            ];
+
+            contenedor.innerHTML = seccionesComisiones.map(sec => `
+                <div class="panel-institucional rounded-2xl overflow-hidden flex flex-col">
+                    <div class="bg-gradient-to-r ${sec.gradiente} p-5 border-b-2 flex justify-between items-start gap-3">
+                        <div>
+                            <div class="flex items-center gap-2 ${sec.colorAcento} text-[10px] font-bold uppercase tracking-[0.2em] mb-1">
+                                <i class="fa-solid ${sec.icono}"></i>
+                                <span>Concejo Municipal de Ibagué</span>
+                            </div>
+                            <h3 class="font-solemne text-xl md:text-2xl uppercase font-bold text-white">${sec.titulo}</h3>
+                            <p class="text-xs text-slate-300/85 mt-1">${sec.subtitulo}</p>
+                        </div>
+                        <span class="bg-black/60 border border-white/15 px-3.5 py-1.5 rounded-xl font-mono-digital text-sm font-extrabold text-white shrink-0">
+                            ${sec.lista.length}
+                        </span>
+                    </div>
+                    <div class="p-4 space-y-2.5 flex-1">
+                        ${sec.lista.length > 0 
+                            ? sec.lista.map((item, idx) => generarTarjetaConcejalComision(item, idx)).join('') 
+                            : '<p class="text-center text-xs text-slate-500 py-10">No hay Honorables Concejales asignados a esta comisión.</p>'
+                        }
+                    </div>
+                </div>
+            `).join('');
+
+            if (sinComision.length > 0) {
+                contenedorSin.innerHTML = `
+                    <div class="panel-institucional rounded-2xl overflow-hidden border border-slate-700/50">
+                        <div class="bg-[#090e1c] p-4 border-b border-white/10 flex justify-between items-center">
+                            <h3 class="font-solemne text-base uppercase font-bold text-slate-300">
+                                <i class="fa-solid fa-user-clock mr-2 text-[#c9a24b]"></i>Concejales Pendientes de Asignación a Comisión (${sinComision.length})
+                            </h3>
+                        </div>
+                        <div class="p-4 grid md:grid-cols-2 gap-3">
+                            ${sinComision.map((item, idx) => generarTarjetaConcejalComision(item, idx)).join('')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                contenedorSin.innerHTML = '';
+            }
+        }
+
+        async function inscribirRapidoDesdeComision(id_integrante) {
+            if (!sesionActual) return alert('Primero debe abrir una sesión en el botón “Abrir Sesión”.');
+            await fetch('/api/intervenciones', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id_sesion: sesionActual,
+                    id_integrante,
+                    tipo_intervencion: 'Ordinaria',
+                    tiempo_asignado_seg: 180
+                })
+            });
+            notificar('🎙️ Honorable Concejal inscrito en el Uso de la Palabra (3 min)');
+            await cargarIntervenciones();
+        }
+
+        function renderizarGestionIntegrantes() {
+            const tbody = document.getElementById('tabla-gestion-integrantes');
+            const filtro = normalizarTexto(document.getElementById('buscar-integrante')?.value || '');
+            tbody.innerHTML = '';
+
+            const filtrados = integrantesGlobal.filter(i => normalizarTexto(i.nombre_completo).includes(filtro));
+
+            filtrados.forEach(i => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-white/[0.03] transition">
+                        <td class="p-4">
+                            <span class="font-bold text-white">H.C. ${i.nombre_completo}</span>
+                            ${i.es_directiva ? '<span class="ml-2 bg-[#c9a24b] text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded">MESA (P)</span>' : ''}
+                        </td>
+                        <td class="p-4">
+                            <select onchange="recolocarIntegrante(${i.id_integrante}, 'bancada', this.value)" class="border border-white/15 rounded-xl px-3 py-1.5 text-xs font-bold ${
+                                i.id_bancada === 1 ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' :
+                                i.id_bancada === 2 ? 'bg-rose-950 text-rose-300 border-rose-500/40' :
+                                'bg-purple-950 text-purple-300 border-purple-500/40'
+                            }">
+                                <option value="1" ${i.id_bancada === 1 ? 'selected' : ''}>Gobierno</option>
+                                <option value="2" ${i.id_bancada === 2 ? 'selected' : ''}>Oposición</option>
+                                <option value="3" ${i.id_bancada === 3 ? 'selected' : ''}>Independientes</option>
+                            </select>
+                        </td>
+                        <td class="p-4">
+                            <select onchange="recolocarIntegrante(${i.id_integrante}, 'comision', this.value)" class="border border-white/15 rounded-xl px-3 py-1.5 text-xs font-bold bg-[#060a14] text-slate-200">
+                                <option value="1" ${i.id_comision === 1 ? 'selected' : ''}>Comisión Primera</option>
+                                <option value="2" ${i.id_comision === 2 ? 'selected' : ''}>Comisión Segunda</option>
+                                <option value="" ${i.id_comision === null ? 'selected' : ''}>Sin Comisión</option>
+                            </select>
+                        </td>
+                        <td class="p-4 text-center">
+                            <input type="checkbox" ${i.es_directiva ? 'checked' : ''} onchange="recolocarIntegrante(${i.id_integrante}, 'directiva', this.checked)" class="w-4 h-4 accent-[#c9a24b] cursor-pointer">
+                        </td>
+                        <td class="p-4 text-right">
+                            <button onclick="eliminarIntegrante(${i.id_integrante}, '${i.nombre_completo}')" class="bg-rose-500/10 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                                <i class="fa-solid fa-user-minus mr-1"></i> Retirar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function agregarIntegrante() {
+            const nombre_completo = document.getElementById('nuevo-int-nombre').value;
+            const id_bancada = document.getElementById('nuevo-int-bancada').value;
+            const id_comision = document.getElementById('nuevo-int-comision').value || null;
+            const es_directiva = document.getElementById('nuevo-int-directiva').checked;
+
+            if (!nombre_completo.trim()) return alert('Ingrese los nombres y apellidos del Honorable Concejal.');
+
+            const res = await fetch('/api/integrantes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre_completo,
+                    id_bancada,
+                    id_comision,
+                    es_directiva,
+                    id_sesion: sesionActual
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                return alert('Error al acreditar: ' + err.error);
+            }
+
+            document.getElementById('nuevo-int-nombre').value = '';
+            document.getElementById('nuevo-int-directiva').checked = false;
+            notificar('✅ Curul acreditada oficialmente');
+            await cargarIntegrantes();
+            if (sesionActual) await cargarAsistencias();
+        }
+
+        async function recolocarIntegrante(id_integrante, campo, valor) {
+            const persona = integrantesGlobal.find(i => i.id_integrante === id_integrante);
+            if (!persona) return;
+
+            const payload = {
+                nombre_completo: persona.nombre_completo,
+                id_bancada: campo === 'bancada' ? valor : persona.id_bancada,
+                id_comision: campo === 'comision' ? (valor === '' ? null : valor) : persona.id_comision,
+                es_directiva: campo === 'directiva' ? valor : persona.es_directiva
+            };
+
+            const res = await fetch(`/api/integrantes/${id_integrante}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                notificar('🔄 Registro de curul actualizado');
+                await cargarIntegrantes();
+                if (sesionActual) await cargarAsistencias();
+            }
+        }
+
+        async function eliminarIntegrante(id_integrante, nombre) {
+            if (!confirm(`¿Confirma retirar la curul del H.C. "${nombre}"?`)) return;
+            const res = await fetch(`/api/integrantes/${id_integrante}`, { method: 'DELETE' });
+            if (res.ok) {
+                notificar('🗑️ Registro retirado');
+                await cargarIntegrantes();
+                if (sesionActual) await cargarAsistencias();
+            }
+        }
+
+        // =====================================================================
+        // 2. SESIONES
+        // =====================================================================
+        function abrirModalSesion() {
+            const modal = document.getElementById('modal-sesion');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('nueva-sesion-titulo').focus();
+        }
+
+        function cerrarModalSesion() {
+            const modal = document.getElementById('modal-sesion');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        async function cargarSesiones() {
+            const select = document.getElementById('select-sesion');
+            const alerta = document.getElementById('alerta-sin-sesion');
+            try {
+                const res = await fetch('/api/sesiones');
+                if (!res.ok) throw new Error('Error al consultar sesiones en PostgreSQL');
+                const sesiones = await res.json();
+                select.innerHTML = '';
+
+                if (sesiones.length === 0) {
+                    select.innerHTML = '<option value="" class="bg-slate-900">-- Sin sesiones convocadas --</option>';
+                    alerta.classList.remove('hidden');
+                    sesionActual = null;
+                    renderizarBancadasAsistencia([]);
+                    return;
+                }
+
+                alerta.classList.add('hidden');
+                sesiones.forEach(s => {
+                    select.innerHTML += `<option value="${s.id_sesion}" class="bg-slate-900">${s.titulo} (${s.tipo_sesion})</option>`;
+                });
+
+                sesionActual = sesiones[0].id_sesion;
+                await cambiarSesion();
+            } catch (err) {
+                select.innerHTML = '<option value="" class="bg-slate-900">-- Error de conexión BD --</option>';
+                alerta.classList.remove('hidden');
+            }
+        }
+
+        async function guardarSesion() {
+            const titulo = document.getElementById('nueva-sesion-titulo').value;
+            const tipo_sesion = document.getElementById('nueva-sesion-tipo').value || 'Plenaria';
+            const id_comision = document.getElementById('nueva-sesion-comision').value || null;
+
+            if (!titulo.trim()) return alert('Ingrese una denominación para la sesión');
+
+            try {
+                const res = await fetch('/api/sesiones', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ titulo, tipo_sesion, id_comision })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    return alert('Error al crear sesión en PostgreSQL: ' + (data.error || 'Desconocido'));
+                }
+                cerrarModalSesion();
+                document.getElementById('nueva-sesion-titulo').value = '';
+                notificar('✅ Sesión del Concejo instalada');
+                await cargarSesiones();
+            } catch (err) {
+                alert('Error de red con el servidor local: ' + err.message);
+            }
+        }
+
+        async function cambiarSesion() {
+            sesionActual = document.getElementById('select-sesion').value;
+            if (!sesionActual) return;
+            await cargarAsistencias();
+            await cargarIntervenciones();
+        }
+
+        // =====================================================================
+        // 3. TABLERO DE QUÓRUM POR BANCADAS
+        // =====================================================================
+        async function cargarAsistencias() {
+            if (!sesionActual) return;
+            const res = await fetch(`/api/asistencias/${sesionActual}`);
+            asistenciasGlobal = await res.json();
+
+            let stats = { Presente: 0, Retardo: 0, Ausente: 0, Excusa: 0 };
+            asistenciasGlobal.forEach(a => { if (stats[a.estado] !== undefined) stats[a.estado]++; });
+
+            document.getElementById('stat-presentes').innerText = stats.Presente;
+            document.getElementById('stat-retardos').innerText = stats.Retardo;
+            document.getElementById('stat-ausentes').innerText = stats.Ausente;
+            document.getElementById('stat-excusas').innerText = stats.Excusa;
+
+            renderizarBancadasAsistencia(asistenciasGlobal);
+            renderizarTableroComisiones();
+        }
+
+        function renderizarBancadasAsistencia(lista) {
+            const contenedor = document.getElementById('contenedor-bancadas-asistencia');
+            const bancadasConfig = [
+                { 
+                    nombre: 'Gobierno', 
+                    headerGrad: 'from-emerald-950 via-[#0d1f1c] to-[#090e1a] border-emerald-500/80',
+                    badgeText: 'text-emerald-300'
+                },
+                { 
+                    nombre: 'Oposición', 
+                    headerGrad: 'from-rose-950 via-[#231019] to-[#090e1a] border-rose-500/80',
+                    badgeText: 'text-rose-300'
+                },
+                { 
+                    nombre: 'Independientes', 
+                    headerGrad: 'from-purple-950 via-[#1a112b] to-[#090e1a] border-purple-500/80',
+                    badgeText: 'text-purple-300'
+                }
+            ];
+
+            contenedor.innerHTML = '';
+
+            bancadasConfig.forEach(b => {
+                const miembros = lista.filter(item => item.bancada === b.nombre);
+                const presentesBancada = miembros.filter(m => m.estado === 'Presente' || m.estado === 'Retardo').length;
+
+                let filasHtml = '';
+                if (miembros.length === 0) {
+                    filasHtml = `<p class="p-8 text-center text-xs text-slate-500">Sin curules convocadas en esta bancada.</p>`;
+                } else {
+                    filasHtml = miembros.map(m => {
+                        const ledClass = m.estado === 'Presente' ? 'bg-emerald-500 led-glow-green' :
+                                         m.estado === 'Retardo' ? 'bg-amber-400 led-glow-amber' :
+                                         m.estado === 'Excusa' ? 'bg-purple-500 led-glow-purple' : 'bg-rose-500 led-glow-red';
+
+                        return `
+                        <div class="curul-institucional p-3.5 rounded-xl mb-2.5">
+                            <div class="flex justify-between items-start gap-2 mb-2.5">
+                                <div class="flex items-start gap-2.5">
+                                    <span class="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0 ${ledClass}"></span>
+                                    <div>
+                                        <p class="font-bold text-sm text-white leading-snug">
+                                            H.C. ${m.nombre_completo}
+                                            ${m.es_directiva ? '<span class="ml-1.5 bg-[#c9a24b] text-slate-950 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded">Mesa (P)</span>' : ''}
+                                        </p>
+                                        <span class="inline-block mt-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-white/5 text-slate-400 border border-white/10">
+                                            Comisión ${m.comision}
+                                        </span>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg border ${
+                                    m.estado === 'Presente' ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40' :
+                                    m.estado === 'Retardo' ? 'bg-amber-500/15 text-amber-300 border-amber-500/40' :
+                                    m.estado === 'Excusa' ? 'bg-purple-500/15 text-purple-300 border-purple-500/40' : 
+                                    'bg-rose-500/15 text-rose-300 border-rose-500/40'
+                                }">${m.estado}</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-1.5 mt-2">
+                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Presente')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Presente'?'bg-emerald-700 text-white shadow':'bg-white/5 hover:bg-emerald-500/20 text-slate-300'}">Presente</button>
+                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Retardo')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Retardo'?'bg-[#c9a24b] text-slate-950 shadow':'bg-white/5 hover:bg-amber-500/20 text-slate-300'}">Retardo</button>
+                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Excusa')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Excusa'?'bg-purple-700 text-white shadow':'bg-white/5 hover:bg-purple-500/20 text-slate-300'}">Excusa</button>
+                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Ausente')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Ausente'?'bg-rose-700 text-white shadow':'bg-white/5 hover:bg-rose-500/20 text-slate-300'}">Ausente</button>
+                            </div>
+                        </div>
+                    `}).join('');
+                }
+
+                contenedor.innerHTML += `
+                    <div class="panel-institucional rounded-2xl overflow-hidden flex flex-col">
+                        <div class="bg-gradient-to-r ${b.headerGrad} p-4 border-b-2 flex justify-between items-center">
+                            <div>
+                                <span class="text-[10px] uppercase tracking-[0.18em] ${b.badgeText} font-bold">Bancada Parlamentaria</span>
+                                <h3 class="font-solemne text-xl uppercase font-bold text-white mt-0.5">${b.nombre}</h3>
+                            </div>
+                            <div class="bg-black/60 border border-white/15 px-3.5 py-1.5 rounded-xl font-mono-digital text-sm font-extrabold text-white">
+                                ${presentesBancada} / ${miembros.length}
+                            </div>
+                        </div>
+                        <div class="p-3.5 flex-1">
+                            ${filasHtml}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function marcarAsistencia(id_asistencia, estado) {
+            await fetch(`/api/asistencias/${id_asistencia}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ estado })
+            });
+            await cargarAsistencias();
+        }
+
+        async function marcarTodosPresentes() {
+            if (!sesionActual) return alert('Primero debe abrir una sesión');
+            await fetch(`/api/asistencias/sesion/${sesionActual}/todos-presentes`, { method: 'PUT' });
+            notificar('✅ Quórum pleno confirmado en el tablero');
+            await cargarAsistencias();
+        }
+
+        // =====================================================================
+        // 4. TEMPORIZADOR DE HEMICICLO Y FILTRO EN COLA DE TURNOS
+        // =====================================================================
+        function autocompletarSegundos() {
+            const sel = document.getElementById('select-tipo-intervencion');
+            const seg = sel.options[sel.selectedIndex].getAttribute('data-seg');
+            document.getElementById('input-segundos').value = seg;
+        }
+
+        async function agregarIntervencion() {
+            if (!sesionActual) return alert('Primero debe abrir una sesión');
+            const id_integrante = document.getElementById('select-orador').value;
+            if (!id_integrante) return alert('Seleccione un Honorable Concejal válido.');
+            const tipo_intervencion = document.getElementById('select-tipo-intervencion').value;
+            const tiempo_asignado_seg = document.getElementById('input-segundos').value;
+
+            await fetch('/api/intervenciones', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_sesion: sesionActual, id_integrante, tipo_intervencion, tiempo_asignado_seg })
+            });
+            notificar('🎙️ Turno inscrito en el orden de oradores');
+            await cargarIntervenciones();
+        }
+
+        async function cargarIntervenciones() {
+            if (!sesionActual) return;
+            const res = await fetch(`/api/intervenciones/${sesionActual}`);
+            intervencionesGlobal = await res.json();
+            document.getElementById('contador-turnos').innerText = intervencionesGlobal.length;
+            renderizarListaIntervenciones();
+        }
+
+        function limpiarFiltroCola() {
+            const input = document.getElementById('filtro-cola-intervenciones');
+            if (input) {
+                input.value = '';
+                renderizarListaIntervenciones();
+                input.focus();
+            }
+        }
+
+        function renderizarListaIntervenciones() {
+            const div = document.getElementById('lista-intervenciones');
+            const inputCola = document.getElementById('filtro-cola-intervenciones');
+            const btnLimpiar = document.getElementById('btn-limpiar-cola');
+            if (!div) return;
+
+            const termino = normalizarTexto(inputCola ? inputCola.value.trim() : '');
+            if (btnLimpiar) {
+                btnLimpiar.classList.toggle('hidden', termino.length === 0);
+            }
+
+            div.innerHTML = '';
+
+            if (intervencionesGlobal.length === 0) {
+                div.innerHTML = '<div class="text-center py-10 bg-[#060a14] rounded-2xl border border-dashed border-white/10"><i class="fa-solid fa-microphone-slash text-2xl text-slate-600 mb-2"></i><p class="text-xs font-semibold text-slate-500">Sin turnos inscritos ante Presidencia.</p></div>';
+                return;
+            }
+
+            const filtradas = intervencionesGlobal.filter(item =>
+                normalizarTexto(item.nombre_completo).includes(termino)
+            );
+
+            if (filtradas.length === 0) {
+                div.innerHTML = '<div class="text-center py-8 bg-[#060a14] rounded-2xl border border-dashed border-white/10"><p class="text-xs font-semibold text-slate-400">No hay turnos inscritos con ese nombre.</p></div>';
+                return;
+            }
+
+            filtradas.forEach(item => {
+                const esActivo = item.id_intervencion === intervencionActivaId;
+                const badgeEstado = item.estado === 'Finalizada' 
+                    ? 'bg-white/10 text-slate-400' 
+                    : item.estado === 'En Curso' 
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' 
+                        : 'bg-[#c9a24b]/20 text-[#e5c16c] border border-[#c9a24b]/40';
+
+                div.innerHTML += `
+                    <div class="p-3.5 rounded-2xl border transition flex justify-between items-center gap-2 ${
+                        esActivo ? 'bg-[#c9a24b]/12 border-[#c9a24b] shadow-lg' : 'bg-[#060a14]/85 border-white/10 hover:border-white/25'
+                    }">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="font-mono-digital font-extrabold text-xs text-slate-950 bg-[#c9a24b] px-2 py-0.5 rounded">#${item.orden_turno}</span>
+                                <span class="font-bold text-sm text-white truncate">H.C. ${item.nombre_completo}</span>
+                                <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${badgeEstado}">${item.estado}</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">
+                                ${item.bancada} • Com. ${item.comision} • <strong class="text-slate-200">${item.tipo_intervencion}</strong>
+                            </p>
+                        </div>
+
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button onclick="seleccionarOrador(${item.id_intervencion}, 'H.C. ${item.nombre_completo}', '${item.bancada} — Comisión ${item.comision}', '${item.tipo_intervencion}', ${item.tiempo_asignado_seg})" class="bg-[#c9a24b] hover:bg-[#e5c16c] text-slate-950 text-xs font-extrabold uppercase px-3 py-2 rounded-xl transition" title="Conceder uso de la palabra">
+                                <i class="fa-solid fa-microphone-lines mr-1"></i> ${Math.floor(item.tiempo_asignado_seg/60)}m ${item.tiempo_asignado_seg%60}s
+                            </button>
+                            <button onclick="retirarIntervencion(${item.id_intervencion}, 'H.C. ${item.nombre_completo}')" class="bg-rose-500/15 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/30 px-2.5 py-2 rounded-xl text-xs font-bold transition" title="Retirar turno">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function retirarIntervencion(id_intervencion, nombre) {
+            if (!confirm(`¿Retirar del orden de oradores a ${nombre}?`)) return;
+
+            if (intervencionActivaId === id_intervencion) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                intervencionActivaId = null;
+                ocultarAlertaVisualCrono();
+                document.getElementById('crono-nombre').innerText = 'En Espera de Orador';
+                document.getElementById('crono-bancada').innerText = 'Turno retirado del orden del día';
+                document.getElementById('crono-tipo-badge').classList.add('hidden');
+                segundosBase = 180;
+                segundosRestantes = 180;
+                sincronizarInputsTiempo();
+                actualizarEstadoVisualIndicador('detenido');
+                actualizarDisplayCrono();
+            }
+
+            const res = await fetch(`/api/intervenciones/${id_intervencion}`, { method: 'DELETE' });
+            if (res.ok) {
+                notificar('🗑️ Turno retirado');
+                await cargarIntervenciones();
+            }
+        }
+
+        function ocultarAlertaVisualCrono() {
+            const alerta = document.getElementById('crono-alerta-visual');
+            alerta.classList.add('hidden');
+            alerta.innerText = '';
+        }
+
+        function mostrarAlertaVisualCrono(texto, clasesColor) {
+            const alerta = document.getElementById('crono-alerta-visual');
+            alerta.className = `w-full max-w-md py-1.5 px-4 rounded-xl font-extrabold text-xs uppercase tracking-widest my-1 z-10 ${clasesColor}`;
+            alerta.innerText = texto;
+            alerta.classList.remove('hidden');
+        }
+
+        function actualizarEstadoVisualIndicador(estado) {
+            const dot = document.getElementById('indicador-estado-reloj');
+            if (estado === 'corriendo') {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping';
+            } else if (estado === 'pausado') {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
+            } else {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-500';
+            }
+        }
+
+        function seleccionarOrador(id, nombre, detalle, tipo, segundos) {
+            pausarCrono();
+            ocultarAlertaVisualCrono();
+            actualizarEstadoVisualIndicador('pausado');
+            intervencionActivaId = id;
+            document.getElementById('crono-nombre').innerText = nombre;
+            document.getElementById('crono-bancada').innerText = detalle;
+            const badge = document.getElementById('crono-tipo-badge');
+            badge.innerText = tipo;
+            badge.classList.remove('hidden');
+
+            segundosBase = segundos;
+            segundosRestantes = segundos;
+            sincronizarInputsTiempo();
+            actualizarDisplayCrono();
+            cargarIntervenciones();
+        }
+
+        function sincronizarInputsTiempo() {
+            document.getElementById('edit-minutos').value = Math.floor(segundosRestantes / 60);
+            document.getElementById('edit-segundos').value = segundosRestantes % 60;
+        }
+
+        function ajustarTiempo(deltaSegundos) {
+            segundosRestantes = Math.max(0, segundosRestantes + deltaSegundos);
+            segundosBase = Math.max(segundosBase, segundosRestantes);
+            if (segundosRestantes > 10) ocultarAlertaVisualCrono();
+            sincronizarInputsTiempo();
+            actualizarDisplayCrono();
+            notificar(`⏱️ Tiempo ajustado (${deltaSegundos > 0 ? '+' : ''}${deltaSegundos}s)`);
+        }
+
+        function aplicarTiempoManual() {
+            const mins = parseInt(document.getElementById('edit-minutos').value, 10) || 0;
+            const segs = parseInt(document.getElementById('edit-segundos').value, 10) || 0;
+            segundosRestantes = (mins * 60) + segs;
+            segundosBase = segundosRestantes;
+            if (segundosRestantes > 10) ocultarAlertaVisualCrono();
+            actualizarDisplayCrono();
+            notificar('⏱️ Tiempo reglamentario fijado');
+        }
+
+        function formatearMMSS(totalSeg) {
+            const min = String(Math.floor(totalSeg / 60)).padStart(2, '0');
+            const seg = String(totalSeg % 60).padStart(2, '0');
+            return `${min}:${seg}`;
+        }
+
+        function actualizarDisplayCrono() {
+            const display = document.getElementById('crono-display');
+            const anillo = document.getElementById('anillo-tiempo');
+            const subtitulo = document.getElementById('crono-subtitulo-tiempo');
+
+            display.innerText = formatearMMSS(segundosRestantes);
+            subtitulo.innerText = `Reglamentario: ${formatearMMSS(segundosBase)}`;
+
+            const ratio = segundosBase > 0 ? (segundosRestantes / segundosBase) : 0;
+            const offset = CIRCUNFERENCIA_ANILLO * (1 - Math.min(1, Math.max(0, ratio)));
+            anillo.style.strokeDashoffset = offset;
+
+            if (segundosRestantes === 0) {
+                display.className = 'font-mono-digital text-6xl md:text-7xl font-extrabold text-rose-500 tracking-tight select-none leading-none';
+                anillo.setAttribute('stroke', '#f43f5e');
+            } else if (segundosRestantes <= 10) {
+                display.className = 'font-mono-digital text-6xl md:text-7xl font-extrabold text-amber-300 tracking-tight select-none leading-none animate-pulse';
+                anillo.setAttribute('stroke', '#fbbf24');
+            } else {
+                display.className = 'font-mono-digital text-6xl md:text-7xl font-extrabold text-[#e5c16c] tracking-tight select-none leading-none';
+                anillo.setAttribute('stroke', '#c9a24b');
+            }
+        }
+
+        function iniciarCrono() {
+            if (timerInterval) return;
+            if (segundosRestantes <= 0) return alert('Fije un tiempo mayor a 0 segundos antes de conceder el uso de la palabra.');
+
+            obtenerAudioContext();
+            actualizarEstadoVisualIndicador('corriendo');
+            if (segundosRestantes > 10) ocultarAlertaVisualCrono();
+
+            timerInterval = setInterval(() => {
+                if (segundosRestantes > 0) {
+                    segundosRestantes--;
+                    sincronizarInputsTiempo();
+                    actualizarDisplayCrono();
+
+                    if (segundosRestantes === 10) {
+                        sonarAdvertencia10Seg();
+                        mostrarAlertaVisualCrono('⚠️ Últimos 10 segundos reglamentarios', 'bg-amber-500/20 text-amber-300 border border-amber-500');
+                    }
+
+                    if (segundosRestantes === 0) {
+                        sonarTiempoFinalizado();
+                        mostrarAlertaVisualCrono('🔔 Tiempo reglamentario concluido', 'bg-rose-700 text-white shadow-lg');
+                        notificar('🔔 Tiempo reglamentario concluido');
+                        finalizarTurnoActual(true);
+                    }
+                }
+            }, 1000);
+        }
+
+        async function pausarCrono() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            actualizarEstadoVisualIndicador('pausado');
+            if (intervencionActivaId) {
+                const usado = Math.max(0, segundosBase - segundosRestantes);
+                await fetch(`/api/intervenciones/${intervencionActivaId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tiempo_usado_seg: usado, estado: 'En Curso' })
+                });
+                await cargarIntervenciones();
+            }
+        }
+
+        async function finalizarTurnoActual(automatico = false) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            actualizarEstadoVisualIndicador('detenido');
+            if (!automatico) {
+                mostrarAlertaVisualCrono('⏹️ Intervención cerrada por Presidencia', 'bg-slate-800 text-slate-300 border border-slate-600');
+            }
+            if (intervencionActivaId) {
+                const usado = Math.max(0, segundosBase - segundosRestantes);
+                await fetch(`/api/intervenciones/${intervencionActivaId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tiempo_usado_seg: usado, estado: 'Finalizada' })
+                });
+                intervencionActivaId = null;
+                if (!automatico) notificar('⏹️ Intervención cerrada');
+                await cargarIntervenciones();
+            }
+        }
+
+        function togglePantallaCompletaCrono() {
+            const elem = document.getElementById('panel-cronometro');
+            if (!document.fullscreenElement) {
+                elem.requestFullscreen().catch(err => alert('No se pudo activar pantalla completa: ' + err.message));
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // =====================================================================
+        // 5. PROYECTOS DE ACUERDO Y PROPOSICIONES
+        // =====================================================================
+        function toggleFormularioProyecto() {
+            const panel = document.getElementById('panel-form-proyecto');
+            panel.classList.toggle('hidden');
+        }
+
+        function leerArchivoBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function crearProyecto() {
+            const tipo_documento = document.getElementById('proy-tipo').value;
+            const codigo_radicado = document.getElementById('proy-codigo').value;
+            const id_comision_asignada = document.getElementById('proy-comision').value;
+            const id_autor = document.getElementById('proy-autor').value;
+            const titulo = document.getElementById('proy-titulo').value;
+            const descripcion = document.getElementById('proy-descripcion').value;
+            const fileInput = document.getElementById('proy-archivo');
+
+            if (!codigo_radicado.trim() || !titulo.trim()) {
+                return alert('Complete el Número de Radicado y el Epígrafe / Título.');
+            }
+
+            let archivo_nombre = null;
+            let archivo_contenido = null;
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                archivo_nombre = file.name;
+                archivo_contenido = await leerArchivoBase64(file);
+            }
+
+            const res = await fetch('/api/proyectos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tipo_documento,
+                    codigo_radicado,
+                    id_comision_asignada: id_comision_asignada || null,
+                    id_autor: id_autor || null,
+                    titulo,
+                    descripcion,
+                    archivo_nombre,
+                    archivo_contenido
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                return alert('Error al radicar: ' + err.error);
+            }
+
+            const nuevoProyecto = await res.json();
+            proyectoSeleccionadoId = nuevoProyecto.id_proyecto;
+
+            document.getElementById('proy-codigo').value = '';
+            document.getElementById('proy-titulo').value = '';
+            document.getElementById('proy-descripcion').value = '';
+            fileInput.value = '';
+            document.getElementById('panel-form-proyecto').classList.add('hidden');
+            notificar('📜 Documento radicado en Secretaría General');
+            await cargarProyectos();
+        }
+
+        async function cargarProyectos() {
+            const res = await fetch('/api/proyectos');
+            proyectosGlobal = await res.json();
+            renderizarProyectos();
+        }
+
+        function filtrarProyectos(comision) {
+            filtroComisionActual = comision;
+            proyectoSeleccionadoId = null;
+            document.querySelectorAll('.filtro-proy-btn').forEach(btn => {
+                btn.classList.remove('bg-[#c9a24b]', 'text-slate-950', 'font-extrabold');
+                btn.classList.add('bg-white/5', 'text-slate-200', 'font-bold');
+            });
+            const active = document.getElementById(`filtro-${comision}`);
+            if (active) {
+                active.classList.add('bg-[#c9a24b]', 'text-slate-950', 'font-extrabold');
+                active.classList.remove('bg-white/5', 'text-slate-200');
+            }
+            renderizarProyectos();
+        }
+
+        function renderizarProyectos() {
+            const listaLateral = document.getElementById('lista-lateral-proyectos');
+            const contador = document.getElementById('contador-docs');
+            listaLateral.innerHTML = '';
+
+            const filtrados = filtroComisionActual === 'TODOS' 
+                ? proyectosGlobal 
+                : proyectosGlobal.filter(p => p.comision === filtroComisionActual);
+
+            contador.innerText = filtrados.length;
+
+            if (filtrados.length === 0) {
+                listaLateral.innerHTML = `<div class="panel-institucional p-6 rounded-xl text-center text-xs text-slate-400">Sin documentos radicados en esta comisión.</div>`;
+                mostrarEnVisorDirecto(null);
+                return;
+            }
+
+            if (!proyectoSeleccionadoId || !filtrados.some(p => p.id_proyecto === proyectoSeleccionadoId)) {
+                proyectoSeleccionadoId = filtrados[0].id_proyecto;
+            }
+
+            filtrados.forEach(p => {
+                const esActivo = p.id_proyecto === proyectoSeleccionadoId;
+                const esProposicion = p.tipo_documento === 'Proposición';
+
+                listaLateral.innerHTML += `
+                    <div onclick="seleccionarProyectoVisor(${p.id_proyecto})" class="cursor-pointer rounded-2xl p-4 border transition shadow-md ${
+                        esActivo ? 'bg-[#c9a24b]/15 border-[#c9a24b]' : 'panel-institucional hover:border-white/30'
+                    }">
+                        <div class="flex justify-between items-center gap-2 mb-1.5">
+                            <span class="px-2.5 py-0.5 rounded text-[10px] font-extrabold uppercase ${esProposicion ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30' : 'bg-[#c9a24b] text-slate-950'}">
+                                ${p.tipo_documento || 'Proyecto de Acuerdo'} • ${p.codigo_radicado}
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Com. ${p.comision}</span>
+                        </div>
+                        <h5 class="font-solemne text-sm uppercase font-bold text-white leading-snug">${p.titulo}</h5>
+                        <div class="flex justify-between items-center mt-2.5 pt-2 border-t border-white/10 text-[11px]">
+                            <span class="text-slate-400 truncate max-w-[160px]"><i class="fa-solid fa-user-tie mr-1 text-[#c9a24b]"></i>${p.autor}</span>
+                            <span class="font-extrabold text-emerald-400">${p.estado}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const proyectoActivo = filtrados.find(p => p.id_proyecto === proyectoSeleccionadoId);
+            mostrarEnVisorDirecto(proyectoActivo);
+        }
+
+        function seleccionarProyectoVisor(id_proyecto) {
+            proyectoSeleccionadoId = id_proyecto;
+            renderizarProyectos();
+        }
+
+        function cambiarZoomTexto(delta) {
+            zoomTexto = Math.min(34, Math.max(14, zoomTexto + delta));
+            const docEl = document.getElementById('area-texto-documento');
+            if (docEl) {
+                docEl.style.fontSize = zoomTexto + 'px';
+            }
+        }
+
+        async function mostrarEnVisorDirecto(p) {
+            const tituloEl = document.getElementById('visor-titulo');
+            const badgeEl = document.getElementById('visor-badge');
+            const comisionEl = document.getElementById('visor-comision');
+            const autorEl = document.getElementById('visor-autor');
+            const accionesEl = document.getElementById('visor-acciones');
+            const contenidoEl = document.getElementById('visor-contenido');
+
+            if (!p) {
+                badgeEl.innerText = 'SIN DOCUMENTO';
+                comisionEl.innerText = filtroComisionActual;
+                tituloEl.innerText = 'No hay documento seleccionado';
+                autorEl.innerText = 'Utilice el botón “Radicar Proyecto / Proposición” para incorporar un acto.';
+                accionesEl.innerHTML = '';
+                contenidoEl.innerHTML = `
+                    <div class="text-center text-slate-400 my-auto py-20">
+                        <i class="fa-solid fa-folder-open text-5xl mb-3 text-slate-300"></i>
+                        <p class="font-bold text-slate-600">Sin documentos para proyectar en esta comisión.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            badgeEl.innerText = `${p.tipo_documento || 'PROYECTO DE ACUERDO'} • ${p.codigo_radicado}`;
+            comisionEl.innerText = `Comisión: ${p.comision}`;
+            tituloEl.innerText = p.titulo;
+            autorEl.innerText = `Ponente: ${p.autor} ${p.archivo_nombre ? '• Archivo: ' + p.archivo_nombre : ''}`;
+
+            accionesEl.innerHTML = `
+                <div class="flex items-center bg-slate-900 rounded-lg border border-white/15 overflow-hidden">
+                    <button onclick="cambiarZoomTexto(-2)" class="px-2.5 py-2 text-xs font-bold hover:bg-slate-800 text-white" title="Reducir letra">A-</button>
+                    <button onclick="cambiarZoomTexto(2)" class="px-2.5 py-2 text-xs font-bold hover:bg-slate-800 text-[#e5c16c]" title="Agrandar letra">A+</button>
+                </div>
+                <select onchange="cambiarEstadoProyecto(${p.id_proyecto}, this.value)" class="bg-slate-900 text-white border border-white/15 rounded-lg px-2.5 py-2 text-xs font-bold">
+                    ${['Radicado', 'En Comisión', 'En Plenaria', 'Aprobado', 'Archivado', 'Retirado'].map(est => 
+                        `<option value="${est}" ${p.estado === est ? 'selected' : ''}>${est}</option>`
+                    ).join('')}
+                </select>
+                <button onclick="togglePantallaCompletaVisor()" class="bg-[#c9a24b] hover:bg-[#e5c16c] text-slate-950 font-extrabold text-xs uppercase px-3.5 py-2 rounded-lg">
+                    <i class="fa-solid fa-expand mr-1"></i> Pantalla Completa
+                </button>
+                <button onclick="eliminarProyecto(${p.id_proyecto})" class="bg-rose-700 hover:bg-rose-600 text-white px-3 py-2 rounded-lg text-xs font-bold" title="Eliminar">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            `;
+
+            const nombreArchivo = (p.archivo_nombre || '').toLowerCase();
+
+            if (p.archivo_contenido && (p.archivo_contenido.startsWith('data:application/pdf') || nombreArchivo.endsWith('.pdf'))) {
+                contenidoEl.className = 'flex-1 bg-slate-900 p-0';
+                contenidoEl.innerHTML = `<iframe src="${p.archivo_contenido}" class="w-full h-[82vh] border-0"></iframe>`;
+                return;
+            }
+
+            if (p.archivo_contenido && nombreArchivo.endsWith('.docx')) {
+                contenidoEl.className = 'flex-1 bg-slate-200 p-6 md:p-8 overflow-y-auto flex justify-center items-start';
+                contenidoEl.innerHTML = `<div class="text-center py-12 font-bold text-slate-600"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Cargando documento oficial en pantalla...</div>`;
+                try {
+                    const base64Data = p.archivo_contenido.split(',')[1];
+                    const binaryString = window.atob(base64Data);
+                    const len = binaryString.length;
+                    const bytes = new Uint8Array(len);
+                    for (let i = 0; i < len; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    const result = await mammoth.convertToHtml({ arrayBuffer: bytes.buffer });
+                    contenidoEl.innerHTML = `
+                        <div class="bg-white text-slate-900 max-w-4xl w-full p-8 md:p-12 rounded-xl shadow-lg border-t-4 border-[#c9a24b] leading-relaxed">
+                            <div class="border-b pb-3 mb-5 flex justify-between items-center text-xs">
+                                <span class="font-extrabold uppercase tracking-widest text-blue-950">Concejo Municipal de Ibagué • ${p.archivo_nombre}</span>
+                                <span class="font-bold text-slate-500">${p.codigo_radicado}</span>
+                            </div>
+                            <div id="area-texto-documento" class="doc-render" style="font-size: ${zoomTexto}px;">${result.value}</div>
+                        </div>
+                    `;
+                } catch (err) {
+                    contenidoEl.innerHTML = `<div class="bg-white p-6 rounded-xl text-rose-600 font-bold">No se pudo leer este archivo .docx directamente. Guárdelo en Word como PDF o .docx nuevo y súbalo nuevamente.</div>`;
+                }
+                return;
+            }
+
+            if (p.archivo_contenido && nombreArchivo.endsWith('.txt')) {
+                const base64Data = p.archivo_contenido.split(',')[1];
+                const textoDecodificado = decodeURIComponent(escape(window.atob(base64Data)));
+                contenidoEl.className = 'flex-1 bg-slate-200 p-6 md:p-8 overflow-y-auto flex justify-center items-start';
+                contenidoEl.innerHTML = `
+                    <div class="bg-white text-slate-900 max-w-4xl w-full p-8 md:p-12 rounded-xl shadow-lg border-t-4 border-[#c9a24b]">
+                        <div id="area-texto-documento" class="whitespace-pre-line leading-relaxed" style="font-size: ${zoomTexto}px;">${textoDecodificado}</div>
+                    </div>
+                `;
+                return;
+            }
+
+            contenidoEl.className = 'flex-1 bg-slate-100 p-6 md:p-8 overflow-y-auto flex justify-center items-start';
+            contenidoEl.innerHTML = `
+                <div class="bg-white text-slate-900 max-w-4xl w-full p-8 rounded-xl shadow-md border-t-4 border-[#c9a24b]">
+                    <div class="border-b pb-3 mb-5 flex justify-between items-center">
+                        <span class="text-xs font-extrabold uppercase tracking-widest text-blue-950">Concejo Municipal de Ibagué • Fundación Creer y Merecer</span>
+                        <span class="text-xs font-bold text-slate-500">${p.codigo_radicado}</span>
+                    </div>
+                    <h2 class="font-solemne text-xl md:text-2xl uppercase font-bold mb-5 text-slate-900">${p.titulo}</h2>
+                    <div id="area-texto-documento" class="leading-relaxed whitespace-pre-line text-slate-800" style="font-size: ${zoomTexto}px;">
+                        ${p.descripcion || 'Nota: Si subió un archivo Word antiguo (.doc), ábralo en Word, guárdelo como .docx o .pdf y súbalo de nuevo para visualizarlo directamente aquí.'}
+                    </div>
+                </div>
+            `;
+        }
+
+        function togglePantallaCompletaVisor() {
+            const elem = document.getElementById('visor-directo-container');
+            if (!document.fullscreenElement) {
+                elem.requestFullscreen().catch(err => alert('No se pudo activar pantalla completa: ' + err.message));
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        async function cambiarEstadoProyecto(id, estado) {
+            await fetch(`/api/proyectos/${id}/estado`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ estado })
+            });
+            notificar('✅ Estado legislativo actualizado');
+            await cargarProyectos();
+        }
+
+        async function eliminarProyecto(id) {
+            if (!confirm('¿Confirma eliminar este documento del archivo?')) return;
+            await fetch(`/api/proyectos/${id}`, { method: 'DELETE' });
+            proyectoSeleccionadoId = null;
+            notificar('🗑️ Documento eliminado');
+            await cargarProyectos();
+        }
+    </script>
+</body>
+</html>
