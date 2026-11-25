@@ -148,7 +148,43 @@ app.post('/api/sesiones', async (req, res) => {
              VALUES ($1, $2, $3, 'En Curso') RETURNING *`,
             [titulo.trim(), modalidad, comisionVal]
         );
-        res.json(result.rows[0]);
+        const nuevaSesion = result.rows[0];
+
+        // Poblar automáticamente la lista de asistencia según Plenaria o Comisión
+        if (comisionVal) {
+            await pool.query(
+                `INSERT INTO asistencias (id_sesion, id_integrante, estado)
+                 SELECT $1, id_integrante, 'Ausente'
+                 FROM integrantes
+                 WHERE activo = TRUE AND id_comision = $2
+                 ON CONFLICT DO NOTHING`,
+                [nuevaSesion.id_sesion, comisionVal]
+            );
+        } else {
+            await pool.query(
+                `INSERT INTO asistencias (id_sesion, id_integrante, estado)
+                 SELECT $1, id_integrante, 'Ausente'
+                 FROM integrantes
+                 WHERE activo = TRUE
+                 ON CONFLICT DO NOTHING`,
+                [nuevaSesion.id_sesion]
+            );
+        }
+
+        res.json(nuevaSesion);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/sesiones/:id_sesion', async (req, res) => {
+    const idSesion = parseInt(req.params.id_sesion, 10);
+    if (isNaN(idSesion)) return res.status(400).json({ error: 'ID de sesión inválido.' });
+    try {
+        await pool.query('DELETE FROM asistencias WHERE id_sesion = $1', [idSesion]);
+        await pool.query('DELETE FROM intervenciones WHERE id_sesion = $1', [idSesion]);
+        await pool.query('DELETE FROM sesiones WHERE id_sesion = $1', [idSesion]);
+        res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
