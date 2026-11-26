@@ -27,40 +27,43 @@ const pool = new Pool(
           }
 );
 
-pool.connect(async (err, client, release) => {
-    if (err) {
-        console.error('❌ ERROR DE CONEXIÓN A POSTGRESQL:', err.message);
-    } else {
-        console.log('✅ Conexión exitosa a PostgreSQL (Concejo_Estudiantil)');
-        try {
-            // Crear tablas del módulo de votaciones si no existen
-            await client.query(`
-                CREATE TABLE IF NOT EXISTS votaciones (
-                    id_votacion SERIAL PRIMARY KEY,
-                    id_sesion INTEGER REFERENCES sesiones(id_sesion) ON DELETE CASCADE,
-                    titulo VARCHAR(255) NOT NULL,
-                    descripcion TEXT,
-                    ambito VARCHAR(50) DEFAULT 'Plenaria',
-                    estado VARCHAR(30) DEFAULT 'Abierta',
-                    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                );
-            `);
-            await client.query(`
-                CREATE TABLE IF NOT EXISTS votos (
-                    id_voto SERIAL PRIMARY KEY,
-                    id_votacion INTEGER REFERENCES votaciones(id_votacion) ON DELETE CASCADE,
-                    id_integrante INTEGER REFERENCES integrantes(id_integrante) ON DELETE CASCADE,
-                    opcion VARCHAR(20) NOT NULL,
-                    fecha_voto TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    UNIQUE (id_votacion, id_integrante)
-                );
-            `);
-        } catch (tableErr) {
-            console.error('Error verificando tablas de votación:', tableErr.message);
-        }
-        release();
-    }
-});
+let tablasVotacionListas = false;
+
+async function asegurarTablasVotacion() {
+    if (tablasVotacionListas) return;
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS votaciones (
+            id_votacion SERIAL PRIMARY KEY,
+            id_sesion INTEGER REFERENCES sesiones(id_sesion) ON DELETE CASCADE,
+            id_proyecto INTEGER REFERENCES proyectos(id_proyecto) ON DELETE SET NULL,
+            titulo VARCHAR(255) NOT NULL,
+            descripcion TEXT,
+            ambito VARCHAR(50) DEFAULT 'Plenaria',
+            estado VARCHAR(30) DEFAULT 'Abierta',
+            fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    `);
+    // Asegurar columna id_proyecto si la tabla votaciones ya existía de antes
+    await pool.query(`
+        ALTER TABLE votaciones 
+        ADD COLUMN IF NOT EXISTS id_proyecto INTEGER REFERENCES proyectos(id_proyecto) ON DELETE SET NULL;
+    `);
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS votos (
+            id_voto SERIAL PRIMARY KEY,
+            id_votacion INTEGER REFERENCES votaciones(id_votacion) ON DELETE CASCADE,
+            id_integrante INTEGER REFERENCES integrantes(id_integrante) ON DELETE CASCADE,
+            opcion VARCHAR(20) NOT NULL,
+            fecha_voto TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE (id_votacion, id_integrante)
+        );
+    `);
+    tablasVotacionListas = true;
+}
+
+asegurarTablasVotacion()
+    .then(() => console.log('✅ Conexión exitosa a PostgreSQL y tablas de votación verificadas'))
+    .catch((err) => console.error('❌ ERROR INICIALIZANDO POSTGRESQL:', err.message));
 
 // =========================================================================
 // 1. GESTIÓN DE CONCEJALES (AÑADIR, RECOLOCAR BANCADA/COMISIÓN, ELIMINAR)
@@ -407,7 +410,7 @@ app.delete('/api/intervenciones/:id_intervencion', async (req, res) => {
 });
 
 // =========================================================================
-// 5. SISTEMA DE VOTACIÓN NOMINAL Y AUTENTICACIÓN DE CONCEJALES
+// 5. SISTEMA DE VOTACIÓN NOMINAL VINCULADO A PROYECTOS
 // =========================================================================
 function limpiarTextoComparacion(txt) {
     return (txt || '')
@@ -418,7 +421,6 @@ function limpiarTextoComparacion(txt) {
         .replace(/\s+/g, ' ');
 }
 
-// Login de concejal: primer nombre + primer apellido + contraseña cualquiera (modo prueba)
 app.post('/api/votacion/login', async (req, res) => {
     const { primer_nombre, primer_apellido, password } = req.body;
     if (!primer_nombre || !primer_apellido || !password || !password.trim()) {
@@ -458,31 +460,37 @@ app.post('/api/votacion/login', async (req, res) => {
     }
 });
 
-// Obtener votaciones (de la sesión actual o todas las recientes)
 app.get('/api/votaciones', async (req, res) => {
     const { id_sesion } = req.query;
     try {
+        await asegurarTablasVotacion();
+        const queryBase = `
+            SELECT v.*, p.codigo_radicado AS proyecto_codigo, p.titulo AS proyecto_titulo, p.tipo_documento AS proyecto_tipo
+            FROM votaciones v
+            LEFT JOIN proyectos p ON v.id_proyecto = p.id_proyecto
+        `;
         const result = id_sesion
-            ? await pool.query('SELECT * FROM votaciones WHERE id_sesion = $1 ORDER BY id_votacion DESC', [id_sesion])
-            : await pool.query('SELECT * FROM votaciones ORDER BY id_votacion DESC LIMIT 20');
+            ? await pool.query(`${queryBase} WHERE v.id_sesion = $1 ORDER BY v.id_votacion DESC`, [id_sesion])
+            : await pool.query(`${queryBase} ORDER BY v.id_votacion DESC LIMIT 20`);
         res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// Crear nueva votación / moción
 app.post('/api/votaciones', async (req, res) => {
-    const { id_sesion, titulo, descripcion, ambito } = req.body;
+    const { id_sesion, id_proyecto, titulo, descripcion, ambito } = req.body;
     if (!titulo || !titulo.trim()) {
-        return res.status(400).json({ error: 'El título o pregunta de la votación es obligatorio.' });
+        return res.status(400).json({ error: 'Seleccione un proyecto o ingrese el asunto a votar.' });
     }
     try {
+        await asegurarTablasVotacion();
         const sesionVal = id_sesion ? parseInt(id_sesion, 10) : null;
+        const proyectoVal = id_proyecto ? parseInt(id_proyecto, 10) : null;
         const result = await pool.query(
-            `INSERT INTO votaciones (id_sesion, titulo, descripcion, ambito, estado)
-             VALUES ($1, $2, $3, $4, 'Abierta') RETURNING *`,
-            [sesionVal, titulo.trim(), descripcion || '', ambito || 'Plenaria']
+            `INSERT INTO votaciones (id_sesion, id_proyecto, titulo, descripcion, ambito, estado)
+             VALUES ($1, $2, $3, $4, $5, 'Abierta') RETURNING *`,
+            [sesionVal, proyectoVal, titulo.trim(), descripcion || '', ambito || 'Plenaria']
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -490,10 +498,10 @@ app.post('/api/votaciones', async (req, res) => {
     }
 });
 
-// Abrir o cerrar urna de votación
 app.put('/api/votaciones/:id_votacion/estado', async (req, res) => {
     const { estado } = req.body;
     try {
+        await asegurarTablasVotacion();
         const result = await pool.query(
             'UPDATE votaciones SET estado = $1 WHERE id_votacion = $2 RETURNING *',
             [estado, req.params.id_votacion]
@@ -504,9 +512,9 @@ app.put('/api/votaciones/:id_votacion/estado', async (req, res) => {
     }
 });
 
-// Eliminar votación
 app.delete('/api/votaciones/:id_votacion', async (req, res) => {
     try {
+        await asegurarTablasVotacion();
         await pool.query('DELETE FROM votaciones WHERE id_votacion = $1', [req.params.id_votacion]);
         res.json({ ok: true });
     } catch (err) {
@@ -514,11 +522,11 @@ app.delete('/api/votaciones/:id_votacion', async (req, res) => {
     }
 });
 
-// Consultar votos nominales de una votación
 app.get('/api/votaciones/:id_votacion/votos', async (req, res) => {
     const idVotacion = parseInt(req.params.id_votacion, 10);
     if (isNaN(idVotacion)) return res.json([]);
     try {
+        await asegurarTablasVotacion();
         const result = await pool.query(`
             SELECT v.id_voto, v.id_votacion, v.id_integrante, v.opcion, v.fecha_voto,
                    i.nombre_completo, i.es_directiva, b.nombre AS bancada,
@@ -536,7 +544,6 @@ app.get('/api/votaciones/:id_votacion/votos', async (req, res) => {
     }
 });
 
-// Emitir o actualizar voto de un concejal autenticado
 app.post('/api/votaciones/:id_votacion/votar', async (req, res) => {
     const idVotacion = parseInt(req.params.id_votacion, 10);
     const { id_integrante, opcion } = req.body;
@@ -546,6 +553,7 @@ app.post('/api/votaciones/:id_votacion/votar', async (req, res) => {
     }
 
     try {
+        await asegurarTablasVotacion();
         const votRes = await pool.query('SELECT estado FROM votaciones WHERE id_votacion = $1', [idVotacion]);
         if (votRes.rows.length === 0) {
             return res.status(404).json({ error: 'La votación no existe.' });
