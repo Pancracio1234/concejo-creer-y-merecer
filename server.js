@@ -34,9 +34,13 @@ const pool = new Pool(
 const CLAVE_ADMIN_MAESTRA = 'Concejo2026)';
 const sesionesAdminActivas = new Map();
 
+function esTokenAdminValido(token) {
+    return Boolean(token && sesionesAdminActivas.has(token));
+}
+
 function verificarAdmin(req, res, next) {
     const token = req.headers['x-admin-token'];
-    if (!token || !sesionesAdminActivas.has(token)) {
+    if (!esTokenAdminValido(token)) {
         return res.status(401).json({
             error: 'Acceso denegado. Debe registrarse como Administrador con la clave institucional para realizar esta acción.',
         });
@@ -80,7 +84,7 @@ app.post('/api/admin/registro', async (req, res) => {
 
 app.get('/api/admin/verificar', (req, res) => {
     const token = req.headers['x-admin-token'];
-    if (token && sesionesAdminActivas.has(token)) {
+    if (esTokenAdminValido(token)) {
         return res.json({ ok: true, admin: sesionesAdminActivas.get(token) });
     }
     res.status(401).json({ ok: false });
@@ -147,6 +151,13 @@ async function asegurarTablasSistema() {
     `);
 
     await pool.query(`
+        ALTER TABLE proyectos ADD COLUMN IF NOT EXISTS visible_publico BOOLEAN DEFAULT TRUE;
+    `);
+    await pool.query(`
+        ALTER TABLE proyectos ADD COLUMN IF NOT EXISTS fecha_radicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+    `);
+
+    await pool.query(`
         CREATE TABLE IF NOT EXISTS votaciones (
             id_votacion SERIAL PRIMARY KEY,
             id_sesion INTEGER,
@@ -196,6 +207,53 @@ async function asegurarTablasSistema() {
 asegurarTablasSistema()
     .then(() => console.log('✅ Conexión exitosa a PostgreSQL y tablas verificadas'))
     .catch((err) => console.error('❌ ERROR INICIALIZANDO POSTGRESQL:', err.message));
+
+// =========================================================================
+// UTILIDAD DE AUTENTICACIÓN DE CONCEJALES (PRIMER NOMBRE + PRIMER APELLIDO)
+// =========================================================================
+function limpiarTextoComparacion(txt) {
+    return (txt || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ' ');
+}
+
+async function autenticarConcejalPorNombre(primer_nombre, primer_apellido, password) {
+    if (!primer_nombre || !primer_apellido || !password || !password.trim()) {
+        return { error: 'Ingrese su primer nombre, primer apellido y contraseña.', status: 400 };
+    }
+
+    const nomBuscado = limpiarTextoComparacion(primer_nombre).split(' ')[0];
+    const apeBuscado = limpiarTextoComparacion(primer_apellido).split(' ')[0];
+
+    const result = await pool.query(`
+        SELECT i.id_integrante, i.nombre_completo, i.id_comision, i.id_bancada, i.es_directiva,
+               COALESCE(c.nombre, 'Sin Comisión') AS comision,
+               b.nombre AS bancada
+        FROM integrantes i
+        LEFT JOIN comisiones c ON i.id_comision = c.id_comision
+        JOIN bancadas b ON i.id_bancada = b.id_bancada
+        WHERE i.activo = TRUE
+    `);
+
+    const encontrado = result.rows.find((row) => {
+        const palabras = limpiarTextoComparacion(row.nombre_completo).split(' ');
+        const primerNombreReal = palabras[0] || '';
+        const contieneApellido = palabras.slice(1).includes(apeBuscado);
+        return primerNombreReal === nomBuscado && contieneApellido;
+    });
+
+    if (!encontrado) {
+        return {
+            error: 'No se encontró ningún Honorable Concejal activo con ese primer nombre y primer apellido.',
+            status: 401,
+        };
+    }
+
+    return { concejal: encontrado };
+}
 
 // =========================================================================
 // CÁLCULO DE VEREDICTO PARLAMENTARIO Y DESEMPATE AUTOMÁTICO
@@ -477,17 +535,24 @@ app.put('/api/asistencias/sesion/:id_sesion/todos-presentes', verificarAdmin, as
 });
 
 // =========================================================================
-// 3. PROYECTOS DE ACUERDO Y PROPOSICIONES (LECTURA PÚBLICA / EDICIÓN SOLO ADMIN)
+// 3. PROYECTOS DE ACUERDO Y PROPOSICIONES (COLAS EN ORDEN DE LLEGADA)
 // =========================================================================
 app.get('/api/proyectos', async (req, res) => {
+    const esAdmin = esTokenAdminValido(req.headers['x-admin-token']);
     try {
+        await asegurarTablasSistema();
+        const whereClause = esAdmin
+            ? ''
+            : `WHERE COALESCE(p.visible_publico, TRUE) = TRUE`;
+
         const result = await pool.query(`
             SELECT p.*, COALESCE(i.nombre_completo, 'Mesa Directiva / Bancada') AS autor, 
                    COALESCE(c.nombre, 'Plenaria') AS comision
             FROM proyectos p
             LEFT JOIN integrantes i ON p.id_autor = i.id_integrante
             LEFT JOIN comisiones c ON p.id_comision_asignada = c.id_comision
-            ORDER BY p.id_proyecto DESC
+            ${whereClause}
+            ORDER BY p.id_proyecto ASC
         `);
         res.json(result.rows);
     } catch (err) {
@@ -495,6 +560,7 @@ app.get('/api/proyectos', async (req, res) => {
     }
 });
 
+// RADICACIÓN POR ADMINISTRADOR / SECRETARÍA (VISIBLE DE INMEDIATO)
 app.post('/api/proyectos', verificarAdmin, async (req, res) => {
     const { 
         codigo_radicado, 
@@ -511,14 +577,15 @@ app.post('/api/proyectos', verificarAdmin, async (req, res) => {
         return res.status(400).json({ error: 'Código y título son obligatorios.' });
     }
     try {
+        await asegurarTablasSistema();
         const comisionId = id_comision_asignada ? parseInt(id_comision_asignada, 10) : null;
         const autorId = id_autor ? parseInt(id_autor, 10) : null;
         const result = await pool.query(
             `INSERT INTO proyectos (
                 codigo_radicado, titulo, descripcion, id_autor, id_comision_asignada, 
-                tipo_documento, archivo_nombre, archivo_contenido
+                tipo_documento, archivo_nombre, archivo_contenido, visible_publico
              )
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, TRUE) RETURNING *`,
             [
                 codigo_radicado.trim(), 
                 titulo.trim(), 
@@ -529,6 +596,89 @@ app.post('/api/proyectos', verificarAdmin, async (req, res) => {
                 archivo_nombre || null,
                 archivo_contenido || null
             ]
+        );
+        emitirActualizacionGlobal('proyectos');
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// RADICACIÓN DE PROPOSICIÓN POR CONCEJAL (EN ORDEN DE LLEGADA, SOLO VISIBLE PARA SECRETARÍA/ADMIN HASTA SER PROYECTADA)
+app.post('/api/proyectos/concejal', async (req, res) => {
+    const {
+        primer_nombre,
+        primer_apellido,
+        password,
+        titulo,
+        descripcion,
+        id_comision_asignada,
+        archivo_nombre,
+        archivo_contenido
+    } = req.body;
+
+    if (!titulo || !titulo.trim()) {
+        return res.status(400).json({ error: 'El título o asunto de la proposición es obligatorio.' });
+    }
+
+    try {
+        await asegurarTablasSistema();
+        const auth = await autenticarConcejalPorNombre(primer_nombre, primer_apellido, password);
+        if (auth.error) {
+            return res.status(auth.status).json({ error: auth.error });
+        }
+
+        const concejal = auth.concejal;
+        const seqRes = await pool.query(`
+            SELECT COUNT(*)::INTEGER + 1 AS turno
+            FROM proyectos
+            WHERE tipo_documento = 'Proposición'
+        `);
+        const numeroOrden = seqRes.rows[0].turno;
+        const codigoAuto = `PROP-${String(numeroOrden).padStart(3, '0')}`;
+        const comisionId = (id_comision_asignada === '' || id_comision_asignada === undefined || id_comision_asignada === null)
+            ? null
+            : parseInt(id_comision_asignada, 10);
+
+        const result = await pool.query(
+            `INSERT INTO proyectos (
+                codigo_radicado, titulo, descripcion, id_autor, id_comision_asignada,
+                tipo_documento, archivo_nombre, archivo_contenido, estado, visible_publico
+             )
+             VALUES ($1, $2, $3, $4, $5, 'Proposición', $6, $7, 'Radicado', FALSE)
+             RETURNING *`,
+            [
+                codigoAuto,
+                titulo.trim(),
+                descripcion || '',
+                concejal.id_integrante,
+                comisionId,
+                archivo_nombre || null,
+                archivo_contenido || null
+            ]
+        );
+
+        emitirActualizacionGlobal('proyectos');
+        res.status(201).json({
+            ok: true,
+            turno: numeroOrden,
+            codigo_radicado: codigoAuto,
+            autor: concejal.nombre_completo,
+            proyecto: result.rows[0]
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// HABILITAR O OCULTAR PROPOSICIÓN AL RECINTO (SOLO SECRETARIO / ADMIN)
+app.put('/api/proyectos/:id_proyecto/visibilidad', verificarAdmin, async (req, res) => {
+    const { visible_publico } = req.body;
+    try {
+        await asegurarTablasSistema();
+        const result = await pool.query(
+            `UPDATE proyectos SET visible_publico = $1 WHERE id_proyecto = $2 RETURNING *`,
+            [Boolean(visible_publico), req.params.id_proyecto]
         );
         emitirActualizacionGlobal('proyectos');
         res.json(result.rows[0]);
@@ -629,15 +779,6 @@ app.delete('/api/intervenciones/:id_intervencion', verificarAdmin, async (req, r
 // =========================================================================
 // 5. SISTEMA DE VOTACIÓN NOMINAL, VEREDICTO Y REPETICIÓN POR EMPATE
 // =========================================================================
-function limpiarTextoComparacion(txt) {
-    return (txt || '')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, ' ');
-}
-
 async function cerrarVotacionesExpiradas() {
     await asegurarTablasSistema();
     const res = await pool.query(`
@@ -656,38 +797,15 @@ async function cerrarVotacionesExpiradas() {
 
 app.post('/api/votacion/login', async (req, res) => {
     const { primer_nombre, primer_apellido, password, id_votacion } = req.body;
-    if (!primer_nombre || !primer_apellido || !password || !password.trim()) {
-        return res.status(400).json({ error: 'Ingrese su primer nombre, primer apellido y contraseña.' });
-    }
-
-    const nomBuscado = limpiarTextoComparacion(primer_nombre).split(' ')[0];
-    const apeBuscado = limpiarTextoComparacion(primer_apellido).split(' ')[0];
 
     try {
         await cerrarVotacionesExpiradas();
 
-        const result = await pool.query(`
-            SELECT i.id_integrante, i.nombre_completo, i.id_comision, i.id_bancada, i.es_directiva,
-                   COALESCE(c.nombre, 'Sin Comisión') AS comision,
-                   b.nombre AS bancada
-            FROM integrantes i
-            LEFT JOIN comisiones c ON i.id_comision = c.id_comision
-            JOIN bancadas b ON i.id_bancada = b.id_bancada
-            WHERE i.activo = TRUE
-        `);
-
-        const encontrado = result.rows.find((row) => {
-            const palabras = limpiarTextoComparacion(row.nombre_completo).split(' ');
-            const primerNombreReal = palabras[0] || '';
-            const contieneApellido = palabras.slice(1).includes(apeBuscado);
-            return primerNombreReal === nomBuscado && contieneApellido;
-        });
-
-        if (!encontrado) {
-            return res.status(401).json({
-                error: 'No se encontró ningún Honorable Concejal activo con ese primer nombre y primer apellido.',
-            });
+        const auth = await autenticarConcejalPorNombre(primer_nombre, primer_apellido, password);
+        if (auth.error) {
+            return res.status(auth.status).json({ error: auth.error });
         }
+        const encontrado = auth.concejal;
 
         if (id_votacion) {
             const idVot = parseInt(id_votacion, 10);
@@ -774,7 +892,6 @@ app.post('/api/votaciones', verificarAdmin, async (req, res) => {
     }
 });
 
-// REPETIR VOTACIÓN EN CASO DE EMPATE (RONDA 2)
 app.post('/api/votaciones/:id_votacion/repetir', verificarAdmin, async (req, res) => {
     const idVot = parseInt(req.params.id_votacion, 10);
     try {

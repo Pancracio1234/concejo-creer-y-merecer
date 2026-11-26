@@ -767,7 +767,6 @@
                         </div>
                     </div>
 
-                    <!-- BANNER DE DICTAMEN / VEREDICTO OFICIAL DE LA VOTACIÓN -->
                     <div id="banner-veredicto-votacion" class="hidden mb-5 p-4 rounded-2xl border-2 shadow-xl"></div>
 
                     <div id="vot-controles-mesa" class="flex items-center justify-end gap-2 flex-wrap mb-5"></div>
@@ -823,11 +822,83 @@
                     <button onclick="filtrarProyectos('Plenaria')" id="filtro-Plenaria" class="filtro-proy-btn bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-xs uppercase px-4 py-2 rounded-xl border border-white/10">Plenaria</button>
                 </div>
 
-                <button onclick="toggleFormularioProyecto()" class="solo-admin bg-[#1e3a8a] hover:bg-blue-800 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-blue-400/30 transition shadow-lg">
-                    <i class="fa-solid fa-file-signature mr-1.5"></i> Radicar Proyecto / Proposición
-                </button>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="toggleFormularioProposicionConcejal()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-lg transition">
+                        <i class="fa-solid fa-feather-pointed mr-1.5"></i> Radicar Proposición (Concejal)
+                    </button>
+                    <button type="button" onclick="toggleFormularioProyecto()" class="solo-admin bg-[#1e3a8a] hover:bg-blue-800 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-blue-400/30 transition shadow-lg">
+                        <i class="fa-solid fa-file-signature mr-1.5"></i> Radicar Acto (Secretaría)
+                    </button>
+                </div>
             </div>
 
+            <!-- FORMULARIO PARA CONCEJALES: RADICACIÓN DE PROPOSICIÓN EN ORDEN DE LLEGADA -->
+            <div id="panel-form-proposicion-concejal" class="hidden panel-institucional p-6 rounded-2xl mb-6 border border-[#c9a24b]">
+                <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#c9a24b] block">Ventanilla Única de Radicación • Orden de Llegada</span>
+                        <h3 class="font-solemne text-xl uppercase font-bold text-white">Radicar Proposición (Honorable Concejal)</h3>
+                    </div>
+                    <button type="button" onclick="toggleFormularioProposicionConcejal()" class="text-slate-400 hover:text-white text-sm font-bold">
+                        <i class="fa-solid fa-xmark"></i> Cerrar
+                    </button>
+                </div>
+
+                <div class="bg-[#060a14]/85 p-3.5 rounded-xl border border-[#c9a24b]/30 text-xs text-slate-300 mb-4 flex items-start gap-2.5">
+                    <i class="fa-solid fa-lock text-[#e5c16c] mt-0.5"></i>
+                    <div>
+                        Inicie sesión con su <strong>Primer Nombre</strong>, <strong>Primer Apellido</strong> y <strong>cualquier contraseña de prueba</strong>. Su proposición quedará registrada en estricto <strong>orden de llegada</strong> en la bandeja de Secretaría General y <strong>solo el Secretario / Administrador podrá visualizarla y proyectarla</strong> al recinto.
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-4 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Primer Nombre</label>
+                        <input type="text" id="prop-conc-nombre" placeholder="Ej: Kaory" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm focus:border-[#c9a24b] focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Primer Apellido</label>
+                        <input type="text" id="prop-conc-apellido" placeholder="Ej: Carrero" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm focus:border-[#c9a24b] focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Contraseña (Cualquiera de prueba)</label>
+                        <input type="password" id="prop-conc-password" placeholder="••••••••" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm focus:border-[#c9a24b] focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Destino / Comisión</label>
+                        <select id="prop-conc-comision" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm font-semibold focus:border-[#c9a24b] focus:outline-none">
+                            <option value="">Plenaria (General)</option>
+                            <option value="1">Comisión Primera</option>
+                            <option value="2">Comisión Segunda</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-[#e5c16c] mb-1">Título / Asunto de la Proposición</label>
+                        <input type="text" id="prop-conc-titulo" placeholder="Ej: Proposición de citación a debate de control político..." class="w-full border border-[#c9a24b]/40 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm focus:border-[#c9a24b] focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Archivo Adjunto (Opcional: PDF, .docx o .txt)</label>
+                        <input type="file" id="prop-conc-archivo" accept=".pdf,.docx,.txt" class="w-full border border-white/15 bg-[#060a14] text-slate-300 rounded-xl px-3 py-1.5 text-sm">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Texto Completo de la Proposición</label>
+                    <textarea id="prop-conc-descripcion" rows="4" placeholder="Redacte aquí el contenido completo de su proposición para que Secretaría la proyecte..." class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm focus:border-[#c9a24b] focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="toggleFormularioProposicionConcejal()" class="px-4 py-2.5 text-xs font-bold uppercase text-slate-400 hover:text-white">Cancelar</button>
+                    <button type="button" onclick="enviarProposicionConcejal()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 rounded-xl px-6 py-2.5 text-xs uppercase tracking-wider font-extrabold shadow-lg">
+                        <i class="fa-solid fa-paper-plane mr-1.5"></i> Enviar Proposición a Secretaría
+                    </button>
+                </div>
+            </div>
+
+            <!-- FORMULARIO DE SECRETARÍA / ADMIN -->
             <div id="panel-form-proyecto" class="solo-admin hidden panel-institucional p-6 rounded-2xl mb-6 border border-[#c9a24b]">
                 <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
                     <h3 class="font-solemne text-xl uppercase font-bold text-[#e5c16c]">Radicación Oficial en Secretaría General</h3>
@@ -884,9 +955,12 @@
 
             <div class="grid lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-4 space-y-3">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 px-1">
-                        Documentos en Trámite (<span id="contador-docs">0</span>)
-                    </h4>
+                    <div class="flex justify-between items-center px-1">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                            Orden de Llegada / Trámite (<span id="contador-docs">0</span>)
+                        </h4>
+                        <span class="solo-admin text-[10px] font-bold text-[#e5c16c]">Vista Secretaría</span>
+                    </div>
                     <div id="lista-lateral-proyectos" class="space-y-3 max-h-[82vh] overflow-y-auto pr-1"></div>
                 </div>
 
@@ -1013,7 +1087,7 @@
 
             <p class="text-xs text-slate-300 bg-[#060a14]/85 p-3 rounded-xl border border-white/10 mb-4">
                 <i class="fa-solid fa-lock text-[#e5c16c] mr-1.5"></i>
-                Regístrese con su nombre, cargo y la clave institucional para habilitar el control de sesiones, quórum, uso de la palabra, urnas y proyectos.
+                Regístrese con su nombre, cargo y la clave institucional para habilitar el control de sesiones, quórum, uso de la palabra, urnas y proyección de proposiciones.
             </p>
 
             <div class="space-y-4">
@@ -1131,7 +1205,7 @@
             modal.classList.remove('flex');
         }
 
-        function aplicarEstadoAdminUI() {
+        async function aplicarEstadoAdminUI() {
             const btnLogin = document.getElementById('btn-abrir-login-admin');
             const infoConectado = document.getElementById('info-admin-conectado');
             const nombreBarra = document.getElementById('nombre-admin-barra');
@@ -1150,7 +1224,7 @@
             renderizarBancadasAsistencia(asistenciasGlobal);
             renderizarTableroComisiones();
             renderizarListaIntervenciones();
-            renderizarProyectos();
+            await cargarProyectos(false);
             renderizarGestionIntegrantes();
             cargarDetalleVotacion();
         }
@@ -1159,7 +1233,7 @@
             if (!adminToken) {
                 esModoAdmin = false;
                 adminInfo = null;
-                aplicarEstadoAdminUI();
+                await aplicarEstadoAdminUI();
                 return;
             }
             try {
@@ -1180,7 +1254,7 @@
                 esModoAdmin = false;
                 adminInfo = null;
             }
-            aplicarEstadoAdminUI();
+            await aplicarEstadoAdminUI();
         }
 
         async function registrarAccesoAdmin() {
@@ -1214,7 +1288,7 @@
                 document.getElementById('admin-reg-nombre').value = '';
                 document.getElementById('admin-reg-password').value = '';
                 cerrarModalAdmin();
-                aplicarEstadoAdminUI();
+                await aplicarEstadoAdminUI();
                 notificar(`🛡️ Bienvenido Administrador: ${adminInfo.nombre_admin}`);
             } catch (err) {
                 alert('Error de conexión al verificar clave: ' + err.message);
@@ -1234,7 +1308,8 @@
             adminToken = null;
             adminInfo = null;
             esModoAdmin = false;
-            aplicarEstadoAdminUI();
+            proyectoSeleccionadoId = null;
+            await aplicarEstadoAdminUI();
             notificar('🔒 Sesión administrativa cerrada');
         }
 
@@ -1257,7 +1332,7 @@
                     adminToken = null;
                     adminInfo = null;
                     localStorage.removeItem('concejo_admin_token');
-                    aplicarEstadoAdminUI();
+                    await aplicarEstadoAdminUI();
                     abrirModalAdmin();
                 }
                 return res;
@@ -1536,7 +1611,7 @@
             const toast = document.getElementById('toast');
             toast.innerText = msg;
             toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3400);
+            setTimeout(() => toast.classList.add('hidden'), 3800);
         }
 
         document.addEventListener('keydown', (e) => {
@@ -1552,7 +1627,6 @@
             aplicarLogoGuardado();
             await verificarSesionAdminGuardada();
             await cargarIntegrantes();
-            await cargarProyectos();
             await cargarSesiones();
             await cargarVotaciones();
             actualizarDisplayCrono();
@@ -1594,6 +1668,8 @@
             if (tabId === 'votacion') {
                 actualizarSelectProyectosVotacion();
                 cargarVotaciones();
+            } else if (tabId === 'proyectos') {
+                cargarProyectos(false);
             }
         }
 
@@ -2817,7 +2893,6 @@
                 return;
             }
 
-            // URNA CERRADA: DETERMINAR VEREDICTO FINAL
             let resultado = votacion.resultado_final || '';
             let mensaje = votacion.mensaje_veredicto || '';
 
@@ -2966,7 +3041,7 @@
                 estadoEl.className = 'bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
             }
 
-            const btnVerDocumento = votacion.id_proyecto
+            const btnVerDocumento = (votacion.id_proyecto && proyectosGlobal.some(p => p.id_proyecto === votacion.id_proyecto))
                 ? `<button onclick="irAVerProyecto(${votacion.id_proyecto})" class="bg-[#1e3a8a] hover:bg-blue-700 text-white font-bold text-xs uppercase px-3 py-2 rounded-xl border border-blue-400/30 transition"><i class="fa-solid fa-file-lines mr-1"></i> Ver Documento</button>`
                 : '';
 
@@ -3094,12 +3169,24 @@
         }
 
         // =====================================================================
-        // 6. PROYECTOS DE ACUERDO Y PROPOSICIONES
+        // 6. PROYECTOS DE ACUERDO Y PROPOSICIONES (COLA EN ORDEN DE LLEGADA)
         // =====================================================================
+        function toggleFormularioProposicionConcejal() {
+            const panelConc = document.getElementById('panel-form-proposicion-concejal');
+            const panelSec = document.getElementById('panel-form-proyecto');
+            if (panelSec) panelSec.classList.add('hidden');
+            panelConc.classList.toggle('hidden');
+            if (!panelConc.classList.contains('hidden')) {
+                document.getElementById('prop-conc-nombre').focus();
+            }
+        }
+
         function toggleFormularioProyecto() {
             if (!esModoAdmin) return abrirModalAdmin();
-            const panel = document.getElementById('panel-form-proyecto');
-            panel.classList.toggle('hidden');
+            const panelConc = document.getElementById('panel-form-proposicion-concejal');
+            const panelSec = document.getElementById('panel-form-proyecto');
+            if (panelConc) panelConc.classList.add('hidden');
+            panelSec.classList.toggle('hidden');
         }
 
         function leerArchivoBase64(file) {
@@ -3109,6 +3196,74 @@
                 reader.onerror = error => reject(error);
                 reader.readAsDataURL(file);
             });
+        }
+
+        async function enviarProposicionConcejal() {
+            const primer_nombre = document.getElementById('prop-conc-nombre').value;
+            const primer_apellido = document.getElementById('prop-conc-apellido').value;
+            const password = document.getElementById('prop-conc-password').value;
+            const id_comision_asignada = document.getElementById('prop-conc-comision').value;
+            const titulo = document.getElementById('prop-conc-titulo').value;
+            const descripcion = document.getElementById('prop-conc-descripcion').value;
+            const fileInput = document.getElementById('prop-conc-archivo');
+
+            if (!primer_nombre.trim() || !primer_apellido.trim() || !password.trim()) {
+                return alert('Ingrese su Primer Nombre, Primer Apellido y contraseña de prueba.');
+            }
+            if (!titulo.trim()) {
+                return alert('Ingrese el título o asunto de su proposición.');
+            }
+            if (!descripcion.trim() && fileInput.files.length === 0) {
+                return alert('Escriba el texto de la proposición o adjunte un archivo PDF/.docx/.txt.');
+            }
+
+            let archivo_nombre = null;
+            let archivo_contenido = null;
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                archivo_nombre = file.name;
+                archivo_contenido = await leerArchivoBase64(file);
+            }
+
+            try {
+                const res = await fetch('/api/proyectos/concejal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        primer_nombre,
+                        primer_apellido,
+                        password,
+                        titulo,
+                        descripcion,
+                        id_comision_asignada,
+                        archivo_nombre,
+                        archivo_contenido
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    return alert(data.error || 'No se pudo radicar la proposición.');
+                }
+
+                document.getElementById('prop-conc-nombre').value = '';
+                document.getElementById('prop-conc-apellido').value = '';
+                document.getElementById('prop-conc-password').value = '';
+                document.getElementById('prop-conc-titulo').value = '';
+                document.getElementById('prop-conc-descripcion').value = '';
+                fileInput.value = '';
+                document.getElementById('panel-form-proposicion-concejal').classList.add('hidden');
+
+                alert(
+                    `✅ PROPOSICIÓN RADICADA EN ORDEN DE LLEGADA\n\n` +
+                    `• Turno de llegada: #${data.turno} (${data.codigo_radicado})\n` +
+                    `• Autor: H.C. ${data.autor}\n\n` +
+                    `Su proposición ya quedó en la bandeja privada de Secretaría General. Únicamente el Secretario / Administrador podrá visualizarla y proyectarla al recinto cuando corresponda.`
+                );
+                await cargarProyectos(false);
+            } catch (err) {
+                alert('Error de red al radicar proposición: ' + err.message);
+            }
         }
 
         async function crearProyecto() {
@@ -3166,9 +3321,19 @@
         }
 
         async function cargarProyectos(silencioso = false) {
-            const res = await fetch('/api/proyectos');
+            const headers = (esModoAdmin && adminToken) ? { 'x-admin-token': adminToken } : {};
+            const res = await fetch('/api/proyectos', { headers });
+            if (!res.ok) return;
             const nuevosProyectos = await res.json();
-            const nuevoHash = JSON.stringify(nuevosProyectos.map(p => ({ id: p.id_proyecto, est: p.estado, tit: p.titulo })));
+            const nuevoHash = JSON.stringify(
+                nuevosProyectos.map(p => ({
+                    id: p.id_proyecto,
+                    est: p.estado,
+                    tit: p.titulo,
+                    vis: p.visible_publico,
+                    adm: esModoAdmin
+                }))
+            );
 
             proyectosGlobal = nuevosProyectos;
             actualizarSelectProyectosVotacion();
@@ -3186,28 +3351,26 @@
                 btn.classList.remove('bg-[#c9a24b]', 'text-slate-950', 'font-extrabold');
                 btn.classList.add('bg-white/5', 'text-slate-200', 'font-bold');
             });
-            const active = document.getElementById(`filtro-${comision}`);
-            if (active) {
-                active.classList.add('bg-[#c9a24b]', 'text-slate-950', 'font-extrabold');
-                active.classList.remove('bg-white/5', 'text-slate-200');
-            }
+            const activo = document.getElementById(`filtro-${comision}`);
+            activo.classList.remove('bg-white/5', 'text-slate-200', 'font-bold');
+            activo.classList.add('bg-[#c9a24b]', 'text-slate-950', 'font-extrabold');
             renderizarProyectos();
         }
 
         function renderizarProyectos() {
-            const listaLateral = document.getElementById('lista-lateral-proyectos');
-            const contador = document.getElementById('contador-docs');
-            listaLateral.innerHTML = '';
+            const listaDiv = document.getElementById('lista-lateral-proyectos');
+            listaDiv.innerHTML = '';
 
-            const filtrados = filtroComisionActual === 'TODOS' 
-                ? proyectosGlobal 
-                : proyectosGlobal.filter(p => p.comision === filtroComisionActual);
+            let filtrados = proyectosGlobal;
+            if (filtroComisionActual !== 'TODOS') {
+                filtrados = proyectosGlobal.filter(p => p.comision === filtroComisionActual);
+            }
 
-            contador.innerText = filtrados.length;
+            document.getElementById('contador-docs').innerText = filtrados.length;
 
             if (filtrados.length === 0) {
-                listaLateral.innerHTML = `<div class="panel-institucional p-6 rounded-xl text-center text-xs text-slate-400">Sin documentos radicados en esta comisión.</div>`;
-                mostrarEnVisorDirecto(null);
+                listaDiv.innerHTML = '<div class="panel-institucional p-8 rounded-2xl text-center text-slate-400 text-sm">No hay documentos habilitados para mostrar en este filtro. Las proposiciones radicadas por concejales quedan en reserva en Secretaría General hasta ser proyectadas.</div>';
+                limpiarVisor();
                 return;
             }
 
@@ -3215,194 +3378,193 @@
                 proyectoSeleccionadoId = filtrados[0].id_proyecto;
             }
 
-            filtrados.forEach(p => {
-                const esActivo = p.id_proyecto === proyectoSeleccionadoId;
-                const esProposicion = p.tipo_documento === 'Proposición';
-                const colorEstado = p.estado === 'Aprobado'
-                    ? 'text-emerald-400'
-                    : (p.estado === 'Archivado' || p.estado === 'Retirado')
-                        ? 'text-rose-400'
-                        : 'text-[#e5c16c]';
+            filtrados.forEach((p, index) => {
+                const seleccionado = p.id_proyecto === proyectoSeleccionadoId;
+                const tipo = p.tipo_documento || 'Proyecto de Acuerdo';
+                const esProposicion = tipo === 'Proposición';
+                const esReservada = p.visible_publico === false;
 
-                listaLateral.innerHTML += `
-                    <div onclick="seleccionarProyectoVisor(${p.id_proyecto})" class="cursor-pointer rounded-2xl p-4 border transition shadow-md ${
-                        esActivo ? 'bg-[#c9a24b]/15 border-[#c9a24b]' : 'panel-institucional hover:border-white/30'
+                const badgeEstado = p.estado === 'Aprobado'
+                    ? '<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded">Aprobado</span>'
+                    : p.estado === 'Archivado'
+                        ? '<span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded">Archivado</span>'
+                        : `<span class="bg-white/10 text-slate-300 text-[10px] font-bold uppercase px-2 py-0.5 rounded">${p.estado}</span>`;
+
+                const badgeVisibilidad = esModoAdmin
+                    ? (esReservada
+                        ? '<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded"><i class="fa-solid fa-eye-slash mr-1"></i>Solo Secretaría</span>'
+                        : '<span class="bg-sky-500/20 text-sky-300 border border-sky-500/40 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded"><i class="fa-solid fa-eye mr-1"></i>Proyectada</span>')
+                    : '';
+
+                listaDiv.innerHTML += `
+                    <div onclick="seleccionarProyecto(${p.id_proyecto})" class="p-4 rounded-2xl cursor-pointer transition border ${
+                        seleccionado 
+                            ? 'bg-[#121d36] border-[#c9a24b] shadow-xl ring-1 ring-[#c9a24b]/40' 
+                            : 'panel-institucional border-white/10 hover:border-[#c9a24b]/45'
                     }">
-                        <div class="flex justify-between items-center gap-2 mb-1.5">
-                            <span class="px-2.5 py-0.5 rounded text-[10px] font-extrabold uppercase ${esProposicion ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30' : 'bg-[#c9a24b] text-slate-950'}">
-                                ${p.tipo_documento || 'Proyecto de Acuerdo'} • ${p.codigo_radicado}
-                            </span>
-                            <span class="text-[11px] font-bold text-slate-400">Com. ${p.comision}</span>
+                        <div class="flex justify-between items-center gap-2 mb-2 flex-wrap">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="font-mono-digital font-extrabold text-[10px] text-slate-950 bg-[#c9a24b] px-2 py-0.5 rounded">#${index + 1}</span>
+                                <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${
+                                    esProposicion ? 'bg-[#c9a24b]/20 text-[#e5c16c] border border-[#c9a24b]/40' : 'bg-sky-500/20 text-sky-300 border border-sky-500/40'
+                                }">${tipo}</span>
+                                ${badgeVisibilidad}
+                            </div>
+                            ${badgeEstado}
                         </div>
-                        <h5 class="font-solemne text-sm uppercase font-bold text-white leading-snug">${p.titulo}</h5>
-                        <div class="flex justify-between items-center mt-2.5 pt-2 border-t border-white/10 text-[11px]">
-                            <span class="text-slate-400 truncate max-w-[160px]"><i class="fa-solid fa-user-tie mr-1 text-[#c9a24b]"></i>${p.autor}</span>
-                            <span class="font-extrabold ${colorEstado}">${p.estado}</span>
+                        <p class="text-xs font-mono-digital font-bold text-[#c9a24b]">${p.codigo_radicado} • Com. ${p.comision}</p>
+                        <h4 class="font-bold text-sm text-white leading-snug mt-0.5 line-clamp-2">${p.titulo}</h4>
+                        <div class="flex justify-between items-center mt-2 pt-2 border-t border-white/10 text-[11px] text-slate-400">
+                            <span>H.C. ${p.autor}</span>
+                            ${p.archivo_nombre ? '<span class="text-emerald-400 font-bold"><i class="fa-solid fa-paperclip"></i> Adjunto</span>' : ''}
                         </div>
                     </div>
                 `;
             });
 
             const proyectoActivo = filtrados.find(p => p.id_proyecto === proyectoSeleccionadoId);
-            mostrarEnVisorDirecto(proyectoActivo);
+            if (proyectoActivo) mostrarEnVisor(proyectoActivo);
         }
 
-        function seleccionarProyectoVisor(id_proyecto) {
-            proyectoSeleccionadoId = id_proyecto;
+        function seleccionarProyecto(id) {
+            proyectoSeleccionadoId = id;
             renderizarProyectos();
         }
 
-        function cambiarZoomTexto(delta) {
-            zoomTexto = Math.min(34, Math.max(14, zoomTexto + delta));
-            const docEl = document.getElementById('area-texto-documento');
-            if (docEl) {
-                docEl.style.fontSize = zoomTexto + 'px';
-            }
+        function limpiarVisor() {
+            document.getElementById('visor-badge').innerText = 'DOCUMENTO';
+            document.getElementById('visor-comision').innerText = '';
+            document.getElementById('visor-titulo').innerText = 'Sin documentos en esta vista';
+            document.getElementById('visor-autor').innerText = '';
+            document.getElementById('visor-acciones').innerHTML = '';
+            document.getElementById('visor-contenido').innerHTML = `
+                <div class="text-center text-slate-400 my-auto py-20">
+                    <i class="fa-solid fa-folder-open text-5xl mb-3 text-slate-300"></i>
+                    <p class="font-bold text-slate-600">No hay documentos disponibles para proyectar en este filtro.</p>
+                </div>`;
         }
 
-        async function mostrarEnVisorDirecto(p) {
-            const tituloEl = document.getElementById('visor-titulo');
-            const badgeEl = document.getElementById('visor-badge');
-            const comisionEl = document.getElementById('visor-comision');
-            const autorEl = document.getElementById('visor-autor');
-            const accionesEl = document.getElementById('visor-acciones');
-            const contenidoEl = document.getElementById('visor-contenido');
+        async function mostrarEnVisor(p) {
+            const tipo = p.tipo_documento || 'Proyecto de Acuerdo';
+            document.getElementById('visor-badge').innerText = `${tipo} • ${p.codigo_radicado}`;
+            document.getElementById('visor-comision').innerText = `Comisión ${p.comision}`;
+            document.getElementById('visor-titulo').innerText = p.titulo;
+            document.getElementById('visor-autor').innerText = `Autor / Ponente: H.C. ${p.autor} | Estado: ${p.estado}`;
 
-            if (!p) {
-                badgeEl.innerText = 'SIN DOCUMENTO';
-                comisionEl.innerText = filtroComisionActual;
-                tituloEl.innerText = 'No hay documento seleccionado';
-                autorEl.innerText = 'Sin documentos radicados para proyectar.';
-                accionesEl.innerHTML = '';
-                contenidoEl.innerHTML = `
-                    <div class="text-center text-slate-400 my-auto py-20">
-                        <i class="fa-solid fa-folder-open text-5xl mb-3 text-slate-300"></i>
-                        <p class="font-bold text-slate-600">Sin documentos para proyectar en esta comisión.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            badgeEl.innerText = `${p.tipo_documento || 'PROYECTO DE ACUERDO'} • ${p.codigo_radicado}`;
-            comisionEl.innerText = `Comisión: ${p.comision}`;
-            tituloEl.innerText = p.titulo;
-            autorEl.innerText = `Ponente: ${p.autor} ${p.archivo_nombre ? '• Archivo: ' + p.archivo_nombre : ''}`;
-
-            const accionesAdminDoc = esModoAdmin ? `
-                <button onclick="someterProyectoAVotacion(${p.id_proyecto})" class="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase px-3.5 py-2 rounded-lg border border-emerald-400/30 shadow transition">
+            const esReservada = p.visible_publico === false;
+            const controlesAdminVisor = esModoAdmin ? `
+                ${esReservada
+                    ? `<button onclick="cambiarVisibilidadProyecto(${p.id_proyecto}, true)" class="bg-sky-600 hover:bg-sky-500 text-white px-3 py-1.5 rounded-lg text-xs font-extrabold transition shadow"><i class="fa-solid fa-eye mr-1"></i> Proyectar al Recinto</button>`
+                    : `<button onclick="cambiarVisibilidadProyecto(${p.id_proyecto}, false)" class="bg-slate-700 hover:bg-slate-600 text-amber-300 px-3 py-1.5 rounded-lg text-xs font-bold transition"><i class="fa-solid fa-eye-slash mr-1"></i> Reservar en Secretaría</button>`
+                }
+                <button onclick="someterProyectoAVotacion(${p.id_proyecto})" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-extrabold transition shadow">
                     <i class="fa-solid fa-check-to-slot mr-1"></i> Someter a Votación
                 </button>
-                <select onchange="cambiarEstadoProyecto(${p.id_proyecto}, this.value)" class="bg-slate-900 text-white border border-white/15 rounded-lg px-2.5 py-2 text-xs font-bold">
-                    ${['Radicado', 'En Comisión', 'En Plenaria', 'Aprobado', 'Archivado', 'Retirado'].map(est => 
-                        `<option value="${est}" ${p.estado === est ? 'selected' : ''}>${est}</option>`
-                    ).join('')}
+                <select onchange="cambiarEstadoProyecto(${p.id_proyecto}, this.value)" class="bg-[#0f172a] border border-white/20 text-white text-xs font-bold rounded-lg px-2.5 py-1.5">
+                    <option value="Radicado" ${p.estado==='Radicado'?'selected':''}>Radicado</option>
+                    <option value="En Primer Debate" ${p.estado==='En Primer Debate'?'selected':''}>Primer Debate</option>
+                    <option value="En Segundo Debate" ${p.estado==='En Segundo Debate'?'selected':''}>Segundo Debate</option>
+                    <option value="Aprobado" ${p.estado==='Aprobado'?'selected':''}>Aprobado</option>
+                    <option value="Archivado" ${p.estado==='Archivado'?'selected':''}>Archivado</option>
                 </select>
-                <button onclick="eliminarProyecto(${p.id_proyecto})" class="bg-rose-700 hover:bg-rose-600 text-white px-3 py-2 rounded-lg text-xs font-bold" title="Eliminar">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            ` : `
-                <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-3 py-1.5 rounded-lg text-xs font-extrabold uppercase">
-                    ${p.estado}
-                </span>
+                <button onclick="eliminarProyecto(${p.id_proyecto})" class="bg-rose-700 hover:bg-rose-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+            ` : '';
+
+            const acciones = document.getElementById('visor-acciones');
+            acciones.innerHTML = `
+                <button onclick="cambiarZoom(-2)" class="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold" title="Reducir letra">A-</button>
+                <button onclick="cambiarZoom(2)" class="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold" title="Aumentar letra">A+</button>
+                <button onclick="pantallaCompletaVisor()" class="bg-[#c9a24b] hover:bg-[#e5c16c] text-slate-950 px-3 py-1.5 rounded-lg text-xs font-extrabold"><i class="fa-solid fa-expand mr-1"></i> Pantalla Completa</button>
+                ${p.archivo_contenido ? `<a href="${p.archivo_contenido}" download="${p.archivo_nombre}" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-download mr-1"></i> Descargar</a>` : ''}
+                ${controlesAdminVisor}
             `;
 
-            accionesEl.innerHTML = `
-                ${accionesAdminDoc}
-                <div class="flex items-center bg-slate-900 rounded-lg border border-white/15 overflow-hidden">
-                    <button onclick="cambiarZoomTexto(-2)" class="px-2.5 py-2 text-xs font-bold hover:bg-slate-800 text-white" title="Reducir letra">A-</button>
-                    <button onclick="cambiarZoomTexto(2)" class="px-2.5 py-2 text-xs font-bold hover:bg-slate-800 text-[#e5c16c]" title="Agrandar letra">A+</button>
-                </div>
-                <button onclick="togglePantallaCompletaVisor()" class="bg-[#c9a24b] hover:bg-[#e5c16c] text-slate-950 font-extrabold text-xs uppercase px-3.5 py-2 rounded-lg">
-                    <i class="fa-solid fa-expand mr-1"></i> Pantalla Completa
-                </button>
-            `;
+            const contenido = document.getElementById('visor-contenido');
+            contenido.innerHTML = '<div class="my-auto text-slate-500 font-semibold py-10"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Cargando documento oficial...</div>';
 
-            const nombreArchivo = (p.archivo_nombre || '').toLowerCase();
+            if (p.archivo_contenido) {
+                const nombre = (p.archivo_nombre || '').toLowerCase();
 
-            if (p.archivo_contenido && (p.archivo_contenido.startsWith('data:application/pdf') || nombreArchivo.endsWith('.pdf'))) {
-                contenidoEl.className = 'flex-1 bg-slate-900 p-0';
-                contenidoEl.innerHTML = `<iframe src="${p.archivo_contenido}" class="w-full h-[82vh] border-0"></iframe>`;
-                return;
-            }
-
-            if (p.archivo_contenido && nombreArchivo.endsWith('.docx')) {
-                contenidoEl.className = 'flex-1 bg-slate-200 p-6 md:p-8 overflow-y-auto flex justify-center items-start';
-                contenidoEl.innerHTML = `<div class="text-center py-12 font-bold text-slate-600"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Cargando documento oficial en pantalla...</div>`;
-                try {
-                    const base64Data = p.archivo_contenido.split(',')[1];
-                    const binaryString = window.atob(base64Data);
-                    const len = binaryString.length;
-                    const bytes = new Uint8Array(len);
-                    for (let i = 0; i < len; i++) {
-                        bytes[i] = binaryString.charCodeAt(i);
-                    }
-                    const result = await mammoth.convertToHtml({ arrayBuffer: bytes.buffer });
-                    contenidoEl.innerHTML = `
-                        <div class="bg-white text-slate-900 max-w-4xl w-full p-8 md:p-12 rounded-xl shadow-lg border-t-4 border-[#c9a24b] leading-relaxed">
-                            <div class="border-b pb-3 mb-5 flex justify-between items-center text-xs">
-                                <span class="font-extrabold uppercase tracking-widest text-blue-950">Concejo Municipal de Ibagué • ${p.archivo_nombre}</span>
-                                <span class="font-bold text-slate-500">${p.codigo_radicado}</span>
-                            </div>
-                            <div id="area-texto-documento" class="doc-render" style="font-size: ${zoomTexto}px;">${result.value}</div>
-                        </div>
-                    `;
-                } catch (err) {
-                    contenidoEl.innerHTML = `<div class="bg-white p-6 rounded-xl text-rose-600 font-bold">No se pudo leer este archivo .docx directamente. Guárdelo en Word como PDF o .docx nuevo y súbalo nuevamente.</div>`;
+                if (nombre.endsWith('.pdf')) {
+                    contenido.innerHTML = `<iframe src="${p.archivo_contenido}" class="w-full h-[78vh] rounded-xl border border-slate-300 bg-white shadow"></iframe>`;
+                    return;
                 }
-                return;
+
+                if (nombre.endsWith('.docx')) {
+                    try {
+                        const base64Data = p.archivo_contenido.split(',')[1];
+                        const binaryString = atob(base64Data);
+                        const len = binaryString.length;
+                        const bytes = new Uint8Array(len);
+                        for (let i = 0; i < len; i++) bytes[i] = binaryString.charCodeAt(i);
+
+                        const result = await mammoth.convertToHtml({ arrayBuffer: bytes.buffer });
+                        contenido.innerHTML = `
+                            <div id="hoja-documento" class="bg-white w-full max-w-4xl p-8 md:p-12 rounded-xl shadow-md border border-slate-200 text-slate-900 leading-relaxed doc-render" style="font-size: ${zoomTexto}px;">
+                                ${result.value}
+                            </div>`;
+                        return;
+                    } catch (err) {
+                        contenido.innerHTML = `<div class="p-6 text-rose-700 font-bold">No se pudo renderizar el archivo Word: ${err.message}</div>`;
+                        return;
+                    }
+                }
+
+                if (nombre.endsWith('.txt')) {
+                    const base64Data = p.archivo_contenido.split(',')[1];
+                    const textoPlano = decodeURIComponent(escape(atob(base64Data)));
+                    contenido.innerHTML = `
+                        <div id="hoja-documento" class="bg-white w-full max-w-4xl p-8 md:p-12 rounded-xl shadow-md border border-slate-200 text-slate-900 whitespace-pre-wrap leading-relaxed" style="font-size: ${zoomTexto}px;">${textoPlano}</div>`;
+                    return;
+                }
             }
 
-            if (p.archivo_contenido && nombreArchivo.endsWith('.txt')) {
-                const base64Data = p.archivo_contenido.split(',')[1];
-                const textoDecodificado = decodeURIComponent(escape(window.atob(base64Data)));
-                contenidoEl.className = 'flex-1 bg-slate-200 p-6 md:p-8 overflow-y-auto flex justify-center items-start';
-                contenidoEl.innerHTML = `
-                    <div class="bg-white text-slate-900 max-w-4xl w-full p-8 md:p-12 rounded-xl shadow-lg border-t-4 border-[#c9a24b]">
-                        <div id="area-texto-documento" class="whitespace-pre-line leading-relaxed" style="font-size: ${zoomTexto}px;">${textoDecodificado}</div>
-                    </div>
-                `;
-                return;
-            }
-
-            contenidoEl.className = 'flex-1 bg-slate-100 p-6 md:p-8 overflow-y-auto flex justify-center items-start';
-            contenidoEl.innerHTML = `
-                <div class="bg-white text-slate-900 max-w-4xl w-full p-8 rounded-xl shadow-md border-t-4 border-[#c9a24b]">
-                    <div class="border-b pb-3 mb-5 flex justify-between items-center">
-                        <span class="text-xs font-extrabold uppercase tracking-widest text-blue-950">Concejo Municipal de Ibagué • Fundación Creer y Merecer</span>
-                        <span class="text-xs font-bold text-slate-500">${p.codigo_radicado}</span>
-                    </div>
-                    <h2 class="font-solemne text-xl md:text-2xl uppercase font-bold mb-5 text-slate-900">${p.titulo}</h2>
-                    <div id="area-texto-documento" class="leading-relaxed whitespace-pre-line text-slate-800" style="font-size: ${zoomTexto}px;">
-                        ${p.descripcion || 'Nota: Si subió un archivo Word antiguo (.doc), ábralo en Word, guárdelo como .docx o .pdf y súbalo de nuevo para visualizarlo directamente aquí.'}
-                    </div>
-                </div>
-            `;
+            contenido.innerHTML = `
+                <div id="hoja-documento" class="bg-white w-full max-w-4xl p-8 md:p-12 rounded-xl shadow-md border border-slate-200 text-slate-900 whitespace-pre-wrap leading-relaxed" style="font-size: ${zoomTexto}px;">${p.descripcion || 'Documento radicado sin contenido de texto adicional.'}</div>`;
         }
 
-        function togglePantallaCompletaVisor() {
+        function cambiarZoom(delta) {
+            zoomTexto = Math.min(34, Math.max(12, zoomTexto + delta));
+            const hoja = document.getElementById('hoja-documento');
+            if (hoja) hoja.style.fontSize = `${zoomTexto}px`;
+        }
+
+        function pantallaCompletaVisor() {
             const elem = document.getElementById('visor-directo-container');
             if (!document.fullscreenElement) {
-                elem.requestFullscreen().catch(err => alert('No se pudo activar pantalla completa: ' + err.message));
+                elem.requestFullscreen().catch(err => alert('Error al proyectar: ' + err.message));
             } else {
                 document.exitFullscreen();
             }
         }
 
-        async function cambiarEstadoProyecto(id, estado) {
-            const res = await fetchAdmin(`/api/proyectos/${id}/estado`, {
+        async function cambiarVisibilidadProyecto(id_proyecto, visible_publico) {
+            const res = await fetchAdmin(`/api/proyectos/${id_proyecto}/visibilidad`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ visible_publico })
+            });
+            if (res.ok) {
+                notificar(visible_publico ? '📢 Proposición proyectada públicamente al recinto' : '🔒 Proposición reservada nuevamente en Secretaría');
+                await cargarProyectos(false);
+            }
+        }
+
+        async function cambiarEstadoProyecto(id_proyecto, estado) {
+            const res = await fetchAdmin(`/api/proyectos/${id_proyecto}/estado`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ estado })
             });
             if (res.ok) {
-                notificar('✅ Estado legislativo actualizado');
+                notificar(`📌 Estado actualizado a: ${estado}`);
                 await cargarProyectos();
             }
         }
 
-        async function eliminarProyecto(id) {
-            if (!confirm('¿Confirma eliminar este documento del archivo?')) return;
-            const res = await fetchAdmin(`/api/proyectos/${id}`, { method: 'DELETE' });
+        async function eliminarProyecto(id_proyecto) {
+            if (!confirm('¿Confirma eliminar este documento del archivo de Secretaría General?')) return;
+            const res = await fetchAdmin(`/api/proyectos/${id_proyecto}`, { method: 'DELETE' });
             if (res.ok) {
                 proyectoSeleccionadoId = null;
                 notificar('🗑️ Documento eliminado');
