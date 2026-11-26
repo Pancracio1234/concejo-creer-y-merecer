@@ -575,11 +575,11 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 4: SISTEMA DE VOTACIÓN NOMINAL VINCULADO A PROYECTOS              -->
+        <!-- TAB 4: SISTEMA DE VOTACIÓN NOMINAL CON TIEMPO Y REGISTRO ÚNICO        -->
         <!-- ===================================================================== -->
         <section id="tab-votacion" class="tab-content hidden">
             
-            <!-- Encabezado y Gestión de Urnas (Mesa Directiva / Secretaría) -->
+            <!-- Encabezado y Gestión de Urnas -->
             <div class="panel-institucional rounded-2xl p-6 mb-6 border-t-4 border-t-[#c9a24b]">
                 <div class="flex flex-wrap justify-between items-center gap-4">
                     <div>
@@ -590,7 +590,7 @@
                             Urna de Votación del Concejo Municipal
                         </h2>
                         <p class="text-xs text-slate-400 mt-1">
-                            Seleccione un <strong>Proyecto de Acuerdo o Proposición</strong> del Orden del Día para someterlo a votación nominal.
+                            Cada Honorable Concejal dispone de un único ingreso y un solo voto dentro del tiempo reglamentario fijado para la urna.
                         </p>
                     </div>
 
@@ -604,10 +604,10 @@
                     </div>
                 </div>
 
-                <!-- Formulario Colapsable para Crear Votación Seleccionando Proyecto -->
+                <!-- Formulario Colapsable para Crear Votación con Tiempo Límite -->
                 <div id="panel-form-votacion" class="hidden mt-5 pt-5 border-t border-white/10">
                     <div class="grid md:grid-cols-12 gap-4 items-end">
-                        <div class="md:col-span-5">
+                        <div class="md:col-span-4">
                             <label class="block text-xs font-bold uppercase text-[#e5c16c] mb-1">
                                 <i class="fa-solid fa-scale-balanced mr-1"></i> Proyecto / Proposición Radicada
                             </label>
@@ -619,12 +619,24 @@
                             <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Asunto a Someter a Votación</label>
                             <input type="text" id="vot-titulo" placeholder="Seleccione un proyecto o escriba el asunto..." class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm">
                         </div>
-                        <div class="md:col-span-3">
+                        <div class="md:col-span-2">
                             <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Ámbito</label>
                             <select id="vot-ambito" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm font-semibold">
                                 <option value="Plenaria">Plenaria (Todos)</option>
                                 <option value="Comisión Primera">Comisión Primera</option>
                                 <option value="Comisión Segunda">Comisión Segunda</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold uppercase text-[#e5c16c] mb-1">
+                                <i class="fa-solid fa-hourglass-half mr-1"></i> Tiempo Urna
+                            </label>
+                            <select id="vot-duracion-seg" class="w-full border border-[#c9a24b]/50 bg-[#060a14] text-[#e5c16c] rounded-xl px-3 py-2.5 text-sm font-extrabold">
+                                <option value="60">1 Minuto (60s)</option>
+                                <option value="120" selected>2 Minutos (120s)</option>
+                                <option value="180">3 Minutos (180s)</option>
+                                <option value="300">5 Minutos (300s)</option>
+                                <option value="600">10 Minutos (600s)</option>
                             </select>
                         </div>
                     </div>
@@ -646,23 +658,23 @@
 
             <div class="grid lg:grid-cols-12 gap-6 items-start">
                 
-                <!-- COLUMNA IZQUIERDA (5 cols): CABINA DE AUTENTICACIÓN Y VOTO DEL CONCEJAL -->
+                <!-- COLUMNA IZQUIERDA (5 cols): CABINA DE AUTENTICACIÓN Y VOTO ÚNICO -->
                 <div class="lg:col-span-5 panel-institucional rounded-2xl p-6 border border-[#c9a24b]/40">
                     <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
                         <div>
                             <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#c9a24b]">Curul Electrónica</span>
                             <h3 class="font-solemne text-xl uppercase font-bold text-white">Cabina de Votación</h3>
                         </div>
-                        <span class="bg-white/5 border border-white/10 text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg text-slate-300">
-                            Modo Prueba Activo
+                        <span class="bg-amber-500/15 border border-amber-500/40 text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg text-amber-300">
+                            Ingreso Único
                         </span>
                     </div>
 
                     <!-- Vista 1: Formulario de Inicio de Sesión -->
                     <div id="cabina-login-form" class="space-y-4">
                         <div class="bg-[#060a14]/85 p-3.5 rounded-xl border border-[#c9a24b]/25 text-xs text-slate-300">
-                            <i class="fa-solid fa-circle-info text-[#e5c16c] mr-1.5"></i>
-                            Inicie sesión con su <strong>Primer Nombre</strong> y <strong>Primer Apellido</strong> registrados en curul, y digite cualquier contraseña de prueba.
+                            <i class="fa-solid fa-shield-halved text-[#e5c16c] mr-1.5"></i>
+                            Inicie sesión con su <strong>Primer Nombre</strong> y <strong>Primer Apellido</strong>. Una vez registrado en esta votación, no podrá volver a ingresar.
                         </div>
 
                         <div>
@@ -701,12 +713,12 @@
                         </div>
 
                         <div id="estado-mi-voto-box" class="bg-white/[0.03] p-3.5 rounded-xl border border-white/10 text-center">
-                            <span class="text-xs text-slate-400">Su voto en esta urna: </span>
-                            <strong id="mi-voto-actual-texto" class="text-sm uppercase text-[#e5c16c]">Aún sin emitir</strong>
+                            <span class="text-xs text-slate-400">Estado de su participación: </span>
+                            <strong id="mi-voto-actual-texto" class="text-sm uppercase text-[#e5c16c]">Habilitado para emitir 1 voto</strong>
                         </div>
 
                         <div id="botones-emitir-voto" class="space-y-3">
-                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 text-center">Seleccione su sentido de votación:</p>
+                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 text-center">Seleccione su sentido de votación (Definitivo):</p>
                             <button type="button" onclick="emitirVoto('SI')" class="w-full bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold py-4 px-5 rounded-2xl text-sm uppercase tracking-wider border border-emerald-400/35 shadow-lg transition flex items-center justify-center gap-3">
                                 <i class="fa-solid fa-thumbs-up text-lg"></i> VOTAR SÍ (POSITIVO)
                             </button>
@@ -720,10 +732,10 @@
                     </div>
                 </div>
 
-                <!-- COLUMNA DERECHA (7 cols): RESULTADOS EN TIEMPO REAL Y VOTO NOMINAL -->
+                <!-- COLUMNA DERECHA (7 cols): RESULTADOS EN TIEMPO REAL Y CRONÓMETRO DE URNA -->
                 <div class="lg:col-span-7 panel-institucional rounded-2xl p-6">
                     <div class="flex flex-wrap justify-between items-start gap-3 border-b border-white/10 pb-4 mb-5">
-                        <div>
+                        <div class="flex-1 min-w-[220px]">
                             <div class="flex items-center gap-2 flex-wrap mb-1">
                                 <span id="vot-visor-estado" class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded">URNA ABIERTA</span>
                                 <span id="vot-visor-ambito" class="text-xs font-bold text-[#c9a24b]">Plenaria</span>
@@ -733,8 +745,14 @@
                             <p id="vot-visor-desc" class="text-xs text-slate-400 mt-1">--</p>
                         </div>
 
-                        <div id="vot-controles-mesa" class="flex items-center gap-2 flex-wrap"></div>
+                        <!-- Cronómetro Reglamentario de Votación -->
+                        <div class="bg-[#060a14] border border-[#c9a24b]/45 px-4 py-2.5 rounded-2xl text-center shrink-0">
+                            <span class="block text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Tiempo de Urna</span>
+                            <span id="vot-cronometro-display" class="font-mono-digital text-2xl md:text-3xl font-extrabold text-[#e5c16c]">--:--</span>
+                        </div>
                     </div>
+
+                    <div id="vot-controles-mesa" class="flex items-center justify-end gap-2 flex-wrap mb-5"></div>
 
                     <!-- Marcador de Resultados -->
                     <div class="grid grid-cols-3 gap-3 mb-6">
@@ -1012,6 +1030,8 @@
         let votacionSeleccionadaId = null;
         let concejalAutenticado = null;
         let intervaloVotacion = null;
+        let intervaloCuentaRegresivaUrna = null;
+        let segundosRestantesUrna = 0;
 
         let filtroComisionActual = 'TODOS';
         let proyectoSeleccionadoId = null;
@@ -1216,7 +1236,7 @@
             const toast = document.getElementById('toast');
             toast.innerText = msg;
             toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3200);
+            setTimeout(() => toast.classList.add('hidden'), 3400);
         }
 
         document.addEventListener('keydown', (e) => {
@@ -1229,7 +1249,6 @@
 
         window.onload = async () => {
             aplicarLogoGuardado();
-            restaurarConcejalGuardado();
             await cargarIntegrantes();
             await cargarProyectos();
             await cargarSesiones();
@@ -1242,6 +1261,26 @@
                     cargarDetalleVotacion();
                 }
             }, 3000);
+
+            intervaloCuentaRegresivaUrna = setInterval(() => {
+                const displayUrna = document.getElementById('vot-cronometro-display');
+                if (!displayUrna || !votacionSeleccionadaId) return;
+
+                if (segundosRestantesUrna > 0) {
+                    segundosRestantesUrna--;
+                    displayUrna.innerText = formatearMMSS(segundosRestantesUrna);
+                    if (segundosRestantesUrna <= 10) {
+                        displayUrna.className = 'font-mono-digital text-2xl md:text-3xl font-extrabold text-rose-400 animate-pulse';
+                    } else {
+                        displayUrna.className = 'font-mono-digital text-2xl md:text-3xl font-extrabold text-[#e5c16c]';
+                    }
+                    if (segundosRestantesUrna === 0) {
+                        sonarTiempoFinalizado();
+                        notificar('🔔 Tiempo reglamentario de votación concluido. Urna cerrada.');
+                        cargarVotaciones();
+                    }
+                }
+            }, 1000);
         };
 
         function mostrarTab(tabId) {
@@ -2129,7 +2168,7 @@
         }
 
         // =====================================================================
-        // 5. SISTEMA DE VOTACIÓN NOMINAL VINCULADO A PROYECTOS
+        // 5. SISTEMA DE VOTACIÓN NOMINAL CON TIEMPO LÍMITE Y REGISTRO ÚNICO
         // =====================================================================
         function actualizarSelectProyectosVotacion() {
             const selectProy = document.getElementById('vot-select-proyecto');
@@ -2197,16 +2236,6 @@
             }
         }
 
-        function restaurarConcejalGuardado() {
-            try {
-                const guardado = sessionStorage.getItem('concejal_autenticado_votacion');
-                if (guardado) {
-                    concejalAutenticado = JSON.parse(guardado);
-                    actualizarCabinaConcejal();
-                }
-            } catch (e) {}
-        }
-
         function actualizarCabinaConcejal() {
             const formLogin = document.getElementById('cabina-login-form');
             const panelAuth = document.getElementById('cabina-concejal-autenticado');
@@ -2224,6 +2253,10 @@
         }
 
         async function iniciarSesionConcejal() {
+            if (!votacionSeleccionadaId) {
+                return alert('Primero debe haber una votación abierta en la urna para ingresar.');
+            }
+
             const primer_nombre = document.getElementById('login-primer-nombre').value;
             const primer_apellido = document.getElementById('login-primer-apellido').value;
             const password = document.getElementById('login-password').value;
@@ -2236,21 +2269,24 @@
                 const res = await fetch('/api/votacion/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ primer_nombre, primer_apellido, password })
+                    body: JSON.stringify({
+                        primer_nombre,
+                        primer_apellido,
+                        password,
+                        id_votacion: votacionSeleccionadaId
+                    })
                 });
                 const data = await res.json();
                 if (!res.ok) {
-                    return alert(data.error || 'No se pudo verificar la identidad del concejal.');
+                    return alert(data.error || 'No se pudo verificar el ingreso del concejal.');
                 }
 
                 concejalAutenticado = data.concejal;
-                try {
-                    sessionStorage.setItem('concejal_autenticado_votacion', JSON.stringify(concejalAutenticado));
-                } catch (e) {}
-
+                document.getElementById('login-primer-nombre').value = '';
+                document.getElementById('login-primer-apellido').value = '';
                 document.getElementById('login-password').value = '';
                 actualizarCabinaConcejal();
-                notificar(`✅ Bienvenido(a) H.C. ${concejalAutenticado.nombre_completo}`);
+                notificar(`✅ Registro único verificado: H.C. ${concejalAutenticado.nombre_completo}`);
                 await cargarDetalleVotacion();
             } catch (err) {
                 alert('Error de conexión al iniciar sesión: ' + err.message);
@@ -2259,11 +2295,7 @@
 
         function cerrarSesionConcejal() {
             concejalAutenticado = null;
-            try {
-                sessionStorage.removeItem('concejal_autenticado_votacion');
-            } catch (e) {}
             actualizarCabinaConcejal();
-            notificar('Sesión de curul cerrada');
         }
 
         async function crearVotacion() {
@@ -2271,6 +2303,7 @@
             const titulo = document.getElementById('vot-titulo').value;
             const descripcion = document.getElementById('vot-descripcion').value;
             const ambito = document.getElementById('vot-ambito').value;
+            const duracion_seg = parseInt(document.getElementById('vot-duracion-seg').value, 10) || 120;
 
             if (!titulo.trim()) {
                 return alert('Seleccione un proyecto del Orden del Día o escriba el asunto a votar.');
@@ -2285,7 +2318,8 @@
                         id_proyecto,
                         titulo,
                         descripcion,
-                        ambito
+                        ambito,
+                        duracion_seg
                     })
                 });
                 const data = await res.json();
@@ -2293,12 +2327,13 @@
                     return alert('Error al crear votación: ' + (data.error || 'Desconocido'));
                 }
 
+                cerrarSesionConcejal();
                 votacionSeleccionadaId = data.id_votacion;
                 document.getElementById('vot-select-proyecto').value = '';
                 document.getElementById('vot-titulo').value = '';
                 document.getElementById('vot-descripcion').value = '';
                 document.getElementById('panel-form-votacion').classList.add('hidden');
-                notificar('🗳️ Urna de votación abierta');
+                notificar(`🗳️ Urna abierta por ${Math.floor(duracion_seg / 60)} min`);
                 await cargarVotaciones();
             } catch (err) {
                 alert('Error de red: ' + err.message);
@@ -2338,6 +2373,7 @@
         }
 
         async function cambiarVotacionSeleccionada() {
+            cerrarSesionConcejal();
             votacionSeleccionadaId = document.getElementById('select-votacion-activa').value;
             await cargarDetalleVotacion();
         }
@@ -2347,11 +2383,11 @@
                 renderizarDetalleVotacion(null, []);
                 return;
             }
-            const votacion = votacionesGlobal.find(v => String(v.id_votacion) === String(votacionSeleccionadaId));
             try {
                 const res = await fetch(`/api/votaciones/${votacionSeleccionadaId}/votos`);
-                const votos = res.ok ? await res.json() : [];
-                renderizarDetalleVotacion(votacion, votos);
+                if (!res.ok) return;
+                const payload = await res.json();
+                renderizarDetalleVotacion(payload.votacion, payload.votos || []);
             } catch (err) {
                 console.error('Error cargando votos:', err);
             }
@@ -2367,10 +2403,13 @@
             const listaEl = document.getElementById('lista-votos-nominales');
             const miVotoEl = document.getElementById('mi-voto-actual-texto');
             const botonesVotoEl = document.getElementById('botones-emitir-voto');
+            const displayUrnaEl = document.getElementById('vot-cronometro-display');
 
             if (!votacion) {
+                segundosRestantesUrna = 0;
+                if (displayUrnaEl) displayUrnaEl.innerText = '--:--';
                 tituloEl.innerText = 'No hay ninguna votación activa';
-                descEl.innerText = 'Presione “Abrir Nueva Votación” y seleccione un proyecto del Orden del Día.';
+                descEl.innerText = 'Presione “Abrir Nueva Votación”, seleccione un proyecto y fije el tiempo reglamentario.';
                 estadoEl.innerText = 'EN ESPERA';
                 estadoEl.className = 'bg-slate-700 text-slate-300 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
                 ambitoEl.innerText = '--';
@@ -2403,14 +2442,20 @@
             }
 
             const estaAbierta = votacion.estado === 'Abierta';
+            segundosRestantesUrna = estaAbierta ? (parseInt(votacion.segundos_restantes, 10) || 0) : 0;
+            if (displayUrnaEl) {
+                displayUrnaEl.innerText = estaAbierta ? formatearMMSS(segundosRestantesUrna) : '00:00';
+                displayUrnaEl.className = estaAbierta
+                    ? 'font-mono-digital text-2xl md:text-3xl font-extrabold text-[#e5c16c]'
+                    : 'font-mono-digital text-2xl md:text-3xl font-extrabold text-rose-500';
+            }
+
             if (estaAbierta) {
                 estadoEl.innerText = 'URNA ABIERTA';
                 estadoEl.className = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
-                if (botonesVotoEl) botonesVotoEl.classList.remove('opacity-40', 'pointer-events-none');
             } else {
                 estadoEl.innerText = 'URNA CERRADA';
                 estadoEl.className = 'bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
-                if (botonesVotoEl) botonesVotoEl.classList.add('opacity-40', 'pointer-events-none');
             }
 
             const btnVerDocumento = votacion.id_proyecto
@@ -2420,7 +2465,7 @@
             controlesEl.innerHTML = `
                 ${btnVerDocumento}
                 ${estaAbierta
-                    ? `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Cerrada')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock mr-1"></i> Cerrar Urna</button>`
+                    ? `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Cerrada')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock mr-1"></i> Cerrar Urna Ahora</button>`
                     : `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Abierta')" class="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock-open mr-1"></i> Reabrir Urna</button>`
                 }
                 <button onclick="eliminarVotacion(${votacion.id_votacion})" class="bg-rose-500/15 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/30 px-3 py-2 rounded-xl text-xs font-bold transition" title="Eliminar votación">
@@ -2441,12 +2486,18 @@
             document.getElementById('pct-votos-abs').innerText = total ? `${Math.round((abs / total) * 100)}%` : '0%';
             document.getElementById('total-votos-emitidos').innerText = total;
 
-            if (concejalAutenticado && miVotoEl) {
+            if (concejalAutenticado) {
                 const miVoto = votos.find(v => v.id_integrante === concejalAutenticado.id_integrante);
-                if (miVoto) {
-                    miVotoEl.innerText = miVoto.opcion === 'SI' ? 'SÍ (POSITIVO)' : miVoto.opcion === 'NO' ? 'NO (NEGATIVO)' : 'ABSTENCIÓN';
+                if (!estaAbierta || miVoto) {
+                    if (botonesVotoEl) botonesVotoEl.classList.add('opacity-40', 'pointer-events-none');
+                    if (miVotoEl) {
+                        miVotoEl.innerText = miVoto
+                            ? `Voto registrado (${miVoto.opcion}) — Bloqueado`
+                            : 'Tiempo expirado — Urna cerrada';
+                    }
                 } else {
-                    miVotoEl.innerText = 'Aún sin emitir';
+                    if (botonesVotoEl) botonesVotoEl.classList.remove('opacity-40', 'pointer-events-none');
+                    if (miVotoEl) miVotoEl.innerText = 'Habilitado para emitir 1 voto';
                 }
             }
 
@@ -2498,7 +2549,10 @@
                 if (!res.ok) {
                     return alert(data.error || 'No se pudo registrar el voto.');
                 }
-                notificar(`🗳️ Voto registrado (${opcion}) para H.C. ${concejalAutenticado.nombre_completo}`);
+                const nombreVotante = concejalAutenticado.nombre_completo;
+                // Cerrar sesión de curul automáticamente tras votar para impedir reingreso
+                cerrarSesionConcejal();
+                notificar(`🗳️ Voto definitivo (${opcion}) registrado para H.C. ${nombreVotante}`);
                 await cargarDetalleVotacion();
             } catch (err) {
                 alert('Error de red al emitir voto: ' + err.message);
@@ -2521,6 +2575,7 @@
             if (!confirm('¿Confirma eliminar esta votación y todos sus votos registrados?')) return;
             const res = await fetch(`/api/votaciones/${id_votacion}`, { method: 'DELETE' });
             if (res.ok) {
+                cerrarSesionConcejal();
                 votacionSeleccionadaId = null;
                 notificar('🗑️ Votación eliminada');
                 await cargarVotaciones();
