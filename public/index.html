@@ -575,7 +575,7 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 4: SISTEMA DE VOTACIÓN NOMINAL CON INICIO DE SESIÓN               -->
+        <!-- TAB 4: SISTEMA DE VOTACIÓN NOMINAL VINCULADO A PROYECTOS              -->
         <!-- ===================================================================== -->
         <section id="tab-votacion" class="tab-content hidden">
             
@@ -590,7 +590,7 @@
                             Urna de Votación del Concejo Municipal
                         </h2>
                         <p class="text-xs text-slate-400 mt-1">
-                            Cada Honorable Concejal debe autenticarse con su <strong>Primer Nombre</strong> y <strong>Primer Apellido</strong> para registrar su voto oficial.
+                            Seleccione un <strong>Proyecto de Acuerdo o Proposición</strong> del Orden del Día para someterlo a votación nominal.
                         </p>
                     </div>
 
@@ -604,16 +604,20 @@
                     </div>
                 </div>
 
-                <!-- Formulario Colapsable para Crear Votación -->
+                <!-- Formulario Colapsable para Crear Votación Seleccionando Proyecto -->
                 <div id="panel-form-votacion" class="hidden mt-5 pt-5 border-t border-white/10">
                     <div class="grid md:grid-cols-12 gap-4 items-end">
                         <div class="md:col-span-5">
-                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Asunto / Proyecto a Someter a Votación</label>
-                            <input type="text" id="vot-titulo" placeholder="Ej: Aprobación en Primer Debate Proyecto de Acuerdo 001" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm">
+                            <label class="block text-xs font-bold uppercase text-[#e5c16c] mb-1">
+                                <i class="fa-solid fa-scale-balanced mr-1"></i> Proyecto / Proposición Radicada
+                            </label>
+                            <select id="vot-select-proyecto" onchange="autocompletarDatosDesdeProyecto()" class="w-full border border-[#c9a24b]/50 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm font-semibold focus:border-[#c9a24b] focus:outline-none">
+                                <option value="">-- Seleccionar proyecto del Orden del Día --</option>
+                            </select>
                         </div>
                         <div class="md:col-span-4">
-                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Detalle o Proposición (Opcional)</label>
-                            <input type="text" id="vot-descripcion" placeholder="Ej: Votación nominal del articulado completo" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm">
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Asunto a Someter a Votación</label>
+                            <input type="text" id="vot-titulo" placeholder="Seleccione un proyecto o escriba el asunto..." class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm">
                         </div>
                         <div class="md:col-span-3">
                             <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Ámbito</label>
@@ -624,11 +628,18 @@
                             </select>
                         </div>
                     </div>
-                    <div class="flex justify-end gap-2 mt-4">
-                        <button onclick="toggleFormNuevaVotacion()" class="px-4 py-2 text-xs font-bold uppercase text-slate-400 hover:text-white">Cancelar</button>
-                        <button onclick="crearVotacion()" class="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-lg">
-                            <i class="fa-solid fa-box-open mr-1.5"></i> Iniciar Votación en Urna
-                        </button>
+
+                    <div class="grid md:grid-cols-12 gap-4 items-end mt-3">
+                        <div class="md:col-span-8">
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Detalle / Ponente / Observación</label>
+                            <input type="text" id="vot-descripcion" placeholder="Ej: Aprobación en Primer Debate del articulado completo" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm">
+                        </div>
+                        <div class="md:col-span-4 flex justify-end gap-2">
+                            <button onclick="toggleFormNuevaVotacion()" class="px-4 py-2.5 text-xs font-bold uppercase text-slate-400 hover:text-white">Cancelar</button>
+                            <button onclick="crearVotacion()" class="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-lg">
+                                <i class="fa-solid fa-box-open mr-1.5"></i> Iniciar Votación en Urna
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -656,12 +667,12 @@
 
                         <div>
                             <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Primer Nombre</label>
-                            <input type="text" id="login-primer-nombre" placeholder="Ej: Karen" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-2.5 text-sm focus:border-[#c9a24b] focus:outline-none">
+                            <input type="text" id="login-primer-nombre" placeholder="Ej: Kaory" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-2.5 text-sm focus:border-[#c9a24b] focus:outline-none">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Primer Apellido</label>
-                            <input type="text" id="login-primer-apellido" placeholder="Ej: Mahecha" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-2.5 text-sm focus:border-[#c9a24b] focus:outline-none">
+                            <input type="text" id="login-primer-apellido" placeholder="Ej: Carrero" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-2.5 text-sm focus:border-[#c9a24b] focus:outline-none">
                         </div>
 
                         <div>
@@ -713,15 +724,16 @@
                 <div class="lg:col-span-7 panel-institucional rounded-2xl p-6">
                     <div class="flex flex-wrap justify-between items-start gap-3 border-b border-white/10 pb-4 mb-5">
                         <div>
-                            <div class="flex items-center gap-2 mb-1">
+                            <div class="flex items-center gap-2 flex-wrap mb-1">
                                 <span id="vot-visor-estado" class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded">URNA ABIERTA</span>
                                 <span id="vot-visor-ambito" class="text-xs font-bold text-[#c9a24b]">Plenaria</span>
+                                <span id="vot-visor-proyecto-badge" class="hidden bg-[#c9a24b]/20 text-[#e5c16c] border border-[#c9a24b]/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded"></span>
                             </div>
                             <h3 id="vot-visor-titulo" class="font-solemne text-xl md:text-2xl uppercase font-bold text-white">Seleccione o cree una votación</h3>
                             <p id="vot-visor-desc" class="text-xs text-slate-400 mt-1">--</p>
                         </div>
 
-                        <div id="vot-controles-mesa" class="flex items-center gap-2"></div>
+                        <div id="vot-controles-mesa" class="flex items-center gap-2 flex-wrap"></div>
                     </div>
 
                     <!-- Marcador de Resultados -->
@@ -1224,7 +1236,6 @@
             await cargarVotaciones();
             actualizarDisplayCrono();
 
-            // Refresco automático en vivo cuando se está en la pestaña de Votación
             intervaloVotacion = setInterval(() => {
                 const tabVot = document.getElementById('tab-votacion');
                 if (tabVot && !tabVot.classList.contains('hidden') && votacionSeleccionadaId) {
@@ -1245,6 +1256,7 @@
             activeBtn.classList.remove('border-transparent', 'text-slate-400');
 
             if (tabId === 'votacion') {
+                actualizarSelectProyectosVotacion();
                 cargarVotaciones();
             }
         }
@@ -2117,10 +2129,72 @@
         }
 
         // =====================================================================
-        // 5. SISTEMA DE VOTACIÓN NOMINAL E INICIO DE SESIÓN DE CONCEJALES
+        // 5. SISTEMA DE VOTACIÓN NOMINAL VINCULADO A PROYECTOS
         // =====================================================================
+        function actualizarSelectProyectosVotacion() {
+            const selectProy = document.getElementById('vot-select-proyecto');
+            if (!selectProy) return;
+
+            const valorActual = selectProy.value;
+            selectProy.innerHTML = '<option value="">-- Seleccionar proyecto o proposición radicada --</option>';
+
+            proyectosGlobal.forEach(p => {
+                const tipo = p.tipo_documento || 'Proyecto de Acuerdo';
+                selectProy.innerHTML += `<option value="${p.id_proyecto}" class="bg-slate-900">${tipo} • ${p.codigo_radicado} — ${p.titulo} (${p.comision})</option>`;
+            });
+
+            if (valorActual && proyectosGlobal.some(p => String(p.id_proyecto) === String(valorActual))) {
+                selectProy.value = valorActual;
+            }
+        }
+
+        function autocompletarDatosDesdeProyecto() {
+            const selectProy = document.getElementById('vot-select-proyecto');
+            const idProy = selectProy ? selectProy.value : '';
+            if (!idProy) return;
+
+            const proyecto = proyectosGlobal.find(p => String(p.id_proyecto) === String(idProy));
+            if (!proyecto) return;
+
+            const tipo = proyecto.tipo_documento || 'Proyecto de Acuerdo';
+            document.getElementById('vot-titulo').value = `${tipo} No. ${proyecto.codigo_radicado}: ${proyecto.titulo}`;
+            document.getElementById('vot-descripcion').value = `Ponente: ${proyecto.autor} • Radicado: ${proyecto.codigo_radicado}`;
+
+            const selectAmbito = document.getElementById('vot-ambito');
+            if (proyecto.comision === 'Primera') {
+                selectAmbito.value = 'Comisión Primera';
+            } else if (proyecto.comision === 'Segunda') {
+                selectAmbito.value = 'Comisión Segunda';
+            } else {
+                selectAmbito.value = 'Plenaria';
+            }
+        }
+
+        function someterProyectoAVotacion(id_proyecto) {
+            mostrarTab('votacion');
+            const panel = document.getElementById('panel-form-votacion');
+            if (panel) panel.classList.remove('hidden');
+            actualizarSelectProyectosVotacion();
+            const selectProy = document.getElementById('vot-select-proyecto');
+            if (selectProy) {
+                selectProy.value = String(id_proyecto);
+                autocompletarDatosDesdeProyecto();
+            }
+        }
+
+        function irAVerProyecto(id_proyecto) {
+            filtroComisionActual = 'TODOS';
+            proyectoSeleccionadoId = parseInt(id_proyecto, 10);
+            mostrarTab('proyectos');
+            renderizarProyectos();
+        }
+
         function toggleFormNuevaVotacion() {
-            document.getElementById('panel-form-votacion').classList.toggle('hidden');
+            const panel = document.getElementById('panel-form-votacion');
+            panel.classList.toggle('hidden');
+            if (!panel.classList.contains('hidden')) {
+                actualizarSelectProyectosVotacion();
+            }
         }
 
         function restaurarConcejalGuardado() {
@@ -2193,12 +2267,13 @@
         }
 
         async function crearVotacion() {
+            const id_proyecto = document.getElementById('vot-select-proyecto').value || null;
             const titulo = document.getElementById('vot-titulo').value;
             const descripcion = document.getElementById('vot-descripcion').value;
             const ambito = document.getElementById('vot-ambito').value;
 
             if (!titulo.trim()) {
-                return alert('Ingrese el título o asunto de la votación.');
+                return alert('Seleccione un proyecto del Orden del Día o escriba el asunto a votar.');
             }
 
             try {
@@ -2207,6 +2282,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         id_sesion: sesionActual || null,
+                        id_proyecto,
                         titulo,
                         descripcion,
                         ambito
@@ -2218,6 +2294,7 @@
                 }
 
                 votacionSeleccionadaId = data.id_votacion;
+                document.getElementById('vot-select-proyecto').value = '';
                 document.getElementById('vot-titulo').value = '';
                 document.getElementById('vot-descripcion').value = '';
                 document.getElementById('panel-form-votacion').classList.add('hidden');
@@ -2285,6 +2362,7 @@
             const descEl = document.getElementById('vot-visor-desc');
             const estadoEl = document.getElementById('vot-visor-estado');
             const ambitoEl = document.getElementById('vot-visor-ambito');
+            const proyectoBadgeEl = document.getElementById('vot-visor-proyecto-badge');
             const controlesEl = document.getElementById('vot-controles-mesa');
             const listaEl = document.getElementById('lista-votos-nominales');
             const miVotoEl = document.getElementById('mi-voto-actual-texto');
@@ -2292,10 +2370,11 @@
 
             if (!votacion) {
                 tituloEl.innerText = 'No hay ninguna votación activa';
-                descEl.innerText = 'Presione “Abrir Nueva Votación” para someter un proyecto o proposición a voto.';
+                descEl.innerText = 'Presione “Abrir Nueva Votación” y seleccione un proyecto del Orden del Día.';
                 estadoEl.innerText = 'EN ESPERA';
                 estadoEl.className = 'bg-slate-700 text-slate-300 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
                 ambitoEl.innerText = '--';
+                if (proyectoBadgeEl) proyectoBadgeEl.classList.add('hidden');
                 controlesEl.innerHTML = '';
                 listaEl.innerHTML = '<p class="text-center text-xs text-slate-500 py-8">Sin registros en urna.</p>';
                 document.getElementById('res-votos-si').innerText = '0';
@@ -2314,6 +2393,15 @@
             descEl.innerText = votacion.descripcion || 'Votación nominal registrada en Secretaría General.';
             ambitoEl.innerText = `Ámbito: ${votacion.ambito}`;
 
+            if (proyectoBadgeEl) {
+                if (votacion.id_proyecto) {
+                    proyectoBadgeEl.innerText = `${votacion.proyecto_tipo || 'Proyecto'} • Rad. ${votacion.proyecto_codigo || votacion.id_proyecto}`;
+                    proyectoBadgeEl.classList.remove('hidden');
+                } else {
+                    proyectoBadgeEl.classList.add('hidden');
+                }
+            }
+
             const estaAbierta = votacion.estado === 'Abierta';
             if (estaAbierta) {
                 estadoEl.innerText = 'URNA ABIERTA';
@@ -2325,7 +2413,12 @@
                 if (botonesVotoEl) botonesVotoEl.classList.add('opacity-40', 'pointer-events-none');
             }
 
+            const btnVerDocumento = votacion.id_proyecto
+                ? `<button onclick="irAVerProyecto(${votacion.id_proyecto})" class="bg-[#1e3a8a] hover:bg-blue-700 text-white font-bold text-xs uppercase px-3 py-2 rounded-xl border border-blue-400/30 transition"><i class="fa-solid fa-file-lines mr-1"></i> Ver Documento</button>`
+                : '';
+
             controlesEl.innerHTML = `
+                ${btnVerDocumento}
                 ${estaAbierta
                     ? `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Cerrada')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock mr-1"></i> Cerrar Urna</button>`
                     : `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Abierta')" class="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock-open mr-1"></i> Reabrir Urna</button>`
@@ -2335,7 +2428,6 @@
                 </button>
             `;
 
-            // Conteo de resultados
             const total = votos.length;
             const si = votos.filter(v => v.opcion === 'SI').length;
             const no = votos.filter(v => v.opcion === 'NO').length;
@@ -2349,7 +2441,6 @@
             document.getElementById('pct-votos-abs').innerText = total ? `${Math.round((abs / total) * 100)}%` : '0%';
             document.getElementById('total-votos-emitidos').innerText = total;
 
-            // Mostrar voto actual del concejal logueado
             if (concejalAutenticado && miVotoEl) {
                 const miVoto = votos.find(v => v.id_integrante === concejalAutenticado.id_integrante);
                 if (miVoto) {
@@ -2359,7 +2450,6 @@
                 }
             }
 
-            // Lista nominal
             if (votos.length === 0) {
                 listaEl.innerHTML = '<div class="text-center py-8 bg-[#060a14] rounded-xl border border-dashed border-white/10 text-xs text-slate-400">Ningún Honorable Concejal ha depositado su voto todavía.</div>';
                 return;
@@ -2511,6 +2601,7 @@
         async function cargarProyectos() {
             const res = await fetch('/api/proyectos');
             proyectosGlobal = await res.json();
+            actualizarSelectProyectosVotacion();
             renderizarProyectos();
         }
 
@@ -2619,6 +2710,9 @@
             autorEl.innerText = `Ponente: ${p.autor} ${p.archivo_nombre ? '• Archivo: ' + p.archivo_nombre : ''}`;
 
             accionesEl.innerHTML = `
+                <button onclick="someterProyectoAVotacion(${p.id_proyecto})" class="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase px-3.5 py-2 rounded-lg border border-emerald-400/30 shadow transition">
+                    <i class="fa-solid fa-check-to-slot mr-1"></i> Someter a Votación
+                </button>
                 <div class="flex items-center bg-slate-900 rounded-lg border border-white/15 overflow-hidden">
                     <button onclick="cambiarZoomTexto(-2)" class="px-2.5 py-2 text-xs font-bold hover:bg-slate-800 text-white" title="Reducir letra">A-</button>
                     <button onclick="cambiarZoomTexto(2)" class="px-2.5 py-2 text-xs font-bold hover:bg-slate-800 text-[#e5c16c]" title="Agrandar letra">A+</button>
