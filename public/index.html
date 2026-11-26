@@ -45,7 +45,6 @@
             height: 1px;
             background: linear-gradient(90deg, transparent 0%, rgba(201, 162, 75, 0.65) 50%, transparent 100%);
         }
-        /* MARCA DE AGUA PURA GRABADA EN EL FONDO DEL RECINTO */
         #marca-agua-fondo {
             position: fixed;
             inset: 0;
@@ -63,16 +62,13 @@
             max-height: 82vh;
             object-fit: contain;
             opacity: 0.11;
-            /* Fusión de luz: elimina fondos negros y convierte el logo en relieve dorado/sutil */
             mix-blend-mode: screen;
             filter: grayscale(100%) contrast(135%) brightness(1.05) sepia(45%) hue-rotate(8deg);
-            /* Difuminado radial en los bordes para que nunca se note un recuadro */
             -webkit-mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 46%, rgba(0, 0, 0, 0) 74%);
             mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 46%, rgba(0, 0, 0, 0) 74%);
             transition: opacity 0.25s ease, width 0.25s ease, height 0.25s ease, filter 0.25s ease;
             user-select: none;
         }
-        /* PANELES CON TRANSPARENCIA SUTIL PARA DEJAR RESPIRAR LA MARCA DE AGUA */
         .panel-institucional {
             background: linear-gradient(180deg, rgba(14, 22, 40, 0.84) 0%, rgba(8, 13, 25, 0.88) 100%);
             backdrop-filter: blur(5px);
@@ -89,7 +85,6 @@
             box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.75);
             transform: translateY(-1px);
         }
-        /* CAJÓN LATERAL OCULTO PARA SUBIR MARCA DE AGUA */
         #drawer-marca-agua {
             position: fixed;
             right: 0;
@@ -121,19 +116,12 @@
 </head>
 <body class="min-h-screen flex flex-col selection:bg-[#c9a24b] selection:text-black relative">
 
-    <!-- INPUT OCULTO PARA CARGAR LOGO / MARCA DE AGUA DESDE EL PC -->
     <input type="file" id="input-logo-pc" accept="image/*" class="hidden" onchange="cargarLogoDesdePC(event)">
 
-    <!-- ===================================================================== -->
-    <!-- CAPA DE MARCA DE AGUA PURA (CREER Y MERECER)                          -->
-    <!-- ===================================================================== -->
     <div id="marca-agua-fondo" aria-hidden="true">
         <img id="img-marca-agua" src="/logo-creer-y-merecer.png" alt="" class="hidden" onload="mostrarMarcaAgua()" onerror="ocultarMarcaAgua()">
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- PESTAÑA LATERAL DISCRETA (OCULTA EN EL BORDE DERECHO)                 -->
-    <!-- ===================================================================== -->
     <div id="drawer-marca-agua">
         <button type="button" onclick="toggleDrawerMarcaAgua()" title="Configurar marca de agua de fondo" class="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 bg-[#0b1222]/90 hover:bg-[#c9a24b] text-[#e5c16c] hover:text-slate-950 border border-r-0 border-[#c9a24b]/45 py-3.5 px-2 rounded-l-xl shadow-2xl transition flex flex-col items-center gap-1.5 backdrop-blur-md">
             <i class="fa-solid fa-stamp text-xs"></i>
@@ -194,7 +182,6 @@
     <header class="bg-[#050914]/92 backdrop-blur-md sticky top-0 z-40 border-b border-[#c9a24b]/35 shadow-2xl">
         <div class="cinta-republica w-full"></div>
 
-        <!-- Barra de Protocolo Institucional -->
         <div class="bg-[#080e1d] border-b border-white/5 py-1.5 px-4">
             <div class="max-w-[1440px] mx-auto flex flex-wrap justify-between items-center text-[11px] tracking-[0.16em] uppercase font-semibold">
                 <div class="flex items-center gap-3 text-[#e5c16c]">
@@ -213,11 +200,9 @@
             </div>
         </div>
 
-        <!-- Bloque Principal de Identidad Parlamentaria -->
         <div class="max-w-[1440px] mx-auto px-4 py-4">
             <div class="flex flex-wrap justify-between items-center gap-5">
                 
-                <!-- Escudo Institucional + Títulos Oficiales -->
                 <div class="flex items-center gap-5">
                     <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-black/90 border-2 border-[#c9a24b] shadow-[0_0_28px_rgba(201,162,75,0.35)] overflow-hidden flex items-center justify-center shrink-0 relative ring-4 ring-[#c9a24b]/10">
                         <img id="img-logo-header" src="/logo-creer-y-merecer.png" alt="Emblema" class="w-full h-full object-cover hidden" onload="mostrarImagenLogo()" onerror="ocultarImagenLogo()">
@@ -239,7 +224,7 @@
                             CONCEJO MUNICIPAL DE IBAGUÉ
                         </h1>
                         <p class="text-xs text-slate-400 font-medium tracking-wide mt-0.5">
-                            Sistema Electrónico de Llamado a Lista, Quórum Reglamentario, Comisiones Permanentes y Orden del Día
+                            Sistema Electrónico de Llamado a Lista, Quórum Reglamentario, Votación Nominal y Orden del Día
                         </p>
                     </div>
                 </div>
@@ -266,7 +251,7 @@
 
         <!-- Barra de Navegación Parlamentaria -->
         <nav class="bg-[#04070f]/95">
-            <div class="max-w-[1440px] mx-auto px-4 flex space-x-1 md:space-x-4 overflow-x-auto">
+            <div class="max-w-[1440px] mx-auto px-4 flex space-x-1 md:space-x-3 overflow-x-auto">
                 <button onclick="mostrarTab('asistencia')" class="tab-btn py-3.5 px-3.5 border-b-2 border-[#c9a24b] text-[#e5c16c] font-bold text-xs uppercase tracking-[0.12em] whitespace-nowrap transition flex items-center gap-2" data-tab="asistencia">
                     <i class="fa-solid fa-landmark"></i> Quórum y Bancadas
                 </button>
@@ -275,6 +260,9 @@
                 </button>
                 <button onclick="mostrarTab('intervenciones')" class="tab-btn py-3.5 px-3.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-xs uppercase tracking-[0.12em] whitespace-nowrap transition flex items-center gap-2" data-tab="intervenciones">
                     <i class="fa-solid fa-microphone-lines"></i> Uso de la Palabra
+                </button>
+                <button onclick="mostrarTab('votacion')" class="tab-btn py-3.5 px-3.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-xs uppercase tracking-[0.12em] whitespace-nowrap transition flex items-center gap-2" data-tab="votacion">
+                    <i class="fa-solid fa-check-to-slot"></i> Votación Nominal
                 </button>
                 <button onclick="mostrarTab('proyectos')" class="tab-btn py-3.5 px-3.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-xs uppercase tracking-[0.12em] whitespace-nowrap transition flex items-center gap-2" data-tab="proyectos">
                     <i class="fa-solid fa-scale-balanced"></i> Orden del Día y Proyectos
@@ -330,7 +318,6 @@
                     </div>
                 </div>
 
-                <!-- Indicadores Numéricos de Quórum -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-[#060a14]/85 p-4 rounded-xl border border-emerald-500/30 flex justify-between items-center">
                         <div>
@@ -399,7 +386,6 @@
                     </div>
                 </div>
 
-                <!-- Resumen Institucional de Comisiones -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-5 border-t border-white/10">
                     <div class="bg-[#060a14]/85 p-4 rounded-xl border border-[#c9a24b]/35 flex justify-between items-center">
                         <div>
@@ -441,7 +427,7 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 3: CONTROL DE USO DE LA PALABRA (CON FILTRO POR NOMBRE)           -->
+        <!-- TAB 3: CONTROL DE USO DE LA PALABRA                                   -->
         <!-- ===================================================================== -->
         <section id="tab-intervenciones" class="tab-content hidden">
             <div class="grid lg:grid-cols-12 gap-6 items-start">
@@ -527,7 +513,6 @@
                     </div>
                 </div>
 
-                <!-- COLUMNA DERECHA: INSCRIPCIÓN Y COLA CON FILTROS POR NOMBRE -->
                 <div class="lg:col-span-5 panel-institucional p-6 rounded-3xl flex flex-col">
                     <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
                         <div>
@@ -590,7 +575,194 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 4: PROYECTOS DE ACUERDO Y PROPOSICIONES CON VISOR DIRECTO         -->
+        <!-- TAB 4: SISTEMA DE VOTACIÓN NOMINAL CON INICIO DE SESIÓN               -->
+        <!-- ===================================================================== -->
+        <section id="tab-votacion" class="tab-content hidden">
+            
+            <!-- Encabezado y Gestión de Urnas (Mesa Directiva / Secretaría) -->
+            <div class="panel-institucional rounded-2xl p-6 mb-6 border-t-4 border-t-[#c9a24b]">
+                <div class="flex flex-wrap justify-between items-center gap-4">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-[0.22em] text-[#c9a24b] block mb-1">
+                            Sistema Electrónico de Votación Nominal
+                        </span>
+                        <h2 class="font-solemne text-2xl md:text-3xl uppercase text-white">
+                            Urna de Votación del Concejo Municipal
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1">
+                            Cada Honorable Concejal debe autenticarse con su <strong>Primer Nombre</strong> y <strong>Primer Apellido</strong> para registrar su voto oficial.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <select id="select-votacion-activa" onchange="cambiarVotacionSeleccionada()" class="bg-[#060a14] border border-[#c9a24b]/40 text-white text-xs font-bold rounded-xl px-3.5 py-2.5 min-w-[240px] focus:border-[#c9a24b] focus:outline-none">
+                            <option value="">-- Sin votaciones creadas --</option>
+                        </select>
+                        <button onclick="toggleFormNuevaVotacion()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-lg transition">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Abrir Nueva Votación
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Formulario Colapsable para Crear Votación -->
+                <div id="panel-form-votacion" class="hidden mt-5 pt-5 border-t border-white/10">
+                    <div class="grid md:grid-cols-12 gap-4 items-end">
+                        <div class="md:col-span-5">
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Asunto / Proyecto a Someter a Votación</label>
+                            <input type="text" id="vot-titulo" placeholder="Ej: Aprobación en Primer Debate Proyecto de Acuerdo 001" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm">
+                        </div>
+                        <div class="md:col-span-4">
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Detalle o Proposición (Opcional)</label>
+                            <input type="text" id="vot-descripcion" placeholder="Ej: Votación nominal del articulado completo" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm">
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Ámbito</label>
+                            <select id="vot-ambito" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm font-semibold">
+                                <option value="Plenaria">Plenaria (Todos)</option>
+                                <option value="Comisión Primera">Comisión Primera</option>
+                                <option value="Comisión Segunda">Comisión Segunda</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-4">
+                        <button onclick="toggleFormNuevaVotacion()" class="px-4 py-2 text-xs font-bold uppercase text-slate-400 hover:text-white">Cancelar</button>
+                        <button onclick="crearVotacion()" class="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-lg">
+                            <i class="fa-solid fa-box-open mr-1.5"></i> Iniciar Votación en Urna
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- COLUMNA IZQUIERDA (5 cols): CABINA DE AUTENTICACIÓN Y VOTO DEL CONCEJAL -->
+                <div class="lg:col-span-5 panel-institucional rounded-2xl p-6 border border-[#c9a24b]/40">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#c9a24b]">Curul Electrónica</span>
+                            <h3 class="font-solemne text-xl uppercase font-bold text-white">Cabina de Votación</h3>
+                        </div>
+                        <span class="bg-white/5 border border-white/10 text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg text-slate-300">
+                            Modo Prueba Activo
+                        </span>
+                    </div>
+
+                    <!-- Vista 1: Formulario de Inicio de Sesión -->
+                    <div id="cabina-login-form" class="space-y-4">
+                        <div class="bg-[#060a14]/85 p-3.5 rounded-xl border border-[#c9a24b]/25 text-xs text-slate-300">
+                            <i class="fa-solid fa-circle-info text-[#e5c16c] mr-1.5"></i>
+                            Inicie sesión con su <strong>Primer Nombre</strong> y <strong>Primer Apellido</strong> registrados en curul, y digite cualquier contraseña de prueba.
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Primer Nombre</label>
+                            <input type="text" id="login-primer-nombre" placeholder="Ej: Karen" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-2.5 text-sm focus:border-[#c9a24b] focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Primer Apellido</label>
+                            <input type="text" id="login-primer-apellido" placeholder="Ej: Mahecha" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-2.5 text-sm focus:border-[#c9a24b] focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Contraseña (Cualquiera para prueba)</label>
+                            <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter') iniciarSesionConcejal()" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-2.5 text-sm focus:border-[#c9a24b] focus:outline-none">
+                        </div>
+
+                        <button type="button" onclick="iniciarSesionConcejal()" class="w-full bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-lg transition">
+                            <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Ingresar a Curul para Votar
+                        </button>
+                    </div>
+
+                    <!-- Vista 2: Panel del Concejal Autenticado -->
+                    <div id="cabina-concejal-autenticado" class="hidden space-y-5">
+                        <div class="bg-[#060a14] p-4 rounded-2xl border border-[#c9a24b]/45 flex justify-between items-start gap-3">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
+                                    <i class="fa-solid fa-circle-check mr-1"></i> Identidad Verificada
+                                </span>
+                                <h4 id="concejal-logueado-nombre" class="font-solemne text-lg uppercase font-bold text-white mt-0.5">--</h4>
+                                <p id="concejal-logueado-detalle" class="text-xs text-slate-400 mt-0.5">--</p>
+                            </div>
+                            <button type="button" onclick="cerrarSesionConcejal()" class="bg-white/5 hover:bg-rose-900/40 text-slate-300 hover:text-rose-300 border border-white/10 px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase transition">
+                                Salir
+                            </button>
+                        </div>
+
+                        <div id="estado-mi-voto-box" class="bg-white/[0.03] p-3.5 rounded-xl border border-white/10 text-center">
+                            <span class="text-xs text-slate-400">Su voto en esta urna: </span>
+                            <strong id="mi-voto-actual-texto" class="text-sm uppercase text-[#e5c16c]">Aún sin emitir</strong>
+                        </div>
+
+                        <div id="botones-emitir-voto" class="space-y-3">
+                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 text-center">Seleccione su sentido de votación:</p>
+                            <button type="button" onclick="emitirVoto('SI')" class="w-full bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold py-4 px-5 rounded-2xl text-sm uppercase tracking-wider border border-emerald-400/35 shadow-lg transition flex items-center justify-center gap-3">
+                                <i class="fa-solid fa-thumbs-up text-lg"></i> VOTAR SÍ (POSITIVO)
+                            </button>
+                            <button type="button" onclick="emitirVoto('NO')" class="w-full bg-rose-800 hover:bg-rose-700 text-white font-extrabold py-4 px-5 rounded-2xl text-sm uppercase tracking-wider border border-rose-400/35 shadow-lg transition flex items-center justify-center gap-3">
+                                <i class="fa-solid fa-thumbs-down text-lg"></i> VOTAR NO (NEGATIVO)
+                            </button>
+                            <button type="button" onclick="emitirVoto('ABSTENCION')" class="w-full bg-slate-800 hover:bg-slate-700 text-amber-300 font-extrabold py-3.5 px-5 rounded-2xl text-xs uppercase tracking-wider border border-amber-500/30 shadow transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-hand"></i> ABSTENCIÓN / IMPEDIMENTO
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUMNA DERECHA (7 cols): RESULTADOS EN TIEMPO REAL Y VOTO NOMINAL -->
+                <div class="lg:col-span-7 panel-institucional rounded-2xl p-6">
+                    <div class="flex flex-wrap justify-between items-start gap-3 border-b border-white/10 pb-4 mb-5">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span id="vot-visor-estado" class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded">URNA ABIERTA</span>
+                                <span id="vot-visor-ambito" class="text-xs font-bold text-[#c9a24b]">Plenaria</span>
+                            </div>
+                            <h3 id="vot-visor-titulo" class="font-solemne text-xl md:text-2xl uppercase font-bold text-white">Seleccione o cree una votación</h3>
+                            <p id="vot-visor-desc" class="text-xs text-slate-400 mt-1">--</p>
+                        </div>
+
+                        <div id="vot-controles-mesa" class="flex items-center gap-2"></div>
+                    </div>
+
+                    <!-- Marcador de Resultados -->
+                    <div class="grid grid-cols-3 gap-3 mb-6">
+                        <div class="bg-[#060a14]/90 p-4 rounded-2xl border border-emerald-500/35 text-center">
+                            <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-400 block">Votos SÍ</span>
+                            <p id="res-votos-si" class="font-mono-digital text-4xl md:text-5xl font-extrabold text-emerald-400 my-1">0</p>
+                            <span id="pct-votos-si" class="text-[11px] font-bold text-slate-400">0%</span>
+                        </div>
+
+                        <div class="bg-[#060a14]/90 p-4 rounded-2xl border border-rose-500/35 text-center">
+                            <span class="text-[11px] font-extrabold uppercase tracking-widest text-rose-400 block">Votos NO</span>
+                            <p id="res-votos-no" class="font-mono-digital text-4xl md:text-5xl font-extrabold text-rose-400 my-1">0</p>
+                            <span id="pct-votos-no" class="text-[11px] font-bold text-slate-400">0%</span>
+                        </div>
+
+                        <div class="bg-[#060a14]/90 p-4 rounded-2xl border border-amber-500/35 text-center">
+                            <span class="text-[11px] font-extrabold uppercase tracking-widest text-amber-300 block">Abstenciones</span>
+                            <p id="res-votos-abs" class="font-mono-digital text-4xl md:text-5xl font-extrabold text-amber-300 my-1">0</p>
+                            <span id="pct-votos-abs" class="text-[11px] font-bold text-slate-400">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Registro Nominal de Votos -->
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300">
+                                Registro Nominal de Votación (<span id="total-votos-emitidos">0</span> votos)
+                            </h4>
+                            <button onclick="cargarDetalleVotacion()" class="text-xs font-bold text-[#e5c16c] hover:underline">
+                                <i class="fa-solid fa-rotate mr-1"></i> Actualizar
+                            </button>
+                        </div>
+                        <div id="lista-votos-nominales" class="space-y-2 max-h-[340px] overflow-y-auto pr-1"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 5: PROYECTOS DE ACUERDO Y PROPOSICIONES CON VISOR DIRECTO         -->
         <!-- ===================================================================== -->
         <section id="tab-proyectos" class="tab-content hidden">
             
@@ -698,12 +870,12 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 5: ADMINISTRACIÓN DE CURULES Y CONCEJALES                         -->
+        <!-- TAB 6: ADMINISTRACIÓN DE CURULES Y CONCEJALES                         -->
         <!-- ===================================================================== -->
         <section id="tab-integrantes" class="tab-content hidden">
             <div class="panel-institucional p-6 rounded-2xl mb-6 border-t-4 border-t-[#c9a24b]">
                 <h3 class="font-solemne text-xl uppercase font-bold text-white mb-1">Acreditación de Curul / Honorable Concejal</h3>
-                <p class="text-xs text-slate-400 mb-4">El registro se sincroniza automáticamente con el tablero de quórum y las comisiones permanentes.</p>
+                <p class="text-xs text-slate-400 mb-4">El registro se sincroniza automáticamente con el tablero de quórum, votación y comisiones.</p>
 
                 <div class="grid md:grid-cols-12 gap-4 items-end">
                     <div class="md:col-span-4">
@@ -824,6 +996,11 @@
         let asistenciasGlobal = [];
         let proyectosGlobal = [];
         let intervencionesGlobal = [];
+        let votacionesGlobal = [];
+        let votacionSeleccionadaId = null;
+        let concejalAutenticado = null;
+        let intervaloVotacion = null;
+
         let filtroComisionActual = 'TODOS';
         let proyectoSeleccionadoId = null;
         let zoomTexto = 18;
@@ -1040,10 +1217,20 @@
 
         window.onload = async () => {
             aplicarLogoGuardado();
+            restaurarConcejalGuardado();
             await cargarIntegrantes();
             await cargarProyectos();
             await cargarSesiones();
+            await cargarVotaciones();
             actualizarDisplayCrono();
+
+            // Refresco automático en vivo cuando se está en la pestaña de Votación
+            intervaloVotacion = setInterval(() => {
+                const tabVot = document.getElementById('tab-votacion');
+                if (tabVot && !tabVot.classList.contains('hidden') && votacionSeleccionadaId) {
+                    cargarDetalleVotacion();
+                }
+            }, 3000);
         };
 
         function mostrarTab(tabId) {
@@ -1056,6 +1243,10 @@
             const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
             activeBtn.classList.add('border-[#c9a24b]', 'text-[#e5c16c]');
             activeBtn.classList.remove('border-transparent', 'text-slate-400');
+
+            if (tabId === 'votacion') {
+                cargarVotaciones();
+            }
         }
 
         // =====================================================================
@@ -1501,6 +1692,7 @@
             if (btnEliminar) btnEliminar.classList.remove('hidden');
             await cargarAsistencias();
             await cargarIntervenciones();
+            await cargarVotaciones();
         }
 
         // =====================================================================
@@ -1626,7 +1818,7 @@
         }
 
         // =====================================================================
-        // 4. TEMPORIZADOR DE HEMICICLO Y FILTRO EN COLA DE TURNOS
+        // 4. TEMPORIZADOR DE HEMICICLO
         // =====================================================================
         function autocompletarSegundos() {
             const sel = document.getElementById('select-tipo-intervencion');
@@ -1925,7 +2117,328 @@
         }
 
         // =====================================================================
-        // 5. PROYECTOS DE ACUERDO Y PROPOSICIONES
+        // 5. SISTEMA DE VOTACIÓN NOMINAL E INICIO DE SESIÓN DE CONCEJALES
+        // =====================================================================
+        function toggleFormNuevaVotacion() {
+            document.getElementById('panel-form-votacion').classList.toggle('hidden');
+        }
+
+        function restaurarConcejalGuardado() {
+            try {
+                const guardado = sessionStorage.getItem('concejal_autenticado_votacion');
+                if (guardado) {
+                    concejalAutenticado = JSON.parse(guardado);
+                    actualizarCabinaConcejal();
+                }
+            } catch (e) {}
+        }
+
+        function actualizarCabinaConcejal() {
+            const formLogin = document.getElementById('cabina-login-form');
+            const panelAuth = document.getElementById('cabina-concejal-autenticado');
+            if (!formLogin || !panelAuth) return;
+
+            if (!concejalAutenticado) {
+                formLogin.classList.remove('hidden');
+                panelAuth.classList.add('hidden');
+            } else {
+                formLogin.classList.add('hidden');
+                panelAuth.classList.remove('hidden');
+                document.getElementById('concejal-logueado-nombre').innerText = `H.C. ${concejalAutenticado.nombre_completo}`;
+                document.getElementById('concejal-logueado-detalle').innerText = `Bancada ${concejalAutenticado.bancada} • ${concejalAutenticado.comision}`;
+            }
+        }
+
+        async function iniciarSesionConcejal() {
+            const primer_nombre = document.getElementById('login-primer-nombre').value;
+            const primer_apellido = document.getElementById('login-primer-apellido').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!primer_nombre.trim() || !primer_apellido.trim() || !password.trim()) {
+                return alert('Por favor ingrese su Primer Nombre, Primer Apellido y una contraseña.');
+            }
+
+            try {
+                const res = await fetch('/api/votacion/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ primer_nombre, primer_apellido, password })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    return alert(data.error || 'No se pudo verificar la identidad del concejal.');
+                }
+
+                concejalAutenticado = data.concejal;
+                try {
+                    sessionStorage.setItem('concejal_autenticado_votacion', JSON.stringify(concejalAutenticado));
+                } catch (e) {}
+
+                document.getElementById('login-password').value = '';
+                actualizarCabinaConcejal();
+                notificar(`✅ Bienvenido(a) H.C. ${concejalAutenticado.nombre_completo}`);
+                await cargarDetalleVotacion();
+            } catch (err) {
+                alert('Error de conexión al iniciar sesión: ' + err.message);
+            }
+        }
+
+        function cerrarSesionConcejal() {
+            concejalAutenticado = null;
+            try {
+                sessionStorage.removeItem('concejal_autenticado_votacion');
+            } catch (e) {}
+            actualizarCabinaConcejal();
+            notificar('Sesión de curul cerrada');
+        }
+
+        async function crearVotacion() {
+            const titulo = document.getElementById('vot-titulo').value;
+            const descripcion = document.getElementById('vot-descripcion').value;
+            const ambito = document.getElementById('vot-ambito').value;
+
+            if (!titulo.trim()) {
+                return alert('Ingrese el título o asunto de la votación.');
+            }
+
+            try {
+                const res = await fetch('/api/votaciones', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id_sesion: sesionActual || null,
+                        titulo,
+                        descripcion,
+                        ambito
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    return alert('Error al crear votación: ' + (data.error || 'Desconocido'));
+                }
+
+                votacionSeleccionadaId = data.id_votacion;
+                document.getElementById('vot-titulo').value = '';
+                document.getElementById('vot-descripcion').value = '';
+                document.getElementById('panel-form-votacion').classList.add('hidden');
+                notificar('🗳️ Urna de votación abierta');
+                await cargarVotaciones();
+            } catch (err) {
+                alert('Error de red: ' + err.message);
+            }
+        }
+
+        async function cargarVotaciones() {
+            const select = document.getElementById('select-votacion-activa');
+            if (!select) return;
+
+            try {
+                const url = sesionActual ? `/api/votaciones?id_sesion=${sesionActual}` : '/api/votaciones';
+                const res = await fetch(url);
+                if (!res.ok) return;
+                votacionesGlobal = await res.json();
+
+                select.innerHTML = '';
+                if (votacionesGlobal.length === 0) {
+                    select.innerHTML = '<option value="">-- Sin votaciones abiertas --</option>';
+                    votacionSeleccionadaId = null;
+                    renderizarDetalleVotacion(null, []);
+                    return;
+                }
+
+                votacionesGlobal.forEach(v => {
+                    select.innerHTML += `<option value="${v.id_votacion}" class="bg-slate-900">${v.titulo} [${v.estado}]</option>`;
+                });
+
+                if (!votacionSeleccionadaId || !votacionesGlobal.some(v => String(v.id_votacion) === String(votacionSeleccionadaId))) {
+                    votacionSeleccionadaId = votacionesGlobal[0].id_votacion;
+                }
+                select.value = votacionSeleccionadaId;
+                await cargarDetalleVotacion();
+            } catch (err) {
+                console.error('Error cargando votaciones:', err);
+            }
+        }
+
+        async function cambiarVotacionSeleccionada() {
+            votacionSeleccionadaId = document.getElementById('select-votacion-activa').value;
+            await cargarDetalleVotacion();
+        }
+
+        async function cargarDetalleVotacion() {
+            if (!votacionSeleccionadaId) {
+                renderizarDetalleVotacion(null, []);
+                return;
+            }
+            const votacion = votacionesGlobal.find(v => String(v.id_votacion) === String(votacionSeleccionadaId));
+            try {
+                const res = await fetch(`/api/votaciones/${votacionSeleccionadaId}/votos`);
+                const votos = res.ok ? await res.json() : [];
+                renderizarDetalleVotacion(votacion, votos);
+            } catch (err) {
+                console.error('Error cargando votos:', err);
+            }
+        }
+
+        function renderizarDetalleVotacion(votacion, votos) {
+            const tituloEl = document.getElementById('vot-visor-titulo');
+            const descEl = document.getElementById('vot-visor-desc');
+            const estadoEl = document.getElementById('vot-visor-estado');
+            const ambitoEl = document.getElementById('vot-visor-ambito');
+            const controlesEl = document.getElementById('vot-controles-mesa');
+            const listaEl = document.getElementById('lista-votos-nominales');
+            const miVotoEl = document.getElementById('mi-voto-actual-texto');
+            const botonesVotoEl = document.getElementById('botones-emitir-voto');
+
+            if (!votacion) {
+                tituloEl.innerText = 'No hay ninguna votación activa';
+                descEl.innerText = 'Presione “Abrir Nueva Votación” para someter un proyecto o proposición a voto.';
+                estadoEl.innerText = 'EN ESPERA';
+                estadoEl.className = 'bg-slate-700 text-slate-300 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
+                ambitoEl.innerText = '--';
+                controlesEl.innerHTML = '';
+                listaEl.innerHTML = '<p class="text-center text-xs text-slate-500 py-8">Sin registros en urna.</p>';
+                document.getElementById('res-votos-si').innerText = '0';
+                document.getElementById('res-votos-no').innerText = '0';
+                document.getElementById('res-votos-abs').innerText = '0';
+                document.getElementById('pct-votos-si').innerText = '0%';
+                document.getElementById('pct-votos-no').innerText = '0%';
+                document.getElementById('pct-votos-abs').innerText = '0%';
+                document.getElementById('total-votos-emitidos').innerText = '0';
+                if (miVotoEl) miVotoEl.innerText = 'Sin votación seleccionada';
+                if (botonesVotoEl) botonesVotoEl.classList.add('opacity-40', 'pointer-events-none');
+                return;
+            }
+
+            tituloEl.innerText = votacion.titulo;
+            descEl.innerText = votacion.descripcion || 'Votación nominal registrada en Secretaría General.';
+            ambitoEl.innerText = `Ámbito: ${votacion.ambito}`;
+
+            const estaAbierta = votacion.estado === 'Abierta';
+            if (estaAbierta) {
+                estadoEl.innerText = 'URNA ABIERTA';
+                estadoEl.className = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
+                if (botonesVotoEl) botonesVotoEl.classList.remove('opacity-40', 'pointer-events-none');
+            } else {
+                estadoEl.innerText = 'URNA CERRADA';
+                estadoEl.className = 'bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
+                if (botonesVotoEl) botonesVotoEl.classList.add('opacity-40', 'pointer-events-none');
+            }
+
+            controlesEl.innerHTML = `
+                ${estaAbierta
+                    ? `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Cerrada')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock mr-1"></i> Cerrar Urna</button>`
+                    : `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Abierta')" class="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock-open mr-1"></i> Reabrir Urna</button>`
+                }
+                <button onclick="eliminarVotacion(${votacion.id_votacion})" class="bg-rose-500/15 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/30 px-3 py-2 rounded-xl text-xs font-bold transition" title="Eliminar votación">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            `;
+
+            // Conteo de resultados
+            const total = votos.length;
+            const si = votos.filter(v => v.opcion === 'SI').length;
+            const no = votos.filter(v => v.opcion === 'NO').length;
+            const abs = votos.filter(v => v.opcion === 'ABSTENCION').length;
+
+            document.getElementById('res-votos-si').innerText = si;
+            document.getElementById('res-votos-no').innerText = no;
+            document.getElementById('res-votos-abs').innerText = abs;
+            document.getElementById('pct-votos-si').innerText = total ? `${Math.round((si / total) * 100)}%` : '0%';
+            document.getElementById('pct-votos-no').innerText = total ? `${Math.round((no / total) * 100)}%` : '0%';
+            document.getElementById('pct-votos-abs').innerText = total ? `${Math.round((abs / total) * 100)}%` : '0%';
+            document.getElementById('total-votos-emitidos').innerText = total;
+
+            // Mostrar voto actual del concejal logueado
+            if (concejalAutenticado && miVotoEl) {
+                const miVoto = votos.find(v => v.id_integrante === concejalAutenticado.id_integrante);
+                if (miVoto) {
+                    miVotoEl.innerText = miVoto.opcion === 'SI' ? 'SÍ (POSITIVO)' : miVoto.opcion === 'NO' ? 'NO (NEGATIVO)' : 'ABSTENCIÓN';
+                } else {
+                    miVotoEl.innerText = 'Aún sin emitir';
+                }
+            }
+
+            // Lista nominal
+            if (votos.length === 0) {
+                listaEl.innerHTML = '<div class="text-center py-8 bg-[#060a14] rounded-xl border border-dashed border-white/10 text-xs text-slate-400">Ningún Honorable Concejal ha depositado su voto todavía.</div>';
+                return;
+            }
+
+            listaEl.innerHTML = votos.map(v => {
+                const badgeVoto = v.opcion === 'SI'
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                    : v.opcion === 'NO'
+                        ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+                        : 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+                const textoVoto = v.opcion === 'SI' ? 'SÍ' : v.opcion === 'NO' ? 'NO' : 'ABSTENCIÓN';
+
+                return `
+                    <div class="bg-[#060a14]/85 p-3 rounded-xl border border-white/10 flex justify-between items-center gap-2">
+                        <div>
+                            <p class="font-bold text-sm text-white">H.C. ${v.nombre_completo}</p>
+                            <p class="text-[11px] text-slate-400">Bancada ${v.bancada} • ${v.comision}</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-lg border text-xs font-extrabold uppercase ${badgeVoto}">
+                            ${textoVoto}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function emitirVoto(opcion) {
+            if (!concejalAutenticado) {
+                return alert('Debe iniciar sesión con su primer nombre y primer apellido antes de votar.');
+            }
+            if (!votacionSeleccionadaId) {
+                return alert('No hay ninguna votación activa.');
+            }
+
+            try {
+                const res = await fetch(`/api/votaciones/${votacionSeleccionadaId}/votar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id_integrante: concejalAutenticado.id_integrante,
+                        opcion
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    return alert(data.error || 'No se pudo registrar el voto.');
+                }
+                notificar(`🗳️ Voto registrado (${opcion}) para H.C. ${concejalAutenticado.nombre_completo}`);
+                await cargarDetalleVotacion();
+            } catch (err) {
+                alert('Error de red al emitir voto: ' + err.message);
+            }
+        }
+
+        async function cambiarEstadoVotacion(id_votacion, estado) {
+            const res = await fetch(`/api/votaciones/${id_votacion}/estado`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ estado })
+            });
+            if (res.ok) {
+                notificar(estado === 'Cerrada' ? '🔒 Urna de votación cerrada' : '🔓 Urna de votación reabierta');
+                await cargarVotaciones();
+            }
+        }
+
+        async function eliminarVotacion(id_votacion) {
+            if (!confirm('¿Confirma eliminar esta votación y todos sus votos registrados?')) return;
+            const res = await fetch(`/api/votaciones/${id_votacion}`, { method: 'DELETE' });
+            if (res.ok) {
+                votacionSeleccionadaId = null;
+                notificar('🗑️ Votación eliminada');
+                await cargarVotaciones();
+            }
+        }
+
+        // =====================================================================
+        // 6. PROYECTOS DE ACUERDO Y PROPOSICIONES
         // =====================================================================
         function toggleFormularioProyecto() {
             const panel = document.getElementById('panel-form-proyecto');
