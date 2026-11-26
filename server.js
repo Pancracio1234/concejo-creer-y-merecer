@@ -2,6 +2,7 @@ const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
 const path = require('path');
+const crypto = require('crypto');
 
 const app = express();
 app.use(cors());
@@ -26,6 +27,70 @@ const pool = new Pool(
               port: 5432,
           }
 );
+
+// =========================================================================
+// SEGURIDAD ADMINISTRATIVA (CLAVE MAESTRA: Concejo2026) )
+// =========================================================================
+const CLAVE_ADMIN_MAESTRA = 'Concejo2026)';
+const sesionesAdminActivas = new Map();
+
+function verificarAdmin(req, res, next) {
+    const token = req.headers['x-admin-token'];
+    if (!token || !sesionesAdminActivas.has(token)) {
+        return res.status(401).json({
+            error: 'Acceso denegado. Debe registrarse como Administrador con la clave institucional para realizar esta acción.',
+        });
+    }
+    req.adminUsuario = sesionesAdminActivas.get(token);
+    next();
+}
+
+app.post('/api/admin/registro', async (req, res) => {
+    const { nombre_admin, cargo_admin, password } = req.body;
+    if (!nombre_admin || !nombre_admin.trim()) {
+        return res.status(400).json({ error: 'Ingrese su nombre completo para registrarse como administrador.' });
+    }
+    if (!password || password.trim() !== CLAVE_ADMIN_MAESTRA) {
+        return res.status(401).json({ error: 'Clave administrativa incorrecta.' });
+    }
+
+    try {
+        await asegurarTablasSistema();
+        const cargoLimpio = (cargo_admin && cargo_admin.trim()) ? cargo_admin.trim() : 'Mesa Directiva / Secretaría';
+        const reg = await pool.query(
+            `INSERT INTO administradores_registro (nombre_admin, cargo_admin)
+             VALUES ($1, $2) RETURNING *`,
+            [nombre_admin.trim(), cargoLimpio]
+        );
+
+        const token = crypto.randomBytes(24).toString('hex');
+        const infoAdmin = {
+            id_admin: reg.rows[0].id_admin,
+            nombre_admin: reg.rows[0].nombre_admin,
+            cargo_admin: reg.rows[0].cargo_admin,
+            fecha_ingreso: reg.rows[0].fecha_ingreso,
+        };
+        sesionesAdminActivas.set(token, infoAdmin);
+
+        res.json({ ok: true, token, admin: infoAdmin });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/admin/verificar', (req, res) => {
+    const token = req.headers['x-admin-token'];
+    if (token && sesionesAdminActivas.has(token)) {
+        return res.json({ ok: true, admin: sesionesAdminActivas.get(token) });
+    }
+    res.status(401).json({ ok: false });
+});
+
+app.post('/api/admin/salir', (req, res) => {
+    const token = req.headers['x-admin-token'];
+    if (token) sesionesAdminActivas.delete(token);
+    res.json({ ok: true });
+});
 
 // =========================================================================
 // CANAL EN TIEMPO REAL (SERVER-SENT EVENTS) PARA TODOS LOS CONECTADOS
@@ -68,10 +133,19 @@ function emitirActualizacionGlobal(tipo, extra = {}) {
     }
 }
 
-let tablasVotacionListas = false;
+let tablasSistemaListas = false;
 
-async function asegurarTablasVotacion() {
-    if (tablasVotacionListas) return;
+async function asegurarTablasSistema() {
+    if (tablasSistemaListas) return;
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS administradores_registro (
+            id_admin SERIAL PRIMARY KEY,
+            nombre_admin VARCHAR(180) NOT NULL,
+            cargo_admin VARCHAR(120) DEFAULT 'Secretaría General',
+            fecha_ingreso TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    `);
+
     await pool.query(`
         CREATE TABLE IF NOT EXISTS votaciones (
             id_votacion SERIAL PRIMARY KEY,
@@ -110,15 +184,15 @@ async function asegurarTablasVotacion() {
             UNIQUE (id_votacion, id_integrante)
         );
     `);
-    tablasVotacionListas = true;
+    tablasSistemaListas = true;
 }
 
-asegurarTablasVotacion()
-    .then(() => console.log('✅ Conexión exitosa a PostgreSQL y tablas de votación verificadas'))
+asegurarTablasSistema()
+    .then(() => console.log('✅ Conexión exitosa a PostgreSQL y tablas verificadas'))
     .catch((err) => console.error('❌ ERROR INICIALIZANDO POSTGRESQL:', err.message));
 
 // =========================================================================
-// 1. GESTIÓN DE CONCEJALES (AÑADIR, RECOLOCAR BANCADA/COMISIÓN, ELIMINAR)
+// 1. GESTIÓN DE CONCEJALES (LECTURA PÚBLICA / EDICIÓN SOLO ADMIN)
 // =========================================================================
 app.get('/api/integrantes', async (req, res) => {
     try {
@@ -138,7 +212,7 @@ app.get('/api/integrantes', async (req, res) => {
     }
 });
 
-app.post('/api/integrantes', async (req, res) => {
+app.post('/api/integrantes', verificarAdmin, async (req, res) => {
     const { nombre_completo, id_comision, id_bancada, es_directiva, id_sesion } = req.body;
     if (!nombre_completo || !nombre_completo.trim()) {
         return res.status(400).json({ error: 'El nombre completo es obligatorio.' });
@@ -170,7 +244,7 @@ app.post('/api/integrantes', async (req, res) => {
     }
 });
 
-app.put('/api/integrantes/:id_integrante', async (req, res) => {
+app.put('/api/integrantes/:id_integrante', verificarAdmin, async (req, res) => {
     const { nombre_completo, id_comision, id_bancada, es_directiva } = req.body;
     const idInt = parseInt(req.params.id_integrante, 10);
     try {
@@ -196,7 +270,7 @@ app.put('/api/integrantes/:id_integrante', async (req, res) => {
     }
 });
 
-app.delete('/api/integrantes/:id_integrante', async (req, res) => {
+app.delete('/api/integrantes/:id_integrante', verificarAdmin, async (req, res) => {
     try {
         await pool.query('DELETE FROM integrantes WHERE id_integrante = $1', [req.params.id_integrante]);
         emitirActualizacionGlobal('integrantes');
@@ -207,7 +281,7 @@ app.delete('/api/integrantes/:id_integrante', async (req, res) => {
 });
 
 // =========================================================================
-// 2. SESIONES LIBRES Y ASISTENCIA
+// 2. SESIONES LIBRES Y ASISTENCIA (LECTURA PÚBLICA / EDICIÓN SOLO ADMIN)
 // =========================================================================
 app.get('/api/sesiones', async (req, res) => {
     try {
@@ -218,7 +292,7 @@ app.get('/api/sesiones', async (req, res) => {
     }
 });
 
-app.post('/api/sesiones', async (req, res) => {
+app.post('/api/sesiones', verificarAdmin, async (req, res) => {
     const { titulo, tipo_sesion, id_comision } = req.body;
     if (!titulo || !titulo.trim()) {
         return res.status(400).json({ error: 'El nombre de la sesión es obligatorio.' });
@@ -261,7 +335,7 @@ app.post('/api/sesiones', async (req, res) => {
     }
 });
 
-app.delete('/api/sesiones/:id_sesion', async (req, res) => {
+app.delete('/api/sesiones/:id_sesion', verificarAdmin, async (req, res) => {
     const idSesion = parseInt(req.params.id_sesion, 10);
     if (isNaN(idSesion)) return res.status(400).json({ error: 'ID de sesión inválido.' });
     try {
@@ -295,7 +369,7 @@ app.get('/api/asistencias/:id_sesion', async (req, res) => {
     }
 });
 
-app.put('/api/asistencias/:id_asistencia', async (req, res) => {
+app.put('/api/asistencias/:id_asistencia', verificarAdmin, async (req, res) => {
     const { estado } = req.body;
     try {
         const result = await pool.query(
@@ -311,7 +385,7 @@ app.put('/api/asistencias/:id_asistencia', async (req, res) => {
     }
 });
 
-app.put('/api/asistencias/sesion/:id_sesion/todos-presentes', async (req, res) => {
+app.put('/api/asistencias/sesion/:id_sesion/todos-presentes', verificarAdmin, async (req, res) => {
     try {
         await pool.query(
             `UPDATE asistencias SET estado = 'Presente', hora_registro = CURRENT_TIME WHERE id_sesion = $1`,
@@ -325,7 +399,7 @@ app.put('/api/asistencias/sesion/:id_sesion/todos-presentes', async (req, res) =
 });
 
 // =========================================================================
-// 3. PROYECTOS DE ACUERDO Y PROPOSICIONES
+// 3. PROYECTOS DE ACUERDO Y PROPOSICIONES (LECTURA PÚBLICA / EDICIÓN SOLO ADMIN)
 // =========================================================================
 app.get('/api/proyectos', async (req, res) => {
     try {
@@ -343,7 +417,7 @@ app.get('/api/proyectos', async (req, res) => {
     }
 });
 
-app.post('/api/proyectos', async (req, res) => {
+app.post('/api/proyectos', verificarAdmin, async (req, res) => {
     const { 
         codigo_radicado, 
         titulo, 
@@ -385,7 +459,7 @@ app.post('/api/proyectos', async (req, res) => {
     }
 });
 
-app.put('/api/proyectos/:id_proyecto/estado', async (req, res) => {
+app.put('/api/proyectos/:id_proyecto/estado', verificarAdmin, async (req, res) => {
     const { estado } = req.body;
     try {
         const result = await pool.query(
@@ -399,7 +473,7 @@ app.put('/api/proyectos/:id_proyecto/estado', async (req, res) => {
     }
 });
 
-app.delete('/api/proyectos/:id_proyecto', async (req, res) => {
+app.delete('/api/proyectos/:id_proyecto', verificarAdmin, async (req, res) => {
     try {
         await pool.query('DELETE FROM proyectos WHERE id_proyecto = $1', [req.params.id_proyecto]);
         emitirActualizacionGlobal('proyectos');
@@ -410,7 +484,7 @@ app.delete('/api/proyectos/:id_proyecto', async (req, res) => {
 });
 
 // =========================================================================
-// 4. INTERVENCIONES (USO DE LA PALABRA: LISTAR, AÑADIR, ACTUALIZAR, RETIRAR)
+// 4. INTERVENCIONES (LECTURA PÚBLICA / EDICIÓN SOLO ADMIN)
 // =========================================================================
 app.get('/api/intervenciones/:id_sesion', async (req, res) => {
     const idSesion = parseInt(req.params.id_sesion, 10);
@@ -431,7 +505,7 @@ app.get('/api/intervenciones/:id_sesion', async (req, res) => {
     }
 });
 
-app.post('/api/intervenciones', async (req, res) => {
+app.post('/api/intervenciones', verificarAdmin, async (req, res) => {
     const { id_sesion, id_integrante, tipo_intervencion, tiempo_asignado_seg } = req.body;
     try {
         const ordenRes = await pool.query(
@@ -450,7 +524,7 @@ app.post('/api/intervenciones', async (req, res) => {
     }
 });
 
-app.put('/api/intervenciones/:id_intervencion', async (req, res) => {
+app.put('/api/intervenciones/:id_intervencion', verificarAdmin, async (req, res) => {
     const { tiempo_usado_seg, estado } = req.body;
     try {
         const result = await pool.query(
@@ -464,7 +538,7 @@ app.put('/api/intervenciones/:id_intervencion', async (req, res) => {
     }
 });
 
-app.delete('/api/intervenciones/:id_intervencion', async (req, res) => {
+app.delete('/api/intervenciones/:id_intervencion', verificarAdmin, async (req, res) => {
     try {
         await pool.query('DELETE FROM intervenciones WHERE id_intervencion = $1', [req.params.id_intervencion]);
         emitirActualizacionGlobal('intervenciones');
@@ -475,7 +549,7 @@ app.delete('/api/intervenciones/:id_intervencion', async (req, res) => {
 });
 
 // =========================================================================
-// 5. SISTEMA DE VOTACIÓN NOMINAL CON TIEMPO LÍMITE Y REGISTRO ÚNICO
+// 5. SISTEMA DE VOTACIÓN NOMINAL (VOTO CONCEJAL LIBRE / ABRIR-CERRAR URNA ADMIN)
 // =========================================================================
 function limpiarTextoComparacion(txt) {
     return (txt || '')
@@ -487,7 +561,7 @@ function limpiarTextoComparacion(txt) {
 }
 
 async function cerrarVotacionesExpiradas() {
-    await asegurarTablasVotacion();
+    await asegurarTablasSistema();
     const res = await pool.query(`
         UPDATE votaciones
         SET estado = 'Cerrada'
@@ -595,13 +669,13 @@ app.get('/api/votaciones', async (req, res) => {
     }
 });
 
-app.post('/api/votaciones', async (req, res) => {
+app.post('/api/votaciones', verificarAdmin, async (req, res) => {
     const { id_sesion, id_proyecto, titulo, descripcion, ambito, duracion_seg } = req.body;
     if (!titulo || !titulo.trim()) {
         return res.status(400).json({ error: 'Seleccione un proyecto o ingrese el asunto a votar.' });
     }
     try {
-        await asegurarTablasVotacion();
+        await asegurarTablasSistema();
         const sesionVal = id_sesion ? parseInt(id_sesion, 10) : null;
         const proyectoVal = id_proyecto ? parseInt(id_proyecto, 10) : null;
         const duracionVal = Math.max(15, parseInt(duracion_seg, 10) || 120);
@@ -619,11 +693,11 @@ app.post('/api/votaciones', async (req, res) => {
     }
 });
 
-app.put('/api/votaciones/:id_votacion/estado', async (req, res) => {
+app.put('/api/votaciones/:id_votacion/estado', verificarAdmin, async (req, res) => {
     const { estado } = req.body;
     const idVot = parseInt(req.params.id_votacion, 10);
     try {
-        await asegurarTablasVotacion();
+        await asegurarTablasSistema();
         let result;
         if (estado === 'Abierta') {
             result = await pool.query(
@@ -646,10 +720,10 @@ app.put('/api/votaciones/:id_votacion/estado', async (req, res) => {
     }
 });
 
-app.delete('/api/votaciones/:id_votacion', async (req, res) => {
+app.delete('/api/votaciones/:id_votacion', verificarAdmin, async (req, res) => {
     const idVot = parseInt(req.params.id_votacion, 10);
     try {
-        await asegurarTablasVotacion();
+        await asegurarTablasSistema();
         await pool.query('DELETE FROM votos WHERE id_votacion = $1', [idVot]);
         await pool.query('DELETE FROM votacion_registros WHERE id_votacion = $1', [idVot]);
         await pool.query('DELETE FROM votaciones WHERE id_votacion = $1', [idVot]);

@@ -112,6 +112,10 @@
         .doc-render td, .doc-render th { border: 1px solid #cbd5e1; padding: 0.5rem; }
         .doc-render ul { list-style: disc; margin-left: 1.5rem; margin-bottom: 0.9rem; }
         .doc-render ol { list-style: decimal; margin-left: 1.5rem; margin-bottom: 0.9rem; }
+
+        body:not(.modo-admin) .solo-admin {
+            display: none !important;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-[#c9a24b] selection:text-black relative">
@@ -122,7 +126,7 @@
         <img id="img-marca-agua" src="/logo-creer-y-merecer.png" alt="" class="hidden" onload="mostrarMarcaAgua()" onerror="ocultarMarcaAgua()">
     </div>
 
-    <div id="drawer-marca-agua">
+    <div id="drawer-marca-agua" class="solo-admin">
         <button type="button" onclick="toggleDrawerMarcaAgua()" title="Configurar marca de agua de fondo" class="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 bg-[#0b1222]/90 hover:bg-[#c9a24b] text-[#e5c16c] hover:text-slate-950 border border-r-0 border-[#c9a24b]/45 py-3.5 px-2 rounded-l-xl shadow-2xl transition flex flex-col items-center gap-1.5 backdrop-blur-md">
             <i class="fa-solid fa-stamp text-xs"></i>
             <span class="text-[9px] font-extrabold uppercase tracking-widest [writing-mode:vertical-rl] rotate-180">Fondo</span>
@@ -183,7 +187,7 @@
         <div class="cinta-republica w-full"></div>
 
         <div class="bg-[#080e1d] border-b border-white/5 py-1.5 px-4">
-            <div class="max-w-[1440px] mx-auto flex flex-wrap justify-between items-center text-[11px] tracking-[0.16em] uppercase font-semibold">
+            <div class="max-w-[1440px] mx-auto flex flex-wrap justify-between items-center text-[11px] tracking-[0.16em] uppercase font-semibold gap-2">
                 <div class="flex items-center gap-3 text-[#e5c16c]">
                     <span class="flex items-center gap-2">
                         <span id="indicador-en-vivo-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -192,10 +196,26 @@
                     <span class="hidden md:inline text-slate-600">|</span>
                     <span id="estado-conexion-vivo" class="hidden md:inline text-emerald-400 font-bold">EN VIVO SINCRONIZADO</span>
                 </div>
-                <div class="flex items-center gap-4 text-slate-300 font-mono-digital text-xs">
-                    <span id="fecha-protocolo-hoy" class="hidden sm:inline text-slate-400 uppercase font-sans text-[10px] tracking-widest"></span>
+
+                <div class="flex items-center gap-3">
+                    <!-- ESTADO Y BOTÓN DE ACCESO ADMINISTRATIVO -->
+                    <div id="barra-admin-status" class="flex items-center gap-2">
+                        <button type="button" id="btn-abrir-login-admin" onclick="abrirModalAdmin()" class="bg-[#c9a24b]/15 hover:bg-[#c9a24b] text-[#e5c16c] hover:text-slate-950 border border-[#c9a24b]/45 px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-shield-halved"></i> Acceso Administrativo
+                        </button>
+                        <div id="info-admin-conectado" class="hidden flex items-center gap-2 bg-emerald-500/15 border border-emerald-500/40 px-3 py-1 rounded-lg">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span id="nombre-admin-barra" class="text-[10px] font-extrabold text-emerald-300 tracking-wider">ADMIN</span>
+                            <button type="button" onclick="cerrarSesionAdmin()" class="text-rose-300 hover:text-white ml-1 text-[10px] font-bold underline" title="Cerrar sesión administrativa">
+                                Salir
+                            </button>
+                        </div>
+                    </div>
+
                     <span class="text-slate-600 hidden sm:inline">•</span>
-                    <span id="reloj-sistema-vivo" class="text-[#e5c16c] font-bold">--:--:--</span>
+                    <span id="fecha-protocolo-hoy" class="hidden lg:inline text-slate-400 uppercase font-sans text-[10px] tracking-widest"></span>
+                    <span class="text-slate-600 hidden lg:inline">•</span>
+                    <span id="reloj-sistema-vivo" class="text-[#e5c16c] font-mono-digital text-xs font-bold">--:--:--</span>
                 </div>
             </div>
         </div>
@@ -237,10 +257,10 @@
                             <option value="" class="bg-slate-900">-- Seleccionar Sesión --</option>
                         </select>
                     </div>
-                    <button type="button" id="btn-eliminar-sesion" onclick="eliminarSesionActual()" title="Eliminar sesión seleccionada" class="hidden bg-rose-500/15 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/35 px-3 py-3 rounded-xl text-xs font-bold transition cursor-pointer">
+                    <button type="button" id="btn-eliminar-sesion" onclick="eliminarSesionActual()" title="Eliminar sesión seleccionada" class="solo-admin hidden bg-rose-500/15 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/35 px-3 py-3 rounded-xl text-xs font-bold transition cursor-pointer">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
-                    <button type="button" onclick="abrirModalSesion()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold text-xs uppercase tracking-wider px-4 py-3 rounded-xl transition shadow-lg shadow-amber-950/40 cursor-pointer border border-[#f5dc99]/40">
+                    <button type="button" onclick="abrirModalSesion()" class="solo-admin bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold text-xs uppercase tracking-wider px-4 py-3 rounded-xl transition shadow-lg shadow-amber-950/40 cursor-pointer border border-[#f5dc99]/40">
                         <i class="fa-solid fa-gavel mr-1.5"></i> Abrir Sesión
                     </button>
                 </div>
@@ -286,10 +306,10 @@
                 </div>
                 <div>
                     <p class="font-solemne text-xl md:text-2xl uppercase text-[#e5c16c]">Recinto del Concejo Municipal en Receso</p>
-                    <p class="text-sm text-slate-300 mt-0.5">Presione <strong>“Abrir Sesión”</strong> en el panel superior para dar inicio al llamado a lista y verificación de quórum.</p>
+                    <p class="text-sm text-slate-300 mt-0.5">A la espera de que Secretaría General o Presidencia instale la sesión.</p>
                 </div>
             </div>
-            <button type="button" onclick="abrirModalSesion()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-widest shadow-lg">
+            <button type="button" onclick="abrirModalSesion()" class="solo-admin bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-widest shadow-lg">
                 + Convocar Sesión
             </button>
         </div>
@@ -308,7 +328,7 @@
                         <h2 class="font-solemne text-2xl uppercase text-white">Tablero Electrónico de Quórum y Asistencia</h2>
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-2.5">
+                    <div class="solo-admin flex flex-wrap items-center gap-2.5">
                         <button onclick="mostrarTab('integrantes')" class="bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl border border-white/15 transition">
                             <i class="fa-solid fa-users-gear mr-1.5 text-[#c9a24b]"></i> Administrar Curules
                         </button>
@@ -380,7 +400,7 @@
                             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                             <input type="text" id="buscar-en-comisiones" onkeyup="renderizarTableroComisiones()" placeholder="Buscar Honorable Concejal..." class="bg-[#060a14] border border-white/15 text-white text-xs rounded-xl pl-9 pr-3.5 py-2.5 w-60 focus:border-[#c9a24b] focus:outline-none">
                         </div>
-                        <button onclick="mostrarTab('integrantes')" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded-xl shadow transition">
+                        <button onclick="mostrarTab('integrantes')" class="solo-admin bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded-xl shadow transition">
                             <i class="fa-solid fa-user-plus mr-1.5"></i> Gestionar Curules
                         </button>
                     </div>
@@ -444,7 +464,7 @@
                             </span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="probarSonidos()" class="bg-white/5 hover:bg-white/10 text-[#e5c16c] text-xs font-bold px-3 py-1.5 rounded-xl border border-white/10 transition">
+                            <button onclick="probarSonidos()" class="solo-admin bg-white/5 hover:bg-white/10 text-[#e5c16c] text-xs font-bold px-3 py-1.5 rounded-xl border border-white/10 transition">
                                 <i class="fa-solid fa-bell mr-1"></i> Timbre
                             </button>
                             <button onclick="togglePantallaCompletaCrono()" class="bg-white/5 hover:bg-white/10 text-white text-xs font-bold px-3 py-1.5 rounded-xl border border-white/10 transition">
@@ -461,7 +481,7 @@
                             En Espera de Orador
                         </h3>
                         <p id="crono-bancada" class="text-xs md:text-sm text-slate-400 font-medium mt-1.5">
-                            Seleccione un Honorable Concejal del orden de oradores o asigne tiempo reglamentario
+                            Orden de oradores del recinto del Concejo Municipal
                         </p>
                     </div>
 
@@ -485,7 +505,7 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap justify-center items-center gap-2 mb-5 bg-white/[0.03] p-3 rounded-2xl border border-white/10 w-full z-10">
+                    <div class="solo-admin flex flex-wrap justify-center items-center gap-2 mb-5 bg-white/[0.03] p-3 rounded-2xl border border-white/10 w-full z-10">
                         <button onclick="ajustarTiempo(-60)" class="bg-[#060a14] hover:bg-slate-900 text-rose-400 border border-rose-500/25 font-bold text-xs px-3 py-2 rounded-xl transition">-1m</button>
                         <button onclick="ajustarTiempo(-30)" class="bg-[#060a14] hover:bg-slate-900 text-rose-300 border border-rose-500/25 font-bold text-xs px-3 py-2 rounded-xl transition">-30s</button>
                         
@@ -500,7 +520,7 @@
                         <button onclick="ajustarTiempo(60)" class="bg-[#060a14] hover:bg-slate-900 text-emerald-400 border border-emerald-500/25 font-bold text-xs px-3 py-2 rounded-xl transition">+1m</button>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-3 w-full z-10">
+                    <div class="solo-admin grid grid-cols-3 gap-3 w-full z-10">
                         <button onclick="iniciarCrono()" class="bg-emerald-700 hover:bg-emerald-600 text-white py-3.5 px-4 rounded-2xl text-xs md:text-sm uppercase font-extrabold tracking-wider border border-emerald-400/25 shadow-lg transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-play"></i> Conceder
                         </button>
@@ -517,14 +537,14 @@
                     <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
                         <div>
                             <h3 class="font-solemne text-lg uppercase font-bold text-white">Orden de Uso de la Palabra</h3>
-                            <p class="text-xs text-slate-400">Inscripción reglamentaria ante Presidencia.</p>
+                            <p class="text-xs text-slate-400">Lista oficial de oradores inscritos ante Presidencia.</p>
                         </div>
                         <span class="bg-[#c9a24b]/15 text-[#e5c16c] border border-[#c9a24b]/40 text-xs font-extrabold px-3 py-1 rounded-lg">
                             <span id="contador-turnos">0</span> inscritos
                         </span>
                     </div>
                     
-                    <div class="space-y-3 mb-5 bg-[#060a14]/85 p-4 rounded-2xl border border-white/10">
+                    <div class="solo-admin space-y-3 mb-5 bg-[#060a14]/85 p-4 rounded-2xl border border-white/10">
                         <div>
                             <div class="flex justify-between items-center mb-1">
                                 <label class="block text-xs font-bold uppercase text-slate-400">Honorable Concejal</label>
@@ -597,13 +617,13 @@
                         <select id="select-votacion-activa" onchange="cambiarVotacionSeleccionada()" class="bg-[#060a14] border border-[#c9a24b]/40 text-white text-xs font-bold rounded-xl px-3.5 py-2.5 min-w-[240px] focus:border-[#c9a24b] focus:outline-none">
                             <option value="">-- Sin votaciones creadas --</option>
                         </select>
-                        <button onclick="toggleFormNuevaVotacion()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-lg transition">
+                        <button onclick="toggleFormNuevaVotacion()" class="solo-admin bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-lg transition">
                             <i class="fa-solid fa-plus mr-1.5"></i> Abrir Nueva Votación
                         </button>
                     </div>
                 </div>
 
-                <div id="panel-form-votacion" class="hidden mt-5 pt-5 border-t border-white/10">
+                <div id="panel-form-votacion" class="solo-admin hidden mt-5 pt-5 border-t border-white/10">
                     <div class="grid md:grid-cols-12 gap-4 items-end">
                         <div class="md:col-span-4">
                             <label class="block text-xs font-bold uppercase text-[#e5c16c] mb-1">
@@ -656,7 +676,7 @@
 
             <div class="grid lg:grid-cols-12 gap-6 items-start">
                 
-                <!-- COLUMNA IZQUIERDA (5 cols): CABINA DE AUTENTICACIÓN Y VOTO ÚNICO -->
+                <!-- COLUMNA IZQUIERDA (5 cols): CABINA DE AUTENTICACIÓN Y VOTO ÚNICO (SIEMPRE ACCESIBLE PARA CONCEJALES) -->
                 <div class="lg:col-span-5 panel-institucional rounded-2xl p-6 border border-[#c9a24b]/40">
                     <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
                         <div>
@@ -800,12 +820,12 @@
                     <button onclick="filtrarProyectos('Plenaria')" id="filtro-Plenaria" class="filtro-proy-btn bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-xs uppercase px-4 py-2 rounded-xl border border-white/10">Plenaria</button>
                 </div>
 
-                <button onclick="toggleFormularioProyecto()" class="bg-[#1e3a8a] hover:bg-blue-800 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-blue-400/30 transition shadow-lg">
+                <button onclick="toggleFormularioProyecto()" class="solo-admin bg-[#1e3a8a] hover:bg-blue-800 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-blue-400/30 transition shadow-lg">
                     <i class="fa-solid fa-file-signature mr-1.5"></i> Radicar Proyecto / Proposición
                 </button>
             </div>
 
-            <div id="panel-form-proyecto" class="hidden panel-institucional p-6 rounded-2xl mb-6 border border-[#c9a24b]">
+            <div id="panel-form-proyecto" class="solo-admin hidden panel-institucional p-6 rounded-2xl mb-6 border border-[#c9a24b]">
                 <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
                     <h3 class="font-solemne text-xl uppercase font-bold text-[#e5c16c]">Radicación Oficial en Secretaría General</h3>
                     <button onclick="toggleFormularioProyecto()" class="text-slate-400 hover:text-white text-sm font-bold"><i class="fa-solid fa-xmark"></i> Cerrar</button>
@@ -885,7 +905,6 @@
                         <div class="text-center text-slate-400 my-auto py-20">
                             <i class="fa-solid fa-file-lines text-5xl mb-3 text-slate-300"></i>
                             <p class="font-bold text-slate-600">Sin documentos seleccionados en el visor.</p>
-                            <p class="text-xs mt-1">Utilice el botón “Radicar Proyecto / Proposición” para incorporar un texto.</p>
                         </div>
                     </div>
                 </div>
@@ -896,7 +915,7 @@
         <!-- TAB 6: ADMINISTRACIÓN DE CURULES Y CONCEJALES                         -->
         <!-- ===================================================================== -->
         <section id="tab-integrantes" class="tab-content hidden">
-            <div class="panel-institucional p-6 rounded-2xl mb-6 border-t-4 border-t-[#c9a24b]">
+            <div class="solo-admin panel-institucional p-6 rounded-2xl mb-6 border-t-4 border-t-[#c9a24b]">
                 <h3 class="font-solemne text-xl uppercase font-bold text-white mb-1">Acreditación de Curul / Honorable Concejal</h3>
                 <p class="text-xs text-slate-400 mb-4">El registro se sincroniza automáticamente con el tablero de quórum, votación y comisiones.</p>
 
@@ -938,7 +957,7 @@
                 <div class="bg-[#060a14] p-4 border-b border-white/10 flex flex-wrap justify-between items-center gap-3">
                     <div>
                         <h3 class="font-solemne text-lg uppercase text-white">Libro Oficial de Curules, Bancadas y Comisiones</h3>
-                        <p class="text-xs text-slate-400">Toda modificación en los selectores se guarda en tiempo real.</p>
+                        <p class="text-xs text-slate-400">Directorio oficial de los Honorables Concejales acreditados.</p>
                     </div>
                     <input type="text" id="buscar-integrante" onkeyup="renderizarGestionIntegrantes()" placeholder="Filtrar por nombre..." class="bg-[#0b1222] border border-white/15 text-white text-xs rounded-xl px-3.5 py-2.5 w-64 focus:border-[#c9a24b] focus:outline-none">
                 </div>
@@ -951,7 +970,7 @@
                                 <th class="p-4">Bancada</th>
                                 <th class="p-4">Comisión Permanente</th>
                                 <th class="p-4 text-center">Mesa Directiva (P)</th>
-                                <th class="p-4 text-right">Acción</th>
+                                <th class="solo-admin p-4 text-right">Acción</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-gestion-integrantes" class="divide-y divide-white/5 text-sm"></tbody>
@@ -975,6 +994,55 @@
             <p class="uppercase tracking-[0.18em] text-[10px] font-bold text-[#c9a24b]/80">Ibagué, Tolima • República de Colombia</p>
         </div>
     </footer>
+
+    <!-- MODAL REGISTRO / ACCESO ADMINISTRATIVO -->
+    <div id="modal-admin" class="fixed inset-0 bg-black/85 hidden items-center justify-center p-4 z-50 backdrop-blur-md">
+        <div class="panel-institucional rounded-2xl max-w-md w-full p-6 border border-[#c9a24b]">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#c9a24b]">Mesa Directiva • Secretaría General</span>
+                    <h3 class="font-solemne text-2xl uppercase font-bold text-white mt-0.5">Registro Administrativo</h3>
+                </div>
+                <button type="button" onclick="cerrarModalAdmin()" class="text-slate-400 hover:text-white text-base p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-300 bg-[#060a14]/85 p-3 rounded-xl border border-white/10 mb-4">
+                <i class="fa-solid fa-lock text-[#e5c16c] mr-1.5"></i>
+                Regístrese con su nombre, cargo y la clave institucional para habilitar el control de sesiones, quórum, uso de la palabra, urnas y proyectos.
+            </p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Nombre Completo del Administrador</label>
+                    <input type="text" id="admin-reg-nombre" placeholder="Ej: Secretario General / Presidente" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-2.5 text-sm focus:border-[#c9a24b] focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Cargo o Rol</label>
+                    <select id="admin-reg-cargo" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-2.5 text-sm font-semibold focus:border-[#c9a24b] focus:outline-none">
+                        <option value="Secretaría General">Secretaría General</option>
+                        <option value="Presidencia del Concejo">Presidencia del Concejo</option>
+                        <option value="Vicepresidencia">Vicepresidencia</option>
+                        <option value="Coordinación Logística">Coordinación Logística</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-[#e5c16c] mb-1">Clave Institucional Administrativa</label>
+                    <input type="password" id="admin-reg-password" placeholder="Ingrese la clave de administrador" onkeydown="if(event.key==='Enter') registrarAccesoAdmin()" class="w-full border border-[#c9a24b]/50 bg-[#060a14] text-white rounded-xl px-3.5 py-2.5 text-sm focus:border-[#c9a24b] focus:outline-none">
+                </div>
+
+                <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-white/10">
+                    <button type="button" onclick="cerrarModalAdmin()" class="px-4 py-2 text-xs font-bold uppercase text-slate-400 hover:text-white rounded-xl">Cancelar</button>
+                    <button type="button" onclick="registrarAccesoAdmin()" class="bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg">
+                        <i class="fa-solid fa-key mr-1.5"></i> Ingresar como Admin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL ABRIR SESIÓN -->
     <div id="modal-sesion" class="fixed inset-0 bg-black/85 hidden items-center justify-center p-4 z-50 backdrop-blur-md">
@@ -1014,6 +1082,10 @@
     </div>
 
     <script>
+        let adminToken = localStorage.getItem('concejo_admin_token') || null;
+        let adminInfo = null;
+        let esModoAdmin = false;
+
         let sesionActual = null;
         let integrantesGlobal = [];
         let asistenciasGlobal = [];
@@ -1039,6 +1111,155 @@
         let intervencionActivaId = null;
         let audioCtx = null;
         const CIRCUNFERENCIA_ANILLO = 2 * Math.PI * 114;
+
+        // =====================================================================
+        // GESTIÓN DE SESIÓN Y PERMISOS DE ADMINISTRADOR
+        // =====================================================================
+        function abrirModalAdmin() {
+            const modal = document.getElementById('modal-admin');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('admin-reg-nombre').focus();
+        }
+
+        function cerrarModalAdmin() {
+            const modal = document.getElementById('modal-admin');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function aplicarEstadoAdminUI() {
+            const btnLogin = document.getElementById('btn-abrir-login-admin');
+            const infoConectado = document.getElementById('info-admin-conectado');
+            const nombreBarra = document.getElementById('nombre-admin-barra');
+
+            if (esModoAdmin && adminInfo) {
+                document.body.classList.add('modo-admin');
+                if (btnLogin) btnLogin.classList.add('hidden');
+                if (infoConectado) infoConectado.classList.remove('hidden');
+                if (nombreBarra) nombreBarra.innerText = `${adminInfo.nombre_admin} (${adminInfo.cargo_admin})`;
+            } else {
+                document.body.classList.remove('modo-admin');
+                if (btnLogin) btnLogin.classList.remove('hidden');
+                if (infoConectado) infoConectado.classList.add('hidden');
+            }
+
+            renderizarBancadasAsistencia(asistenciasGlobal);
+            renderizarTableroComisiones();
+            renderizarListaIntervenciones();
+            renderizarProyectos();
+            renderizarGestionIntegrantes();
+            cargarDetalleVotacion();
+        }
+
+        async function verificarSesionAdminGuardada() {
+            if (!adminToken) {
+                esModoAdmin = false;
+                adminInfo = null;
+                aplicarEstadoAdminUI();
+                return;
+            }
+            try {
+                const res = await fetch('/api/admin/verificar', {
+                    headers: { 'x-admin-token': adminToken }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    esModoAdmin = true;
+                    adminInfo = data.admin;
+                } else {
+                    localStorage.removeItem('concejo_admin_token');
+                    adminToken = null;
+                    esModoAdmin = false;
+                    adminInfo = null;
+                }
+            } catch (e) {
+                esModoAdmin = false;
+                adminInfo = null;
+            }
+            aplicarEstadoAdminUI();
+        }
+
+        async function registrarAccesoAdmin() {
+            const nombre_admin = document.getElementById('admin-reg-nombre').value;
+            const cargo_admin = document.getElementById('admin-reg-cargo').value;
+            const password = document.getElementById('admin-reg-password').value;
+
+            if (!nombre_admin.trim()) {
+                return alert('Ingrese su nombre completo para quedar registrado.');
+            }
+            if (!password.trim()) {
+                return alert('Ingrese la clave administrativa.');
+            }
+
+            try {
+                const res = await fetch('/api/admin/registro', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre_admin, cargo_admin, password })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    return alert(data.error || 'Clave administrativa incorrecta.');
+                }
+
+                adminToken = data.token;
+                adminInfo = data.admin;
+                esModoAdmin = true;
+                localStorage.setItem('concejo_admin_token', adminToken);
+
+                document.getElementById('admin-reg-nombre').value = '';
+                document.getElementById('admin-reg-password').value = '';
+                cerrarModalAdmin();
+                aplicarEstadoAdminUI();
+                notificar(`🛡️ Bienvenido Administrador: ${adminInfo.nombre_admin}`);
+            } catch (err) {
+                alert('Error de conexión al verificar clave: ' + err.message);
+            }
+        }
+
+        async function cerrarSesionAdmin() {
+            if (adminToken) {
+                try {
+                    await fetch('/api/admin/salir', {
+                        method: 'POST',
+                        headers: { 'x-admin-token': adminToken }
+                    });
+                } catch (e) {}
+            }
+            localStorage.removeItem('concejo_admin_token');
+            adminToken = null;
+            adminInfo = null;
+            esModoAdmin = false;
+            aplicarEstadoAdminUI();
+            notificar('🔒 Sesión administrativa cerrada');
+        }
+
+        function fetchAdmin(url, options = {}) {
+            if (!esModoAdmin || !adminToken) {
+                abrirModalAdmin();
+                return Promise.resolve({
+                    ok: false,
+                    status: 401,
+                    json: async () => ({ error: 'Debe registrarse como administrador primero.' })
+                });
+            }
+            const headers = {
+                ...(options.headers || {}),
+                'x-admin-token': adminToken
+            };
+            return fetch(url, { ...options, headers }).then(async (res) => {
+                if (res.status === 401) {
+                    esModoAdmin = false;
+                    adminToken = null;
+                    adminInfo = null;
+                    localStorage.removeItem('concejo_admin_token');
+                    aplicarEstadoAdminUI();
+                    abrirModalAdmin();
+                }
+                return res;
+            });
+        }
 
         // =====================================================================
         // SINCRONIZACIÓN EN TIEMPO REAL PARA TODOS LOS CONECTADOS (SIN F5)
@@ -1108,7 +1329,6 @@
                 actualizarIndicadorConexion(false);
             }
 
-            // Respaldo automático cada 3 segundos para cualquier cambio de red
             if (intervaloSyncGlobal) clearInterval(intervaloSyncGlobal);
             intervaloSyncGlobal = setInterval(() => {
                 sincronizarTodoSilencioso('todos');
@@ -1319,6 +1539,7 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 cerrarModalSesion();
+                cerrarModalAdmin();
                 const drawer = document.getElementById('drawer-marca-agua');
                 if (drawer) drawer.classList.remove('abierto');
             }
@@ -1326,6 +1547,7 @@
 
         window.onload = async () => {
             aplicarLogoGuardado();
+            await verificarSesionAdminGuardada();
             await cargarIntegrantes();
             await cargarProyectos();
             await cargarSesiones();
@@ -1484,6 +1706,20 @@
                     }">${estadoAsis}</span>
                 ` : '';
 
+                const controlesAdminComision = esModoAdmin ? `
+                    <div class="flex items-center gap-2 shrink-0">
+                        <select onchange="recolocarIntegrante(${i.id_integrante}, 'comision', this.value)" title="Reasignar comisión" class="bg-[#060a14] border border-white/15 text-slate-200 text-[11px] font-semibold rounded-lg px-2.5 py-1.5 focus:border-[#c9a24b] focus:outline-none">
+                            <option value="1" ${i.id_comision === 1 ? 'selected' : ''}>Comisión Primera</option>
+                            <option value="2" ${i.id_comision === 2 ? 'selected' : ''}>Comisión Segunda</option>
+                            <option value="" ${!i.id_comision ? 'selected' : ''}>Sin Comisión</option>
+                        </select>
+
+                        <button onclick="inscribirRapidoDesdeComision(${i.id_integrante})" class="bg-white/5 hover:bg-[#c9a24b] text-[#e5c16c] hover:text-slate-950 border border-[#c9a24b]/40 px-2.5 py-1.5 rounded-lg text-xs font-bold transition" title="Inscribir en Uso de la Palabra">
+                            <i class="fa-solid fa-microphone-lines"></i>
+                        </button>
+                    </div>
+                ` : '';
+
                 return `
                     <div class="curul-institucional p-4 rounded-xl flex flex-wrap justify-between items-center gap-3">
                         <div class="flex items-center gap-3 min-w-0 flex-1">
@@ -1503,18 +1739,7 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="flex items-center gap-2 shrink-0">
-                            <select onchange="recolocarIntegrante(${i.id_integrante}, 'comision', this.value)" title="Reasignar comisión" class="bg-[#060a14] border border-white/15 text-slate-200 text-[11px] font-semibold rounded-lg px-2.5 py-1.5 focus:border-[#c9a24b] focus:outline-none">
-                                <option value="1" ${i.id_comision === 1 ? 'selected' : ''}>Comisión Primera</option>
-                                <option value="2" ${i.id_comision === 2 ? 'selected' : ''}>Comisión Segunda</option>
-                                <option value="" ${!i.id_comision ? 'selected' : ''}>Sin Comisión</option>
-                            </select>
-
-                            <button onclick="inscribirRapidoDesdeComision(${i.id_integrante})" class="bg-white/5 hover:bg-[#c9a24b] text-[#e5c16c] hover:text-slate-950 border border-[#c9a24b]/40 px-2.5 py-1.5 rounded-lg text-xs font-bold transition" title="Inscribir en Uso de la Palabra">
-                                <i class="fa-solid fa-microphone-lines"></i>
-                            </button>
-                        </div>
+                        ${controlesAdminComision}
                     </div>
                 `;
             };
@@ -1582,7 +1807,7 @@
 
         async function inscribirRapidoDesdeComision(id_integrante) {
             if (!sesionActual) return alert('Primero debe abrir una sesión en el botón “Abrir Sesión”.');
-            await fetch('/api/intervenciones', {
+            const res = await fetchAdmin('/api/intervenciones', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -1592,8 +1817,10 @@
                     tiempo_asignado_seg: 180
                 })
             });
-            notificar('🎙️ Honorable Concejal inscrito en el Uso de la Palabra (3 min)');
-            await cargarIntervenciones();
+            if (res.ok) {
+                notificar('🎙️ Honorable Concejal inscrito en el Uso de la Palabra (3 min)');
+                await cargarIntervenciones();
+            }
         }
 
         function renderizarGestionIntegrantes() {
@@ -1604,40 +1831,61 @@
             const filtrados = integrantesGlobal.filter(i => normalizarTexto(i.nombre_completo).includes(filtro));
 
             filtrados.forEach(i => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-white/[0.03] transition">
-                        <td class="p-4">
-                            <span class="font-bold text-white">H.C. ${i.nombre_completo}</span>
-                            ${i.es_directiva ? '<span class="ml-2 bg-[#c9a24b] text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded">MESA (P)</span>' : ''}
-                        </td>
-                        <td class="p-4">
-                            <select onchange="recolocarIntegrante(${i.id_integrante}, 'bancada', this.value)" class="border border-white/15 rounded-xl px-3 py-1.5 text-xs font-bold ${
-                                i.id_bancada === 1 ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' :
-                                i.id_bancada === 2 ? 'bg-rose-950 text-rose-300 border-rose-500/40' :
-                                'bg-purple-950 text-purple-300 border-purple-500/40'
-                            }">
-                                <option value="1" ${i.id_bancada === 1 ? 'selected' : ''}>Gobierno</option>
-                                <option value="2" ${i.id_bancada === 2 ? 'selected' : ''}>Oposición</option>
-                                <option value="3" ${i.id_bancada === 3 ? 'selected' : ''}>Independientes</option>
-                            </select>
-                        </td>
-                        <td class="p-4">
-                            <select onchange="recolocarIntegrante(${i.id_integrante}, 'comision', this.value)" class="border border-white/15 rounded-xl px-3 py-1.5 text-xs font-bold bg-[#060a14] text-slate-200">
-                                <option value="1" ${i.id_comision === 1 ? 'selected' : ''}>Comisión Primera</option>
-                                <option value="2" ${i.id_comision === 2 ? 'selected' : ''}>Comisión Segunda</option>
-                                <option value="" ${i.id_comision === null ? 'selected' : ''}>Sin Comisión</option>
-                            </select>
-                        </td>
-                        <td class="p-4 text-center">
-                            <input type="checkbox" ${i.es_directiva ? 'checked' : ''} onchange="recolocarIntegrante(${i.id_integrante}, 'directiva', this.checked)" class="w-4 h-4 accent-[#c9a24b] cursor-pointer">
-                        </td>
-                        <td class="p-4 text-right">
-                            <button onclick="eliminarIntegrante(${i.id_integrante}, '${i.nombre_completo}')" class="bg-rose-500/10 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                                <i class="fa-solid fa-user-minus mr-1"></i> Retirar
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                if (esModoAdmin) {
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-white/[0.03] transition">
+                            <td class="p-4">
+                                <span class="font-bold text-white">H.C. ${i.nombre_completo}</span>
+                                ${i.es_directiva ? '<span class="ml-2 bg-[#c9a24b] text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded">MESA (P)</span>' : ''}
+                            </td>
+                            <td class="p-4">
+                                <select onchange="recolocarIntegrante(${i.id_integrante}, 'bancada', this.value)" class="border border-white/15 rounded-xl px-3 py-1.5 text-xs font-bold ${
+                                    i.id_bancada === 1 ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' :
+                                    i.id_bancada === 2 ? 'bg-rose-950 text-rose-300 border-rose-500/40' :
+                                    'bg-purple-950 text-purple-300 border-purple-500/40'
+                                }">
+                                    <option value="1" ${i.id_bancada === 1 ? 'selected' : ''}>Gobierno</option>
+                                    <option value="2" ${i.id_bancada === 2 ? 'selected' : ''}>Oposición</option>
+                                    <option value="3" ${i.id_bancada === 3 ? 'selected' : ''}>Independientes</option>
+                                </select>
+                            </td>
+                            <td class="p-4">
+                                <select onchange="recolocarIntegrante(${i.id_integrante}, 'comision', this.value)" class="border border-white/15 rounded-xl px-3 py-1.5 text-xs font-bold bg-[#060a14] text-slate-200">
+                                    <option value="1" ${i.id_comision === 1 ? 'selected' : ''}>Comisión Primera</option>
+                                    <option value="2" ${i.id_comision === 2 ? 'selected' : ''}>Comisión Segunda</option>
+                                    <option value="" ${i.id_comision === null ? 'selected' : ''}>Sin Comisión</option>
+                                </select>
+                            </td>
+                            <td class="p-4 text-center">
+                                <input type="checkbox" ${i.es_directiva ? 'checked' : ''} onchange="recolocarIntegrante(${i.id_integrante}, 'directiva', this.checked)" class="w-4 h-4 accent-[#c9a24b] cursor-pointer">
+                            </td>
+                            <td class="p-4 text-right">
+                                <button onclick="eliminarIntegrante(${i.id_integrante}, '${i.nombre_completo}')" class="bg-rose-500/10 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                                    <i class="fa-solid fa-user-minus mr-1"></i> Retirar
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-white/[0.03] transition">
+                            <td class="p-4">
+                                <span class="font-bold text-white">H.C. ${i.nombre_completo}</span>
+                            </td>
+                            <td class="p-4">
+                                <span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${
+                                    i.id_bancada === 1 ? 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40' :
+                                    i.id_bancada === 2 ? 'bg-rose-950/60 text-rose-300 border-rose-500/40' :
+                                    'bg-purple-950/60 text-purple-300 border-purple-500/40'
+                                }">${i.bancada}</span>
+                            </td>
+                            <td class="p-4 text-slate-300 font-semibold text-xs">${i.comision}</td>
+                            <td class="p-4 text-center">
+                                ${i.es_directiva ? '<span class="bg-[#c9a24b] text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded">MESA (P)</span>' : '<span class="text-slate-600 text-xs">—</span>'}
+                            </td>
+                        </tr>
+                    `;
+                }
             });
         }
 
@@ -1649,7 +1897,7 @@
 
             if (!nombre_completo.trim()) return alert('Ingrese los nombres y apellidos del Honorable Concejal.');
 
-            const res = await fetch('/api/integrantes', {
+            const res = await fetchAdmin('/api/integrantes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -1684,7 +1932,7 @@
                 es_directiva: campo === 'directiva' ? valor : persona.es_directiva
             };
 
-            const res = await fetch(`/api/integrantes/${id_integrante}`, {
+            const res = await fetchAdmin(`/api/integrantes/${id_integrante}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -1699,7 +1947,7 @@
 
         async function eliminarIntegrante(id_integrante, nombre) {
             if (!confirm(`¿Confirma retirar la curul del H.C. "${nombre}"?`)) return;
-            const res = await fetch(`/api/integrantes/${id_integrante}`, { method: 'DELETE' });
+            const res = await fetchAdmin(`/api/integrantes/${id_integrante}`, { method: 'DELETE' });
             if (res.ok) {
                 notificar('🗑️ Registro retirado');
                 await cargarIntegrantes();
@@ -1711,6 +1959,7 @@
         // 2. SESIONES (CON ELIMINACIÓN Y SINCRONIZACIÓN SILENCIOSA)
         // =====================================================================
         function abrirModalSesion() {
+            if (!esModoAdmin) return abrirModalAdmin();
             const modal = document.getElementById('modal-sesion');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -1778,14 +2027,14 @@
             if (!titulo.trim()) return alert('Ingrese una denominación para la sesión');
 
             try {
-                const res = await fetch('/api/sesiones', {
+                const res = await fetchAdmin('/api/sesiones', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ titulo, tipo_sesion, id_comision })
                 });
                 const data = await res.json();
                 if (!res.ok) {
-                    return alert('Error al crear sesión en PostgreSQL: ' + (data.error || 'Desconocido'));
+                    return alert('Error al crear sesión: ' + (data.error || 'Desconocido'));
                 }
                 cerrarModalSesion();
                 document.getElementById('nueva-sesion-titulo').value = '';
@@ -1807,7 +2056,7 @@
             }
 
             try {
-                const res = await fetch(`/api/sesiones/${sesionActual}`, { method: 'DELETE' });
+                const res = await fetchAdmin(`/api/sesiones/${sesionActual}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (!res.ok) {
                     return alert('Error al eliminar la sesión: ' + (data.error || 'Desconocido'));
@@ -1888,9 +2137,18 @@
                                          m.estado === 'Retardo' ? 'bg-amber-400 led-glow-amber' :
                                          m.estado === 'Excusa' ? 'bg-purple-500 led-glow-purple' : 'bg-rose-500 led-glow-red';
 
+                        const botonesAsistenciaHtml = esModoAdmin ? `
+                            <div class="grid grid-cols-4 gap-1.5 mt-2">
+                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Presente')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Presente'?'bg-emerald-700 text-white shadow':'bg-white/5 hover:bg-emerald-500/20 text-slate-300'}">Presente</button>
+                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Retardo')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Retardo'?'bg-[#c9a24b] text-slate-950 shadow':'bg-white/5 hover:bg-amber-500/20 text-slate-300'}">Retardo</button>
+                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Excusa')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Excusa'?'bg-purple-700 text-white shadow':'bg-white/5 hover:bg-purple-500/20 text-slate-300'}">Excusa</button>
+                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Ausente')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Ausente'?'bg-rose-700 text-white shadow':'bg-white/5 hover:bg-rose-500/20 text-slate-300'}">Ausente</button>
+                            </div>
+                        ` : '';
+
                         return `
                         <div class="curul-institucional p-3.5 rounded-xl mb-2.5">
-                            <div class="flex justify-between items-start gap-2 mb-2.5">
+                            <div class="flex justify-between items-start gap-2 ${esModoAdmin ? 'mb-2.5' : ''}">
                                 <div class="flex items-start gap-2.5">
                                     <span class="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0 ${ledClass}"></span>
                                     <div>
@@ -1910,12 +2168,7 @@
                                     'bg-rose-500/15 text-rose-300 border-rose-500/40'
                                 }">${m.estado}</span>
                             </div>
-                            <div class="grid grid-cols-4 gap-1.5 mt-2">
-                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Presente')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Presente'?'bg-emerald-700 text-white shadow':'bg-white/5 hover:bg-emerald-500/20 text-slate-300'}">Presente</button>
-                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Retardo')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Retardo'?'bg-[#c9a24b] text-slate-950 shadow':'bg-white/5 hover:bg-amber-500/20 text-slate-300'}">Retardo</button>
-                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Excusa')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Excusa'?'bg-purple-700 text-white shadow':'bg-white/5 hover:bg-purple-500/20 text-slate-300'}">Excusa</button>
-                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Ausente')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Ausente'?'bg-rose-700 text-white shadow':'bg-white/5 hover:bg-rose-500/20 text-slate-300'}">Ausente</button>
-                            </div>
+                            ${botonesAsistenciaHtml}
                         </div>
                     `}).join('');
                 }
@@ -1940,19 +2193,21 @@
         }
 
         async function marcarAsistencia(id_asistencia, estado) {
-            await fetch(`/api/asistencias/${id_asistencia}`, {
+            const res = await fetchAdmin(`/api/asistencias/${id_asistencia}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ estado })
             });
-            await cargarAsistencias();
+            if (res.ok) await cargarAsistencias();
         }
 
         async function marcarTodosPresentes() {
             if (!sesionActual) return alert('Primero debe abrir una sesión');
-            await fetch(`/api/asistencias/sesion/${sesionActual}/todos-presentes`, { method: 'PUT' });
-            notificar('✅ Quórum pleno confirmado en el tablero');
-            await cargarAsistencias();
+            const res = await fetchAdmin(`/api/asistencias/sesion/${sesionActual}/todos-presentes`, { method: 'PUT' });
+            if (res.ok) {
+                notificar('✅ Quórum pleno confirmado en el tablero');
+                await cargarAsistencias();
+            }
         }
 
         // =====================================================================
@@ -1971,13 +2226,15 @@
             const tipo_intervencion = document.getElementById('select-tipo-intervencion').value;
             const tiempo_asignado_seg = document.getElementById('input-segundos').value;
 
-            await fetch('/api/intervenciones', {
+            const res = await fetchAdmin('/api/intervenciones', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id_sesion: sesionActual, id_integrante, tipo_intervencion, tiempo_asignado_seg })
             });
-            notificar('🎙️ Turno inscrito en el orden de oradores');
-            await cargarIntervenciones();
+            if (res.ok) {
+                notificar('🎙️ Turno inscrito en el orden de oradores');
+                await cargarIntervenciones();
+            }
         }
 
         async function cargarIntervenciones() {
@@ -2032,6 +2289,21 @@
                         ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' 
                         : 'bg-[#c9a24b]/20 text-[#e5c16c] border border-[#c9a24b]/40';
 
+                const botonesTurnoHtml = esModoAdmin ? `
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button onclick="seleccionarOrador(${item.id_intervencion}, 'H.C. ${item.nombre_completo}', '${item.bancada} — Comisión ${item.comision}', '${item.tipo_intervencion}', ${item.tiempo_asignado_seg})" class="bg-[#c9a24b] hover:bg-[#e5c16c] text-slate-950 text-xs font-extrabold uppercase px-3 py-2 rounded-xl transition" title="Conceder uso de la palabra">
+                            <i class="fa-solid fa-microphone-lines mr-1"></i> ${Math.floor(item.tiempo_asignado_seg/60)}m ${item.tiempo_asignado_seg%60}s
+                        </button>
+                        <button onclick="retirarIntervencion(${item.id_intervencion}, 'H.C. ${item.nombre_completo}')" class="bg-rose-500/15 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/30 px-2.5 py-2 rounded-xl text-xs font-bold transition" title="Retirar turno">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                ` : `
+                    <span class="text-xs font-mono-digital font-bold text-[#e5c16c] shrink-0">
+                        ${Math.floor(item.tiempo_asignado_seg/60)}m ${item.tiempo_asignado_seg%60}s
+                    </span>
+                `;
+
                 div.innerHTML += `
                     <div class="p-3.5 rounded-2xl border transition flex justify-between items-center gap-2 ${
                         esActivo ? 'bg-[#c9a24b]/12 border-[#c9a24b] shadow-lg' : 'bg-[#060a14]/85 border-white/10 hover:border-white/25'
@@ -2046,15 +2318,7 @@
                                 ${item.bancada} • Com. ${item.comision} • <strong class="text-slate-200">${item.tipo_intervencion}</strong>
                             </p>
                         </div>
-
-                        <div class="flex items-center gap-1.5 shrink-0">
-                            <button onclick="seleccionarOrador(${item.id_intervencion}, 'H.C. ${item.nombre_completo}', '${item.bancada} — Comisión ${item.comision}', '${item.tipo_intervencion}', ${item.tiempo_asignado_seg})" class="bg-[#c9a24b] hover:bg-[#e5c16c] text-slate-950 text-xs font-extrabold uppercase px-3 py-2 rounded-xl transition" title="Conceder uso de la palabra">
-                                <i class="fa-solid fa-microphone-lines mr-1"></i> ${Math.floor(item.tiempo_asignado_seg/60)}m ${item.tiempo_asignado_seg%60}s
-                            </button>
-                            <button onclick="retirarIntervencion(${item.id_intervencion}, 'H.C. ${item.nombre_completo}')" class="bg-rose-500/15 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/30 px-2.5 py-2 rounded-xl text-xs font-bold transition" title="Retirar turno">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
+                        ${botonesTurnoHtml}
                     </div>
                 `;
             });
@@ -2063,23 +2327,22 @@
         async function retirarIntervencion(id_intervencion, nombre) {
             if (!confirm(`¿Retirar del orden de oradores a ${nombre}?`)) return;
 
-            if (intervencionActivaId === id_intervencion) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-                intervencionActivaId = null;
-                ocultarAlertaVisualCrono();
-                document.getElementById('crono-nombre').innerText = 'En Espera de Orador';
-                document.getElementById('crono-bancada').innerText = 'Turno retirado del orden del día';
-                document.getElementById('crono-tipo-badge').classList.add('hidden');
-                segundosBase = 180;
-                segundosRestantes = 180;
-                sincronizarInputsTiempo();
-                actualizarEstadoVisualIndicador('detenido');
-                actualizarDisplayCrono();
-            }
-
-            const res = await fetch(`/api/intervenciones/${id_intervencion}`, { method: 'DELETE' });
+            const res = await fetchAdmin(`/api/intervenciones/${id_intervencion}`, { method: 'DELETE' });
             if (res.ok) {
+                if (intervencionActivaId === id_intervencion) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    intervencionActivaId = null;
+                    ocultarAlertaVisualCrono();
+                    document.getElementById('crono-nombre').innerText = 'En Espera de Orador';
+                    document.getElementById('crono-bancada').innerText = 'Turno retirado del orden del día';
+                    document.getElementById('crono-tipo-badge').classList.add('hidden');
+                    segundosBase = 180;
+                    segundosRestantes = 180;
+                    sincronizarInputsTiempo();
+                    actualizarEstadoVisualIndicador('detenido');
+                    actualizarDisplayCrono();
+                }
                 notificar('🗑️ Turno retirado');
                 await cargarIntervenciones();
             }
@@ -2110,6 +2373,7 @@
         }
 
         function seleccionarOrador(id, nombre, detalle, tipo, segundos) {
+            if (!esModoAdmin) return abrirModalAdmin();
             pausarCrono();
             ocultarAlertaVisualCrono();
             actualizarEstadoVisualIndicador('pausado');
@@ -2133,6 +2397,7 @@
         }
 
         function ajustarTiempo(deltaSegundos) {
+            if (!esModoAdmin) return abrirModalAdmin();
             segundosRestantes = Math.max(0, segundosRestantes + deltaSegundos);
             segundosBase = Math.max(segundosBase, segundosRestantes);
             if (segundosRestantes > 10) ocultarAlertaVisualCrono();
@@ -2142,6 +2407,7 @@
         }
 
         function aplicarTiempoManual() {
+            if (!esModoAdmin) return abrirModalAdmin();
             const mins = parseInt(document.getElementById('edit-minutos').value, 10) || 0;
             const segs = parseInt(document.getElementById('edit-segundos').value, 10) || 0;
             segundosRestantes = (mins * 60) + segs;
@@ -2182,6 +2448,7 @@
         }
 
         function iniciarCrono() {
+            if (!esModoAdmin) return abrirModalAdmin();
             if (timerInterval) return;
             if (segundosRestantes <= 0) return alert('Fije un tiempo mayor a 0 segundos antes de conceder el uso de la palabra.');
 
@@ -2214,9 +2481,9 @@
             clearInterval(timerInterval);
             timerInterval = null;
             actualizarEstadoVisualIndicador('pausado');
-            if (intervencionActivaId) {
+            if (intervencionActivaId && esModoAdmin) {
                 const usado = Math.max(0, segundosBase - segundosRestantes);
-                await fetch(`/api/intervenciones/${intervencionActivaId}`, {
+                await fetchAdmin(`/api/intervenciones/${intervencionActivaId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ tiempo_usado_seg: usado, estado: 'En Curso' })
@@ -2226,15 +2493,16 @@
         }
 
         async function finalizarTurnoActual(automatico = false) {
+            if (!esModoAdmin && !automatico) return abrirModalAdmin();
             clearInterval(timerInterval);
             timerInterval = null;
             actualizarEstadoVisualIndicador('detenido');
             if (!automatico) {
                 mostrarAlertaVisualCrono('⏹️ Intervención cerrada por Presidencia', 'bg-slate-800 text-slate-300 border border-slate-600');
             }
-            if (intervencionActivaId) {
+            if (intervencionActivaId && esModoAdmin) {
                 const usado = Math.max(0, segundosBase - segundosRestantes);
-                await fetch(`/api/intervenciones/${intervencionActivaId}`, {
+                await fetchAdmin(`/api/intervenciones/${intervencionActivaId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ tiempo_usado_seg: usado, estado: 'Finalizada' })
@@ -2297,6 +2565,7 @@
         }
 
         function someterProyectoAVotacion(id_proyecto) {
+            if (!esModoAdmin) return abrirModalAdmin();
             mostrarTab('votacion');
             const panel = document.getElementById('panel-form-votacion');
             if (panel) panel.classList.remove('hidden');
@@ -2316,6 +2585,7 @@
         }
 
         function toggleFormNuevaVotacion() {
+            if (!esModoAdmin) return abrirModalAdmin();
             const panel = document.getElementById('panel-form-votacion');
             panel.classList.toggle('hidden');
             if (!panel.classList.contains('hidden')) {
@@ -2397,7 +2667,7 @@
             }
 
             try {
-                const res = await fetch('/api/votaciones', {
+                const res = await fetchAdmin('/api/votaciones', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -2496,7 +2766,7 @@
                 segundosRestantesUrna = 0;
                 if (displayUrnaEl) displayUrnaEl.innerText = '--:--';
                 tituloEl.innerText = 'No hay ninguna votación activa';
-                descEl.innerText = 'Presione “Abrir Nueva Votación”, seleccione un proyecto y fije el tiempo reglamentario.';
+                descEl.innerText = 'A la espera de que Mesa Directiva o Secretaría abra la urna de votación.';
                 estadoEl.innerText = 'EN ESPERA';
                 estadoEl.className = 'bg-slate-700 text-slate-300 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
                 ambitoEl.innerText = '--';
@@ -2549,8 +2819,7 @@
                 ? `<button onclick="irAVerProyecto(${votacion.id_proyecto})" class="bg-[#1e3a8a] hover:bg-blue-700 text-white font-bold text-xs uppercase px-3 py-2 rounded-xl border border-blue-400/30 transition"><i class="fa-solid fa-file-lines mr-1"></i> Ver Documento</button>`
                 : '';
 
-            controlesEl.innerHTML = `
-                ${btnVerDocumento}
+            const botonesAdminUrna = esModoAdmin ? `
                 ${estaAbierta
                     ? `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Cerrada')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock mr-1"></i> Cerrar Urna Ahora</button>`
                     : `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Abierta')" class="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock-open mr-1"></i> Reabrir Urna</button>`
@@ -2558,7 +2827,9 @@
                 <button onclick="eliminarVotacion(${votacion.id_votacion})" class="bg-rose-500/15 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/30 px-3 py-2 rounded-xl text-xs font-bold transition" title="Eliminar votación">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
-            `;
+            ` : '';
+
+            controlesEl.innerHTML = `${btnVerDocumento} ${botonesAdminUrna}`;
 
             const total = votos.length;
             const si = votos.filter(v => v.opcion === 'SI').length;
@@ -2646,7 +2917,7 @@
         }
 
         async function cambiarEstadoVotacion(id_votacion, estado) {
-            const res = await fetch(`/api/votaciones/${id_votacion}/estado`, {
+            const res = await fetchAdmin(`/api/votaciones/${id_votacion}/estado`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ estado })
@@ -2659,7 +2930,7 @@
 
         async function eliminarVotacion(id_votacion) {
             if (!confirm('¿Confirma eliminar esta votación y todos sus votos registrados?')) return;
-            const res = await fetch(`/api/votaciones/${id_votacion}`, { method: 'DELETE' });
+            const res = await fetchAdmin(`/api/votaciones/${id_votacion}`, { method: 'DELETE' });
             if (res.ok) {
                 cerrarSesionConcejal();
                 votacionSeleccionadaId = null;
@@ -2672,6 +2943,7 @@
         // 6. PROYECTOS DE ACUERDO Y PROPOSICIONES
         // =====================================================================
         function toggleFormularioProyecto() {
+            if (!esModoAdmin) return abrirModalAdmin();
             const panel = document.getElementById('panel-form-proyecto');
             panel.classList.toggle('hidden');
         }
@@ -2707,7 +2979,7 @@
                 archivo_contenido = await leerArchivoBase64(file);
             }
 
-            const res = await fetch('/api/proyectos', {
+            const res = await fetchAdmin('/api/proyectos', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -2841,7 +3113,7 @@
                 badgeEl.innerText = 'SIN DOCUMENTO';
                 comisionEl.innerText = filtroComisionActual;
                 tituloEl.innerText = 'No hay documento seleccionado';
-                autorEl.innerText = 'Utilice el botón “Radicar Proyecto / Proposición” para incorporar un acto.';
+                autorEl.innerText = 'Sin documentos radicados para proyectar.';
                 accionesEl.innerHTML = '';
                 contenidoEl.innerHTML = `
                     <div class="text-center text-slate-400 my-auto py-20">
@@ -2857,24 +3129,32 @@
             tituloEl.innerText = p.titulo;
             autorEl.innerText = `Ponente: ${p.autor} ${p.archivo_nombre ? '• Archivo: ' + p.archivo_nombre : ''}`;
 
-            accionesEl.innerHTML = `
+            const accionesAdminDoc = esModoAdmin ? `
                 <button onclick="someterProyectoAVotacion(${p.id_proyecto})" class="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase px-3.5 py-2 rounded-lg border border-emerald-400/30 shadow transition">
                     <i class="fa-solid fa-check-to-slot mr-1"></i> Someter a Votación
                 </button>
-                <div class="flex items-center bg-slate-900 rounded-lg border border-white/15 overflow-hidden">
-                    <button onclick="cambiarZoomTexto(-2)" class="px-2.5 py-2 text-xs font-bold hover:bg-slate-800 text-white" title="Reducir letra">A-</button>
-                    <button onclick="cambiarZoomTexto(2)" class="px-2.5 py-2 text-xs font-bold hover:bg-slate-800 text-[#e5c16c]" title="Agrandar letra">A+</button>
-                </div>
                 <select onchange="cambiarEstadoProyecto(${p.id_proyecto}, this.value)" class="bg-slate-900 text-white border border-white/15 rounded-lg px-2.5 py-2 text-xs font-bold">
                     ${['Radicado', 'En Comisión', 'En Plenaria', 'Aprobado', 'Archivado', 'Retirado'].map(est => 
                         `<option value="${est}" ${p.estado === est ? 'selected' : ''}>${est}</option>`
                     ).join('')}
                 </select>
-                <button onclick="togglePantallaCompletaVisor()" class="bg-[#c9a24b] hover:bg-[#e5c16c] text-slate-950 font-extrabold text-xs uppercase px-3.5 py-2 rounded-lg">
-                    <i class="fa-solid fa-expand mr-1"></i> Pantalla Completa
-                </button>
                 <button onclick="eliminarProyecto(${p.id_proyecto})" class="bg-rose-700 hover:bg-rose-600 text-white px-3 py-2 rounded-lg text-xs font-bold" title="Eliminar">
                     <i class="fa-solid fa-trash"></i>
+                </button>
+            ` : `
+                <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-3 py-1.5 rounded-lg text-xs font-extrabold uppercase">
+                    ${p.estado}
+                </span>
+            `;
+
+            accionesEl.innerHTML = `
+                ${accionesAdminDoc}
+                <div class="flex items-center bg-slate-900 rounded-lg border border-white/15 overflow-hidden">
+                    <button onclick="cambiarZoomTexto(-2)" class="px-2.5 py-2 text-xs font-bold hover:bg-slate-800 text-white" title="Reducir letra">A-</button>
+                    <button onclick="cambiarZoomTexto(2)" class="px-2.5 py-2 text-xs font-bold hover:bg-slate-800 text-[#e5c16c]" title="Agrandar letra">A+</button>
+                </div>
+                <button onclick="togglePantallaCompletaVisor()" class="bg-[#c9a24b] hover:bg-[#e5c16c] text-slate-950 font-extrabold text-xs uppercase px-3.5 py-2 rounded-lg">
+                    <i class="fa-solid fa-expand mr-1"></i> Pantalla Completa
                 </button>
             `;
 
@@ -2950,21 +3230,25 @@
         }
 
         async function cambiarEstadoProyecto(id, estado) {
-            await fetch(`/api/proyectos/${id}/estado`, {
+            const res = await fetchAdmin(`/api/proyectos/${id}/estado`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ estado })
             });
-            notificar('✅ Estado legislativo actualizado');
-            await cargarProyectos();
+            if (res.ok) {
+                notificar('✅ Estado legislativo actualizado');
+                await cargarProyectos();
+            }
         }
 
         async function eliminarProyecto(id) {
             if (!confirm('¿Confirma eliminar este documento del archivo?')) return;
-            await fetch(`/api/proyectos/${id}`, { method: 'DELETE' });
-            proyectoSeleccionadoId = null;
-            notificar('🗑️ Documento eliminado');
-            await cargarProyectos();
+            const res = await fetchAdmin(`/api/proyectos/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                proyectoSeleccionadoId = null;
+                notificar('🗑️ Documento eliminado');
+                await cargarProyectos();
+            }
         }
     </script>
 </body>
