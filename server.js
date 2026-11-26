@@ -141,6 +141,24 @@ let tablasSistemaListas = false;
 
 async function asegurarTablasSistema() {
     if (tablasSistemaListas) return;
+
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS configuracion_visual (
+            id_config INTEGER PRIMARY KEY DEFAULT 1,
+            logo_base64 TEXT,
+            marca_agua_visible BOOLEAN DEFAULT TRUE,
+            marca_agua_estilo VARCHAR(30) DEFAULT 'oro',
+            marca_agua_opacidad INTEGER DEFAULT 11,
+            marca_agua_tamano INTEGER DEFAULT 560,
+            actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    `);
+    await pool.query(`
+        INSERT INTO configuracion_visual (id_config)
+        VALUES (1)
+        ON CONFLICT (id_config) DO NOTHING;
+    `);
+
     await pool.query(`
         CREATE TABLE IF NOT EXISTS administradores_registro (
             id_admin SERIAL PRIMARY KEY,
@@ -207,6 +225,65 @@ async function asegurarTablasSistema() {
 asegurarTablasSistema()
     .then(() => console.log('✅ Conexión exitosa a PostgreSQL y tablas verificadas'))
     .catch((err) => console.error('❌ ERROR INICIALIZANDO POSTGRESQL:', err.message));
+
+// =========================================================================
+// CONFIGURACIÓN VISUAL GLOBAL (LECTURA PARA TODOS / EDICIÓN SOLO ADMIN)
+// =========================================================================
+app.get('/api/configuracion-visual', async (req, res) => {
+    try {
+        await asegurarTablasSistema();
+        const result = await pool.query(`SELECT * FROM configuracion_visual WHERE id_config = 1`);
+        res.json(result.rows[0] || {
+            logo_base64: null,
+            marca_agua_visible: true,
+            marca_agua_estilo: 'oro',
+            marca_agua_opacidad: 11,
+            marca_agua_tamano: 560,
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/configuracion-visual', verificarAdmin, async (req, res) => {
+    const {
+        logo_base64,
+        marca_agua_visible,
+        marca_agua_estilo,
+        marca_agua_opacidad,
+        marca_agua_tamano,
+    } = req.body;
+
+    try {
+        await asegurarTablasSistema();
+        const actualRes = await pool.query(`SELECT * FROM configuracion_visual WHERE id_config = 1`);
+        const actual = actualRes.rows[0] || {};
+
+        const nuevoLogo = logo_base64 !== undefined ? logo_base64 : actual.logo_base64;
+        const nuevaVisibilidad = marca_agua_visible !== undefined ? Boolean(marca_agua_visible) : actual.marca_agua_visible;
+        const nuevoEstilo = marca_agua_estilo || actual.marca_agua_estilo || 'oro';
+        const nuevaOpacidad = marca_agua_opacidad !== undefined ? parseInt(marca_agua_opacidad, 10) : (actual.marca_agua_opacidad || 11);
+        const nuevoTamano = marca_agua_tamano !== undefined ? parseInt(marca_agua_tamano, 10) : (actual.marca_agua_tamano || 560);
+
+        const updated = await pool.query(
+            `UPDATE configuracion_visual
+             SET logo_base64 = $1,
+                 marca_agua_visible = $2,
+                 marca_agua_estilo = $3,
+                 marca_agua_opacidad = $4,
+                 marca_agua_tamano = $5,
+                 actualizado_en = NOW()
+             WHERE id_config = 1
+             RETURNING *`,
+            [nuevoLogo, nuevaVisibilidad, nuevoEstilo, nuevaOpacidad, nuevoTamano]
+        );
+
+        emitirActualizacionGlobal('config_visual');
+        res.json(updated.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 // =========================================================================
 // UTILIDAD DE AUTENTICACIÓN DE CONCEJALES (PRIMER NOMBRE + PRIMER APELLIDO)
@@ -560,7 +637,6 @@ app.get('/api/proyectos', async (req, res) => {
     }
 });
 
-// RADICACIÓN POR ADMINISTRADOR / SECRETARÍA (VISIBLE DE INMEDIATO)
 app.post('/api/proyectos', verificarAdmin, async (req, res) => {
     const { 
         codigo_radicado, 
@@ -604,7 +680,6 @@ app.post('/api/proyectos', verificarAdmin, async (req, res) => {
     }
 });
 
-// RADICACIÓN DE PROPOSICIÓN POR CONCEJAL (EN ORDEN DE LLEGADA, SOLO VISIBLE PARA SECRETARÍA/ADMIN HASTA SER PROYECTADA)
 app.post('/api/proyectos/concejal', async (req, res) => {
     const {
         primer_nombre,
@@ -671,7 +746,6 @@ app.post('/api/proyectos/concejal', async (req, res) => {
     }
 });
 
-// HABILITAR O OCULTAR PROPOSICIÓN AL RECINTO (SOLO SECRETARIO / ADMIN)
 app.put('/api/proyectos/:id_proyecto/visibilidad', verificarAdmin, async (req, res) => {
     const { visible_publico } = req.body;
     try {
