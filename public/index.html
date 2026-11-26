@@ -7,62 +7,68 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --azul-recinto: #040812;
-            --azul-panel: #0a1120;
-            --azul-tarjeta: #0e1629;
-            --oro-institucional: #c9a24b;
-            --oro-brillante: #f0d078;
-            --oro-oscuro: #967226;
-            --borde-oro: rgba(201, 162, 75, 0.32);
-            --sombra-oro: 0 0 25px rgba(201, 162, 75, 0.16);
+            --azul-abismo: #050b18;
+            --azul-hemiciclo: #0c1933;
+            --azul-cristal: rgba(14, 27, 54, 0.88);
+            --azul-curul: rgba(19, 36, 70, 0.92);
+            --oro-palido: #fff3c4;
+            --oro-brillante: #f3cf7a;
+            --oro-institucional: #cfa349;
+            --oro-bronce: #8f681e;
+            --borde-dorado: rgba(243, 207, 122, 0.45);
         }
 
         /* =====================================================================
-           1. FONDO DE HEMICICLO, TEXTURA SUTIL Y SCROLLBAR DE LUJO
+           1. SCROLLBAR DE GALA Y FONDO DE HEMICICLO CON ILUMINACIÓN CENITAL
            ===================================================================== */
         * {
             scrollbar-width: thin;
-            scrollbar-color: rgba(201, 162, 75, 0.45) rgba(6, 11, 22, 0.6);
+            scrollbar-color: #cfa349 #071022;
         }
         ::-webkit-scrollbar {
-            width: 7px;
-            height: 7px;
+            width: 8px;
+            height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(5, 9, 18, 0.8);
+            background: #060d1c;
         }
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #d9b45b, #8f6b20);
+            background: linear-gradient(180deg, #f3cf7a, #9e7424);
             border-radius: 999px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid #060d1c;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #f0d078;
+            background: #fff3c4;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--azul-recinto);
+            background-color: var(--azul-abismo);
             background-image:
-                radial-gradient(ellipse 80% 45% at 50% -8%, rgba(201, 162, 75, 0.18) 0%, transparent 65%),
-                radial-gradient(circle at 12% 35%, rgba(29, 78, 216, 0.12) 0%, transparent 45%),
-                radial-gradient(circle at 88% 85%, rgba(14, 42, 85, 0.32) 0%, transparent 55%),
-                repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.012) 0px, rgba(255, 255, 255, 0.012) 1px, transparent 1px, transparent 44px),
-                repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.012) 0px, rgba(255, 255, 255, 0.012) 1px, transparent 1px, transparent 44px),
-                linear-gradient(180deg, #040710 0%, #081020 52%, #03060d 100%);
-            color: #f1f5f9;
+                /* Foco de luz dorada cenital en el techo del recinto */
+                radial-gradient(ellipse 85% 42% at 50% -5%, rgba(243, 207, 122, 0.28) 0%, rgba(207, 163, 73, 0.08) 45%, transparent 75%),
+                /* Iluminación azul real lateral */
+                radial-gradient(circle at 10% 30%, rgba(37, 99, 235, 0.24) 0%, transparent 48%),
+                radial-gradient(circle at 90% 75%, rgba(29, 78, 216, 0.22) 0%, transparent 52%),
+                /* Trama arquitectónica sutil */
+                repeating-linear-gradient(0deg, rgba(243, 207, 122, 0.025) 0px, rgba(243, 207, 122, 0.025) 1px, transparent 1px, transparent 48px),
+                repeating-linear-gradient(90deg, rgba(243, 207, 122, 0.025) 0px, rgba(243, 207, 122, 0.025) 1px, transparent 1px, transparent 48px),
+                /* Degradado principal azul marino profundo */
+                linear-gradient(180deg, #071126 0%, #0d1d3d 48%, #050b18 100%);
+            background-attachment: fixed;
+            color: #f8fafc;
             overflow-x: hidden;
         }
 
         /* =====================================================================
-           2. TIPOGRAFÍA SOLEMNE Y DEGRADADO DORADO METÁLICO
+           2. TIPOGRAFÍA SOLEMNE Y ORO METÁLICO CON RELIEVE
            ===================================================================== */
         .font-solemne {
             font-family: 'Cinzel', serif;
-            letter-spacing: 0.055em;
+            letter-spacing: 0.06em;
         }
         .font-editorial {
             font-family: 'Cormorant Garamond', serif;
@@ -72,45 +78,47 @@
             font-variant-numeric: tabular-nums;
         }
         .texto-oro-metalico {
-            background: linear-gradient(180deg, #fff3c4 0%, #e5c16c 45%, #b58d36 100%);
+            background: linear-gradient(180deg, #fff8dc 0%, #f3cf7a 42%, #cfa349 78%, #9e7424 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 2px 10px rgba(201, 162, 75, 0.25));
+            filter: drop-shadow(0 3px 14px rgba(243, 207, 122, 0.35));
         }
 
         /* =====================================================================
-           3. CINTA TRICOLOR, FILETES Y EMBLEMA CON HALO INSTITUCIONAL
+           3. BANDERA TRICOLOR, FILETES LUMINOSOS Y EMBLEMA DE GALA
            ===================================================================== */
         .cinta-republica {
             background: linear-gradient(90deg, #FCD116 0%, #FCD116 50%, #003893 50%, #003893 75%, #CE1126 75%, #CE1126 100%);
-            height: 4px;
-            box-shadow: 0 2px 12px rgba(252, 209, 22, 0.25);
+            height: 5px;
+            box-shadow: 0 3px 16px rgba(252, 209, 22, 0.4);
         }
         .filete-oro {
-            height: 1px;
-            background: linear-gradient(90deg, transparent 0%, rgba(201, 162, 75, 0.25) 20%, rgba(240, 208, 120, 0.85) 50%, rgba(201, 162, 75, 0.25) 80%, transparent 100%);
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, rgba(207, 163, 73, 0.35) 15%, #f3cf7a 50%, rgba(207, 163, 73, 0.35) 85%, transparent 100%);
+            box-shadow: 0 0 12px rgba(243, 207, 122, 0.45);
         }
         .emblema-ring {
             position: relative;
+            border: 2px solid #f3cf7a;
             box-shadow:
-                0 0 0 2px #c9a24b,
-                0 0 0 6px rgba(201, 162, 75, 0.12),
-                0 12px 30px rgba(0, 0, 0, 0.85),
-                0 0 32px rgba(201, 162, 75, 0.35);
+                0 0 0 4px rgba(12, 25, 51, 0.95),
+                0 0 0 6px rgba(243, 207, 122, 0.45),
+                0 14px 35px rgba(0, 0, 0, 0.9),
+                0 0 38px rgba(243, 207, 122, 0.45);
             transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
         }
         .emblema-ring:hover {
-            transform: scale(1.03);
+            transform: scale(1.04);
             box-shadow:
-                0 0 0 2px #f0d078,
-                0 0 0 7px rgba(201, 162, 75, 0.2),
-                0 15px 35px rgba(0, 0, 0, 0.9),
-                0 0 42px rgba(201, 162, 75, 0.5);
+                0 0 0 4px rgba(12, 25, 51, 0.95),
+                0 0 0 7px rgba(255, 243, 196, 0.7),
+                0 18px 40px rgba(0, 0, 0, 0.95),
+                0 0 50px rgba(243, 207, 122, 0.65);
         }
 
         /* =====================================================================
-           4. MARCA DE AGUA DE FONDO
+           4. MARCA DE AGUA CENTRAL
            ===================================================================== */
         #marca-agua-fondo {
             position: fixed;
@@ -128,9 +136,9 @@
             max-width: 82vw;
             max-height: 82vh;
             object-fit: contain;
-            opacity: 0.11;
+            opacity: 0.13;
             mix-blend-mode: screen;
-            filter: grayscale(100%) contrast(135%) brightness(1.05) sepia(45%) hue-rotate(8deg);
+            filter: grayscale(100%) contrast(135%) brightness(1.1) sepia(55%) hue-rotate(8deg);
             -webkit-mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 46%, rgba(0, 0, 0, 0) 74%);
             mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 46%, rgba(0, 0, 0, 0) 74%);
             transition: opacity 0.25s ease, width 0.25s ease, height 0.25s ease, filter 0.25s ease;
@@ -138,77 +146,86 @@
         }
 
         /* =====================================================================
-           5. PANELES DE CRISTAL OSCURO, CURULES Y TARJETAS KPI
+           5. PANELES DE CRISTAL AZUL REAL CON MARCO DORADO EVIDENTE
            ===================================================================== */
         .panel-institucional {
             position: relative;
-            background: linear-gradient(165deg, rgba(16, 26, 48, 0.86) 0%, rgba(8, 13, 26, 0.92) 60%, rgba(5, 9, 18, 0.95) 100%);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(201, 162, 75, 0.26);
+            background: linear-gradient(160deg, rgba(18, 34, 66, 0.92) 0%, rgba(10, 20, 42, 0.95) 55%, rgba(6, 13, 28, 0.98) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1.5px solid var(--borde-dorado);
             box-shadow:
-                0 24px 55px -15px rgba(0, 0, 0, 0.9),
-                inset 0 1px 0 rgba(255, 255, 255, 0.08),
-                inset 0 0 30px rgba(201, 162, 75, 0.03);
+                0 25px 60px -15px rgba(0, 0, 0, 0.88),
+                0 0 28px rgba(14, 42, 95, 0.45),
+                inset 0 1px 0 rgba(255, 248, 220, 0.22),
+                inset 0 0 35px rgba(243, 207, 122, 0.05);
         }
         .panel-institucional::before {
             content: "";
             position: absolute;
             top: 0;
-            left: 12%;
-            right: 12%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(240, 208, 120, 0.55), transparent);
+            left: 8%;
+            right: 8%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #f3cf7a, transparent);
             pointer-events: none;
         }
 
+        /* Tarjeta de cada curul / concejal */
         .curul-institucional {
             position: relative;
-            background: linear-gradient(145deg, rgba(18, 29, 52, 0.85) 0%, rgba(9, 15, 29, 0.94) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            background: linear-gradient(145deg, rgba(24, 44, 82, 0.9) 0%, rgba(12, 23, 46, 0.96) 100%);
+            border: 1px solid rgba(243, 207, 122, 0.24);
+            border-left: 3px solid #cfa349;
+            box-shadow: 0 8px 22px -6px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .curul-institucional:hover {
-            border-color: rgba(201, 162, 75, 0.58);
-            background: linear-gradient(145deg, rgba(23, 36, 64, 0.92) 0%, rgba(11, 18, 34, 0.96) 100%);
-            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.85), 0 0 18px rgba(201, 162, 75, 0.12);
+            border-color: #f3cf7a;
+            background: linear-gradient(145deg, rgba(31, 56, 104, 0.96) 0%, rgba(16, 31, 61, 0.98) 100%);
+            box-shadow: 0 14px 30px -8px rgba(0, 0, 0, 0.9), 0 0 22px rgba(243, 207, 122, 0.22);
             transform: translateY(-2px);
         }
 
-        /* Tarjetas de métricas (KPIs de Quórum y Votación) */
+        /* Tarjetas KPI luminosas (Presentes, Retardo, Ausentes, Excusa) */
         .kpi-card {
             position: relative;
             overflow: hidden;
-            background: linear-gradient(180deg, rgba(8, 13, 26, 0.92) 0%, rgba(4, 7, 15, 0.96) 100%);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 10px 25px -10px rgba(0, 0, 0, 0.8);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: linear-gradient(180deg, rgba(15, 29, 58, 0.95) 0%, rgba(7, 14, 30, 0.98) 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 12px 28px -10px rgba(0, 0, 0, 0.85);
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
         }
         .kpi-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 16px 34px -8px rgba(0, 0, 0, 0.95);
         }
         .kpi-card::after {
             content: "";
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.04), transparent 60%);
+            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.08), transparent 60%);
             pointer-events: none;
         }
 
         /* =====================================================================
-           6. BOTONES E INPUTS CON ACABADO PREMIUM
+           6. BOTONES DE ORO REAL E INPUTS CON ENFOQUE DORADO
            ===================================================================== */
         .btn-oro {
-            background: linear-gradient(180deg, #e8c772 0%, #c9a24b 52%, #a88230 100%);
-            color: #060a14;
-            border: 1px solid rgba(255, 243, 196, 0.55);
-            box-shadow: 0 6px 20px -4px rgba(201, 162, 75, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            background: linear-gradient(180deg, #fae094 0%, #dca842 48%, #b38022 100%);
+            color: #050a14;
+            font-weight: 800;
+            border: 1px solid #fff3c4;
+            box-shadow:
+                0 6px 22px -3px rgba(220, 168, 66, 0.55),
+                inset 0 1px 0 rgba(255, 255, 255, 0.75);
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .btn-oro:hover {
-            background: linear-gradient(180deg, #f3d689 0%, #d8b25a 52%, #b58d36 100%);
-            box-shadow: 0 10px 26px -4px rgba(201, 162, 75, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.7);
-            transform: translateY(-1px);
+            background: linear-gradient(180deg, #fff0ba 0%, #ecc05c 48%, #c7922e 100%);
+            box-shadow:
+                0 10px 28px -3px rgba(243, 207, 122, 0.78),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transform: translateY(-1.5px);
         }
         .btn-oro:active {
             transform: translateY(0) scale(0.98);
@@ -217,33 +234,37 @@
         input:not([type="checkbox"]):not([type="range"]):not([type="file"]),
         select,
         textarea {
+            background-color: #071022 !important;
+            border-color: rgba(243, 207, 122, 0.28) !important;
             transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
         }
         input:not([type="checkbox"]):not([type="range"]):not([type="file"]):focus,
         select:focus,
         textarea:focus {
-            border-color: #c9a24b !important;
-            box-shadow: 0 0 0 3px rgba(201, 162, 75, 0.18);
+            border-color: #f3cf7a !important;
+            background-color: #0b1730 !important;
+            box-shadow: 0 0 0 3px rgba(243, 207, 122, 0.25);
             outline: none;
         }
 
         /* =====================================================================
-           7. PESTAÑAS DE NAVEGACIÓN Y ANIMACIÓN DE ENTRADA
+           7. BARRA DE PESTAÑAS PARLAMENTARIAS
            ===================================================================== */
         .tab-btn {
             position: relative;
             transition: all 0.22s ease;
         }
         .tab-btn:hover {
-            background: rgba(201, 162, 75, 0.06);
+            background: rgba(243, 207, 122, 0.1);
+            color: #fff3c4;
         }
         .tab-content:not(.hidden) {
-            animation: fadeInRecinto 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeInRecinto 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         @keyframes fadeInRecinto {
             from {
                 opacity: 0;
-                transform: translateY(6px);
+                transform: translateY(8px);
             }
             to {
                 opacity: 1;
@@ -270,10 +291,10 @@
             transform: rotate(-90deg);
             transform-origin: 50% 50%;
         }
-        .led-glow-green { box-shadow: 0 0 12px rgba(16, 185, 129, 0.75); }
-        .led-glow-amber { box-shadow: 0 0 12px rgba(245, 158, 11, 0.75); }
-        .led-glow-red { box-shadow: 0 0 12px rgba(244, 63, 94, 0.75); }
-        .led-glow-purple { box-shadow: 0 0 12px rgba(168, 85, 247, 0.75); }
+        .led-glow-green { box-shadow: 0 0 14px rgba(16, 185, 129, 0.85); }
+        .led-glow-amber { box-shadow: 0 0 14px rgba(245, 158, 11, 0.85); }
+        .led-glow-red { box-shadow: 0 0 14px rgba(244, 63, 94, 0.85); }
+        .led-glow-purple { box-shadow: 0 0 14px rgba(168, 85, 247, 0.85); }
 
         .doc-render p { margin-bottom: 0.9rem; }
         .doc-render h1, .doc-render h2, .doc-render h3 { font-weight: 800; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #0f172a; }
@@ -290,7 +311,7 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         /* =====================================================================
-           9. OPTIMIZACIÓN RESPONSIVE PARA CELULARES (MÓVIL < 640px)
+           9. RESPONSIVE MÓVIL (< 640px)
            ===================================================================== */
         @media (max-width: 640px) {
             input, select, textarea {
@@ -327,7 +348,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-[#c9a24b] selection:text-black relative">
+<body class="min-h-screen flex flex-col selection:bg-[#f3cf7a] selection:text-black relative">
 
     <input type="file" id="input-logo-pc" accept="image/*" class="hidden" onchange="cargarLogoDesdePC(event)">
 
@@ -338,15 +359,15 @@
 
     <!-- PANEL LATERAL DE PERSONALIZACIÓN DE LOGO/MARCA DE AGUA (SOLO ADMINISTRADORES) -->
     <div id="drawer-marca-agua" class="solo-admin">
-        <button type="button" onclick="toggleDrawerMarcaAgua()" title="Configurar marca de agua y logo institucional" class="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 bg-[#0b1222]/95 hover:bg-[#c9a24b] text-[#e5c16c] hover:text-slate-950 border border-r-0 border-[#c9a24b]/50 py-3.5 px-2.5 rounded-l-xl shadow-2xl transition flex flex-col items-center gap-1.5 backdrop-blur-md">
+        <button type="button" onclick="toggleDrawerMarcaAgua()" title="Configurar marca de agua y logo institucional" class="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 bg-[#0c1933]/95 hover:bg-[#f3cf7a] text-[#f3cf7a] hover:text-slate-950 border border-r-0 border-[#f3cf7a]/60 py-3.5 px-2.5 rounded-l-xl shadow-2xl transition flex flex-col items-center gap-1.5 backdrop-blur-md">
             <i class="fa-solid fa-stamp text-xs"></i>
             <span class="text-[9px] font-extrabold uppercase tracking-widest [writing-mode:vertical-rl] rotate-180">Fondo</span>
         </button>
 
-        <div class="w-72 bg-[#091020]/95 backdrop-blur-xl border-l border-y border-[#c9a24b]/55 rounded-l-2xl p-5 shadow-2xl">
-            <div class="flex justify-between items-center pb-3 mb-4 border-b border-white/10">
+        <div class="w-72 bg-[#0c1933]/95 backdrop-blur-xl border-l border-y border-[#f3cf7a]/60 rounded-l-2xl p-5 shadow-2xl">
+            <div class="flex justify-between items-center pb-3 mb-4 border-b border-white/15">
                 <div>
-                    <span class="text-[9px] font-bold uppercase tracking-[0.2em] text-[#c9a24b] block">Solo Administrador</span>
+                    <span class="text-[9px] font-bold uppercase tracking-[0.2em] text-[#f3cf7a] block">Solo Administrador</span>
                     <h4 class="font-solemne text-sm uppercase font-bold text-white">Logo y Marca de Agua</h4>
                 </div>
                 <button type="button" onclick="toggleDrawerMarcaAgua()" class="text-slate-400 hover:text-white text-sm p-1">
@@ -361,7 +382,7 @@
 
                 <div>
                     <label class="block text-[11px] font-bold text-slate-300 mb-1">Acabado de Grabado</label>
-                    <select id="select-estilo-marca" onchange="cambiarEstiloMarcaAgua(this.value)" class="w-full bg-[#060a14] border border-white/15 text-white text-xs font-semibold rounded-xl px-2.5 py-2">
+                    <select id="select-estilo-marca" onchange="cambiarEstiloMarcaAgua(this.value)" class="w-full border text-white text-xs font-semibold rounded-xl px-2.5 py-2">
                         <option value="oro">Relieve Dorado (Fondo Negro)</option>
                         <option value="plata">Relieve Plata / Blanco (Fondo Negro)</option>
                         <option value="claro">Grabado Invertido (Si la imagen tiene fondo blanco)</option>
@@ -371,20 +392,20 @@
                 <div>
                     <div class="flex justify-between text-[11px] font-bold text-slate-300 mb-1">
                         <span>Sutileza (Opacidad)</span>
-                        <span id="valor-opacidad-marca" class="text-[#e5c16c] font-mono-digital">11%</span>
+                        <span id="valor-opacidad-marca" class="text-[#f3cf7a] font-mono-digital">13%</span>
                     </div>
-                    <input type="range" id="slider-opacidad-marca" min="3" max="30" value="11" oninput="ajustarOpacidadMarcaAgua(this.value)" class="w-full accent-[#c9a24b] cursor-pointer">
+                    <input type="range" id="slider-opacidad-marca" min="3" max="30" value="13" oninput="ajustarOpacidadMarcaAgua(this.value)" class="w-full accent-[#f3cf7a] cursor-pointer">
                 </div>
 
                 <div>
                     <div class="flex justify-between text-[11px] font-bold text-slate-300 mb-1">
                         <span>Tamaño del Sello</span>
-                        <span id="valor-tamano-marca" class="text-[#e5c16c] font-mono-digital">560px</span>
+                        <span id="valor-tamano-marca" class="text-[#f3cf7a] font-mono-digital">560px</span>
                     </div>
-                    <input type="range" id="slider-tamano-marca" min="280" max="860" step="20" value="560" oninput="ajustarTamanoMarcaAgua(this.value)" class="w-full accent-[#c9a24b] cursor-pointer">
+                    <input type="range" id="slider-tamano-marca" min="280" max="860" step="20" value="560" oninput="ajustarTamanoMarcaAgua(this.value)" class="w-full accent-[#f3cf7a] cursor-pointer">
                 </div>
 
-                <button type="button" onclick="quitarMarcaAgua()" class="w-full bg-white/5 hover:bg-rose-900/40 text-slate-400 hover:text-rose-300 border border-white/10 text-[11px] font-bold uppercase tracking-wider py-2 rounded-xl transition">
+                <button type="button" onclick="quitarMarcaAgua()" class="w-full bg-white/5 hover:bg-rose-900/40 text-slate-400 hover:text-rose-300 border border-white/15 text-[11px] font-bold uppercase tracking-wider py-2 rounded-xl transition">
                     <i class="fa-solid fa-eye-slash mr-1"></i> Ocultar Marca de Agua
                 </button>
             </div>
@@ -394,26 +415,26 @@
     <!-- ===================================================================== -->
     <!-- ENCABEZADO SOLEMNE • CONCEJO MUNICIPAL DE IBAGUÉ                      -->
     <!-- ===================================================================== -->
-    <header class="bg-[#040812]/94 backdrop-blur-xl md:sticky md:top-0 z-40 border-b border-[#c9a24b]/35 shadow-[0_12px_40px_rgba(0,0,0,0.85)]">
+    <header class="bg-gradient-to-b from-[#0a162e]/95 via-[#081226]/95 to-[#060d1c]/95 backdrop-blur-xl md:sticky md:top-0 z-40 shadow-[0_14px_45px_rgba(0,0,0,0.9)]">
         <div class="cinta-republica w-full"></div>
 
-        <div class="bg-[#070d1b]/95 border-b border-white/5 py-1.5 px-3 md:px-4">
+        <div class="bg-[#050b18]/90 border-b border-[#f3cf7a]/20 py-1.5 px-3 md:px-4">
             <div class="max-w-[1440px] mx-auto flex flex-wrap justify-between items-center text-[10px] md:text-[11px] tracking-[0.14em] md:tracking-[0.16em] uppercase font-semibold gap-2">
-                <div class="flex items-center gap-2 md:gap-3 text-[#e5c16c]">
+                <div class="flex items-center gap-2 md:gap-3 text-[#f3cf7a]">
                     <span class="flex items-center gap-1.5 md:gap-2">
-                        <span id="indicador-en-vivo-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span id="indicador-en-vivo-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]"></span>
                         <span class="hidden sm:inline">REPÚBLICA DE COLOMBIA •</span> TOLIMA
                     </span>
-                    <span class="hidden md:inline text-slate-700">|</span>
+                    <span class="hidden md:inline text-slate-600">|</span>
                     <span id="estado-conexion-vivo" class="hidden md:inline text-emerald-400 font-bold">EN VIVO SINCRONIZADO</span>
                 </div>
 
                 <div class="flex items-center gap-2 md:gap-3 ml-auto sm:ml-0">
                     <div id="barra-admin-status" class="flex items-center gap-2">
-                        <button type="button" id="btn-abrir-login-admin" onclick="abrirModalAdmin()" class="bg-[#c9a24b]/15 hover:bg-[#c9a24b] text-[#e5c16c] hover:text-slate-950 border border-[#c9a24b]/50 px-2.5 md:px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition flex items-center gap-1.5 shadow-sm">
+                        <button type="button" id="btn-abrir-login-admin" onclick="abrirModalAdmin()" class="bg-[#f3cf7a]/15 hover:bg-[#f3cf7a] text-[#f3cf7a] hover:text-slate-950 border border-[#f3cf7a]/60 px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition flex items-center gap-1.5 shadow-[0_0_15px_rgba(243,207,122,0.2)]">
                             <i class="fa-solid fa-shield-halved"></i> <span class="hidden xs:inline">Acceso</span> Admin
                         </button>
-                        <div id="info-admin-conectado" class="hidden flex items-center gap-2 bg-emerald-500/15 border border-emerald-500/45 px-2.5 md:px-3 py-1 rounded-lg">
+                        <div id="info-admin-conectado" class="hidden flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/50 px-3 py-1 rounded-lg">
                             <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
                             <span id="nombre-admin-barra" class="text-[10px] font-extrabold text-emerald-300 tracking-wider max-w-[130px] sm:max-w-none truncate">ADMIN</span>
                             <button type="button" onclick="cerrarSesionAdmin()" class="text-rose-300 hover:text-white ml-1 text-[10px] font-bold underline" title="Cerrar sesión administrativa">
@@ -422,56 +443,56 @@
                         </div>
                     </div>
 
-                    <span class="text-slate-700 hidden sm:inline">•</span>
-                    <span id="fecha-protocolo-hoy" class="hidden lg:inline text-slate-400 uppercase font-sans text-[10px] tracking-widest"></span>
-                    <span class="text-slate-700 hidden lg:inline">•</span>
-                    <span id="reloj-sistema-vivo" class="text-[#e5c16c] font-mono-digital text-[11px] md:text-xs font-bold bg-black/40 px-2 py-0.5 rounded border border-white/5">--:--:--</span>
+                    <span class="text-slate-600 hidden sm:inline">•</span>
+                    <span id="fecha-protocolo-hoy" class="hidden lg:inline text-slate-300 uppercase font-sans text-[10px] tracking-widest"></span>
+                    <span class="text-slate-600 hidden lg:inline">•</span>
+                    <span id="reloj-sistema-vivo" class="text-[#f3cf7a] font-mono-digital text-[11px] md:text-xs font-bold bg-[#0a162e] px-2.5 py-0.5 rounded border border-[#f3cf7a]/35">--:--:--</span>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-[1440px] mx-auto px-3 md:px-4 py-3 md:py-4">
+        <div class="max-w-[1440px] mx-auto px-3 md:px-4 py-3.5 md:py-4">
             <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3.5 md:gap-5">
                 
                 <div class="flex items-center gap-3.5 md:gap-5">
-                    <!-- LOGO SUPERIOR VISIBLE PARA TODOS -->
-                    <div class="emblema-ring w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-black/95 overflow-hidden flex items-center justify-center shrink-0">
+                    <!-- LOGO SUPERIOR CON DOBLE ANILLO DORADO -->
+                    <div class="emblema-ring w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-[#050b18] overflow-hidden flex items-center justify-center shrink-0">
                         <img id="img-logo-header" src="/logo-creer-y-merecer.png" alt="Emblema" class="w-full h-full object-cover hidden" onload="mostrarImagenLogo()" onerror="ocultarImagenLogo()">
                         <div id="placeholder-logo-header" class="flex flex-col items-center justify-center text-center p-1">
-                            <i class="fa-solid fa-landmark text-[#c9a24b] text-lg md:text-2xl"></i>
+                            <i class="fa-solid fa-landmark text-[#f3cf7a] text-lg md:text-2xl"></i>
                         </div>
                     </div>
 
                     <div class="min-w-0">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="bg-gradient-to-r from-[#c9a24b]/20 to-[#c9a24b]/5 text-[#f0d078] border border-[#c9a24b]/45 text-[9px] md:text-[10px] font-bold uppercase px-2.5 md:px-3 py-0.5 rounded-full tracking-[0.15em] md:tracking-[0.18em]">
+                            <span class="bg-gradient-to-r from-[#f3cf7a]/25 to-[#cfa349]/10 text-[#fff3c4] border border-[#f3cf7a]/55 text-[9px] md:text-[10px] font-bold uppercase px-3 py-0.5 rounded-full tracking-[0.16em] shadow-sm">
                                 Fundación Creer y Merecer • Modelo Concejo
                             </span>
-                            <span class="hidden sm:inline-block font-editorial italic text-sm text-slate-300">
+                            <span class="hidden sm:inline-block font-editorial italic text-base text-[#f3cf7a]/90">
                                 “Coherencia, Independencia y Liderazgo”
                             </span>
                         </div>
-                        <h1 class="font-solemne texto-oro-metalico text-lg sm:text-2xl md:text-4xl font-extrabold uppercase leading-tight mt-1">
+                        <h1 class="font-solemne texto-oro-metalico text-xl sm:text-2xl md:text-4xl font-black uppercase leading-tight mt-1">
                             CONCEJO MUNICIPAL DE IBAGUÉ
                         </h1>
-                        <p class="text-[11px] md:text-xs text-slate-400 font-medium tracking-wide mt-0.5 line-clamp-1 sm:line-clamp-none">
+                        <p class="text-[11px] md:text-xs text-slate-300 font-medium tracking-wide mt-0.5 line-clamp-1 sm:line-clamp-none">
                             Sistema Electrónico de Llamado a Lista, Quórum Reglamentario, Votación Nominal y Orden del Día
                         </p>
                     </div>
                 </div>
 
                 <!-- Control de Sesión Plenaria -->
-                <div class="flex flex-wrap items-center gap-2 bg-[#070d1b]/95 p-2 md:p-2.5 rounded-2xl border border-[#c9a24b]/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_10px_25px_rgba(0,0,0,0.6)] w-full lg:w-auto">
+                <div class="flex flex-wrap items-center gap-2 bg-gradient-to-r from-[#0e1e3d] to-[#081226] p-2.5 md:p-3 rounded-2xl border-2 border-[#f3cf7a]/45 shadow-[0_12px_30px_rgba(0,0,0,0.75)] w-full lg:w-auto">
                     <div class="flex flex-col px-2 flex-1 min-w-[160px]">
-                        <span class="text-[9px] uppercase font-bold tracking-[0.2em] text-[#c9a24b]">Sesión Convocada</span>
-                        <select id="select-sesion" onchange="cambiarSesion()" class="bg-transparent text-xs md:text-sm font-bold text-white w-full sm:min-w-[210px] focus:outline-none cursor-pointer mt-0.5">
+                        <span class="text-[9px] uppercase font-extrabold tracking-[0.22em] text-[#f3cf7a]">Sesión Convocada</span>
+                        <select id="select-sesion" onchange="cambiarSesion()" class="!bg-transparent !border-0 text-xs md:text-sm font-bold text-white w-full sm:min-w-[210px] focus:outline-none cursor-pointer mt-0.5">
                             <option value="" class="bg-slate-900">-- Seleccionar Sesión --</option>
                         </select>
                     </div>
-                    <button type="button" id="btn-eliminar-sesion" onclick="eliminarSesionActual()" title="Eliminar sesión seleccionada" class="solo-admin hidden bg-rose-500/15 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/35 px-3 py-2.5 md:py-3 rounded-xl text-xs font-bold transition cursor-pointer shrink-0">
+                    <button type="button" id="btn-eliminar-sesion" onclick="eliminarSesionActual()" title="Eliminar sesión seleccionada" class="solo-admin hidden bg-rose-500/20 hover:bg-rose-700 text-rose-300 hover:text-white border border-rose-500/45 px-3 py-2.5 md:py-3 rounded-xl text-xs font-bold transition cursor-pointer shrink-0">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
-                    <button type="button" onclick="abrirModalSesion()" class="solo-admin btn-oro font-extrabold text-[11px] md:text-xs uppercase tracking-wider px-3.5 md:px-4 py-2.5 md:py-3 rounded-xl cursor-pointer shrink-0">
+                    <button type="button" onclick="abrirModalSesion()" class="solo-admin btn-oro font-extrabold text-[11px] md:text-xs uppercase tracking-wider px-4 py-2.5 md:py-3 rounded-xl cursor-pointer shrink-0">
                         <i class="fa-solid fa-gavel mr-1"></i> Abrir Sesión
                     </button>
                 </div>
@@ -482,42 +503,42 @@
     </header>
 
     <!-- Barra de Navegación Parlamentaria -->
-    <nav class="bg-[#03060e]/95 backdrop-blur-xl sticky top-0 z-30 md:static border-b border-white/10 shadow-xl">
+    <nav class="bg-[#071126]/95 backdrop-blur-xl sticky top-0 z-30 md:static border-b border-[#f3cf7a]/25 shadow-2xl">
         <div class="max-w-[1440px] mx-auto px-2 md:px-4 flex space-x-1 md:space-x-2 overflow-x-auto no-scrollbar">
-            <button onclick="mostrarTab('asistencia')" class="tab-btn py-3 md:py-3.5 px-3 md:px-4 border-b-2 border-[#c9a24b] text-[#e5c16c] font-bold text-[11px] md:text-xs uppercase tracking-[0.10em] md:tracking-[0.12em] whitespace-nowrap flex items-center gap-1.5 md:gap-2" data-tab="asistencia">
-                <i class="fa-solid fa-landmark"></i> Quórum y Bancadas
+            <button onclick="mostrarTab('asistencia')" class="tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-[#f3cf7a] text-[#fff3c4] font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="asistencia">
+                <i class="fa-solid fa-landmark text-[#f3cf7a]"></i> Quórum y Bancadas
             </button>
-            <button onclick="mostrarTab('comisiones')" class="tab-btn py-3 md:py-3.5 px-3 md:px-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-[11px] md:text-xs uppercase tracking-[0.10em] md:tracking-[0.12em] whitespace-nowrap flex items-center gap-1.5 md:gap-2" data-tab="comisiones">
-                <i class="fa-solid fa-sitemap"></i> Comisiones
+            <button onclick="mostrarTab('comisiones')" class="tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-transparent text-slate-300 font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="comisiones">
+                <i class="fa-solid fa-sitemap text-[#f3cf7a]/80"></i> Comisiones
             </button>
-            <button onclick="mostrarTab('intervenciones')" class="tab-btn py-3 md:py-3.5 px-3 md:px-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-[11px] md:text-xs uppercase tracking-[0.10em] md:tracking-[0.12em] whitespace-nowrap flex items-center gap-1.5 md:gap-2" data-tab="intervenciones">
-                <i class="fa-solid fa-microphone-lines"></i> Uso de la Palabra
+            <button onclick="mostrarTab('intervenciones')" class="tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-transparent text-slate-300 font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="intervenciones">
+                <i class="fa-solid fa-microphone-lines text-[#f3cf7a]/80"></i> Uso de la Palabra
             </button>
-            <button onclick="mostrarTab('votacion')" class="tab-btn py-3 md:py-3.5 px-3 md:px-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-[11px] md:text-xs uppercase tracking-[0.10em] md:tracking-[0.12em] whitespace-nowrap flex items-center gap-1.5 md:gap-2" data-tab="votacion">
-                <i class="fa-solid fa-check-to-slot"></i> Votación Nominal
+            <button onclick="mostrarTab('votacion')" class="tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-transparent text-slate-300 font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="votacion">
+                <i class="fa-solid fa-check-to-slot text-[#f3cf7a]/80"></i> Votación Nominal
             </button>
-            <button onclick="mostrarTab('proyectos')" class="tab-btn py-3 md:py-3.5 px-3 md:px-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-[11px] md:text-xs uppercase tracking-[0.10em] md:tracking-[0.12em] whitespace-nowrap flex items-center gap-1.5 md:gap-2" data-tab="proyectos">
-                <i class="fa-solid fa-scale-balanced"></i> Orden del Día y Docs
+            <button onclick="mostrarTab('proyectos')" class="tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-transparent text-slate-300 font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="proyectos">
+                <i class="fa-solid fa-scale-balanced text-[#f3cf7a]/80"></i> Orden del Día y Docs
             </button>
-            <button onclick="mostrarTab('integrantes')" class="tab-btn py-3 md:py-3.5 px-3 md:px-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-[11px] md:text-xs uppercase tracking-[0.10em] md:tracking-[0.12em] whitespace-nowrap flex items-center gap-1.5 md:gap-2" data-tab="integrantes">
-                <i class="fa-solid fa-id-card-clip"></i> Curules (<span id="nav-total-integrantes">21</span>)
+            <button onclick="mostrarTab('integrantes')" class="tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-transparent text-slate-300 font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="integrantes">
+                <i class="fa-solid fa-id-card-clip text-[#f3cf7a]/80"></i> Curules (<span id="nav-total-integrantes">21</span>)
             </button>
         </div>
     </nav>
 
-    <div id="toast" class="fixed bottom-4 left-4 right-4 md:left-auto md:right-5 md:max-w-md bg-[#0a1120]/95 backdrop-blur-xl text-white px-4 md:px-5 py-3 md:py-3.5 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.9)] text-xs md:text-sm hidden z-50 border border-[#c9a24b]/70 border-l-4 border-l-[#e5c16c] font-semibold"></div>
+    <div id="toast" class="fixed bottom-4 left-4 right-4 md:left-auto md:right-5 md:max-w-md bg-[#0c1933]/95 backdrop-blur-xl text-white px-4 md:px-5 py-3 md:py-3.5 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.95)] text-xs md:text-sm hidden z-50 border-2 border-[#f3cf7a]/80 border-l-8 border-l-[#f3cf7a] font-semibold"></div>
 
-    <main class="max-w-[1440px] mx-auto px-3 md:px-4 py-4 md:py-6 flex-1 w-full relative z-10">
+    <main class="max-w-[1440px] mx-auto px-3 md:px-4 py-5 md:py-7 flex-1 w-full relative z-10">
 
         <!-- BANNER DE RECINTO EN RECESO -->
-        <div id="alerta-sin-sesion" class="hidden panel-institucional border-l-4 border-l-[#c9a24b] p-4 md:p-6 rounded-2xl mb-6 flex flex-wrap justify-between items-center gap-4">
+        <div id="alerta-sin-sesion" class="hidden panel-institucional border-l-4 border-l-[#f3cf7a] p-4 md:p-6 rounded-2xl mb-6 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3 md:gap-4">
-                <div class="w-11 h-11 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-[#c9a24b]/25 to-transparent border border-[#c9a24b]/45 flex items-center justify-center text-[#f0d078] text-lg md:text-xl shrink-0 shadow-inner">
+                <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-[#f3cf7a]/30 to-[#cfa349]/10 border border-[#f3cf7a]/60 flex items-center justify-center text-[#fff3c4] text-xl md:text-2xl shrink-0 shadow-lg">
                     <i class="fa-solid fa-landmark"></i>
                 </div>
                 <div>
-                    <p class="font-solemne text-base md:text-2xl uppercase text-[#f0d078]">Recinto del Concejo Municipal en Receso</p>
-                    <p class="text-xs md:text-sm text-slate-300 mt-0.5">A la espera de que Secretaría General o Presidencia instale la sesión.</p>
+                    <p class="font-solemne text-base md:text-2xl uppercase text-[#fff3c4] font-bold">Recinto del Concejo Municipal en Receso</p>
+                    <p class="text-xs md:text-sm text-slate-200 mt-0.5">A la espera de que Secretaría General o Presidencia instale la sesión.</p>
                 </div>
             </div>
             <button type="button" onclick="abrirModalSesion()" class="solo-admin w-full sm:w-auto btn-oro font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-widest">
@@ -531,55 +552,55 @@
         <section id="tab-asistencia" class="tab-content">
             
             <div class="panel-institucional rounded-2xl p-4 md:p-6 mb-6">
-                <div class="flex flex-wrap justify-between items-center gap-3 md:gap-4 mb-5 pb-4 border-b border-white/10">
+                <div class="flex flex-wrap justify-between items-center gap-3 md:gap-4 mb-5 pb-4 border-b border-[#f3cf7a]/25">
                     <div>
-                        <span class="text-[10px] font-bold uppercase tracking-[0.22em] text-[#c9a24b] block mb-1">
+                        <span class="text-[10px] font-extrabold uppercase tracking-[0.24em] text-[#f3cf7a] block mb-1">
                             Verificación Reglamentaria
                         </span>
-                        <h2 class="font-solemne text-lg md:text-2xl uppercase text-white">Tablero Electrónico de Quórum y Asistencia</h2>
+                        <h2 class="font-solemne text-lg md:text-2xl uppercase text-white font-bold">Tablero Electrónico de Quórum y Asistencia</h2>
                     </div>
 
                     <div class="solo-admin flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                        <button onclick="mostrarTab('integrantes')" class="flex-1 sm:flex-initial bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-bold uppercase tracking-wider px-3.5 py-2.5 rounded-xl border border-white/15 transition">
-                            <i class="fa-solid fa-users-gear mr-1.5 text-[#c9a24b]"></i> Curules
+                        <button onclick="mostrarTab('integrantes')" class="flex-1 sm:flex-initial bg-white/10 hover:bg-white/15 text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl border border-[#f3cf7a]/35 transition">
+                            <i class="fa-solid fa-users-gear mr-1.5 text-[#f3cf7a]"></i> Curules
                         </button>
-                        <button onclick="marcarTodosPresentes()" class="flex-1 sm:flex-initial bg-gradient-to-b from-emerald-600 to-emerald-800 hover:from-emerald-500 hover:to-emerald-700 text-white text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded-xl border border-emerald-400/35 shadow-lg shadow-emerald-950/50 transition">
+                        <button onclick="marcarTodosPresentes()" class="flex-1 sm:flex-initial bg-gradient-to-b from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded-xl border border-emerald-300/50 shadow-lg shadow-emerald-950/60 transition">
                             <i class="fa-solid fa-check-double mr-1.5"></i> Quórum Pleno
                         </button>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-                    <div class="kpi-card p-3.5 md:p-4 rounded-xl border border-emerald-500/35 flex justify-between items-center gap-2">
+                    <div class="kpi-card p-4 rounded-2xl border-2 border-emerald-400/50 flex justify-between items-center gap-2">
                         <div>
-                            <p class="text-[10px] md:text-[11px] text-emerald-400 uppercase font-extrabold tracking-widest">Presentes</p>
-                            <p class="text-[10px] md:text-[11px] text-slate-400 mt-0.5">En curul</p>
+                            <p class="text-[11px] text-emerald-300 uppercase font-extrabold tracking-widest">Presentes</p>
+                            <p class="text-[11px] text-slate-300 mt-0.5">En curul</p>
                         </div>
-                        <p id="stat-presentes" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-emerald-400 drop-shadow-[0_0_12px_rgba(52,211,153,0.3)]">0</p>
+                        <p id="stat-presentes" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-emerald-400 drop-shadow-[0_0_16px_rgba(52,211,153,0.45)]">0</p>
                     </div>
 
-                    <div class="kpi-card p-3.5 md:p-4 rounded-xl border border-amber-500/35 flex justify-between items-center gap-2">
+                    <div class="kpi-card p-4 rounded-2xl border-2 border-amber-400/50 flex justify-between items-center gap-2">
                         <div>
-                            <p class="text-[10px] md:text-[11px] text-amber-400 uppercase font-extrabold tracking-widest">Retardo</p>
-                            <p class="text-[10px] md:text-[11px] text-slate-400 mt-0.5">Posterior</p>
+                            <p class="text-[11px] text-amber-300 uppercase font-extrabold tracking-widest">Retardo</p>
+                            <p class="text-[11px] text-slate-300 mt-0.5">Posterior</p>
                         </div>
-                        <p id="stat-retardos" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-amber-400 drop-shadow-[0_0_12px_rgba(251,191,36,0.3)]">0</p>
+                        <p id="stat-retardos" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-amber-300 drop-shadow-[0_0_16px_rgba(251,191,36,0.45)]">0</p>
                     </div>
 
-                    <div class="kpi-card p-3.5 md:p-4 rounded-xl border border-rose-500/35 flex justify-between items-center gap-2">
+                    <div class="kpi-card p-4 rounded-2xl border-2 border-rose-400/50 flex justify-between items-center gap-2">
                         <div>
-                            <p class="text-[10px] md:text-[11px] text-rose-400 uppercase font-extrabold tracking-widest">Ausentes</p>
-                            <p class="text-[10px] md:text-[11px] text-slate-400 mt-0.5">Sin registro</p>
+                            <p class="text-[11px] text-rose-300 uppercase font-extrabold tracking-widest">Ausentes</p>
+                            <p class="text-[11px] text-slate-300 mt-0.5">Sin registro</p>
                         </div>
-                        <p id="stat-ausentes" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-rose-400 drop-shadow-[0_0_12px_rgba(251,113,133,0.3)]">0</p>
+                        <p id="stat-ausentes" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-rose-400 drop-shadow-[0_0_16px_rgba(251,113,133,0.45)]">0</p>
                     </div>
 
-                    <div class="kpi-card p-3.5 md:p-4 rounded-xl border border-purple-500/35 flex justify-between items-center gap-2">
+                    <div class="kpi-card p-4 rounded-2xl border-2 border-purple-400/50 flex justify-between items-center gap-2">
                         <div>
-                            <p class="text-[10px] md:text-[11px] text-purple-400 uppercase font-extrabold tracking-widest">Excusa</p>
-                            <p class="text-[10px] md:text-[11px] text-slate-400 mt-0.5">Radicada</p>
+                            <p class="text-[11px] text-purple-300 uppercase font-extrabold tracking-widest">Excusa</p>
+                            <p class="text-[11px] text-slate-300 mt-0.5">Radicada</p>
                         </div>
-                        <p id="stat-excusas" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-purple-400 drop-shadow-[0_0_12px_rgba(192,132,252,0.3)]">0</p>
+                        <p id="stat-excusas" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-purple-300 drop-shadow-[0_0_16px_rgba(192,132,252,0.45)]">0</p>
                     </div>
                 </div>
             </div>
@@ -595,21 +616,21 @@
             <div class="panel-institucional rounded-2xl p-4 md:p-6 mb-6">
                 <div class="flex flex-wrap justify-between items-center gap-4">
                     <div>
-                        <span class="text-[10px] font-bold uppercase tracking-[0.22em] text-[#c9a24b] block mb-1">
+                        <span class="text-[10px] font-extrabold uppercase tracking-[0.24em] text-[#f3cf7a] block mb-1">
                             Reglamento Interno del Concejo Municipal
                         </span>
-                        <h2 class="font-solemne text-lg md:text-3xl uppercase text-white">
+                        <h2 class="font-solemne text-lg md:text-3xl uppercase text-white font-bold">
                             Conformación de Comisiones Permanentes
                         </h2>
-                        <p class="text-xs text-slate-400 mt-1">
+                        <p class="text-xs text-slate-300 mt-1">
                             Distribución oficial de los Honorables Concejales por comisión constitucional, bancada política y estado en sesión.
                         </p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
                         <div class="relative flex-1 sm:flex-initial">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                            <input type="text" id="buscar-en-comisiones" onkeyup="renderizarTableroComisiones()" placeholder="Buscar Honorable Concejal..." class="bg-[#060a14] border border-white/15 text-white text-xs rounded-xl pl-9 pr-3.5 py-2.5 w-full sm:w-60">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-[#f3cf7a] text-xs"></i>
+                            <input type="text" id="buscar-en-comisiones" onkeyup="renderizarTableroComisiones()" placeholder="Buscar Honorable Concejal..." class="border text-white text-xs rounded-xl pl-9 pr-3.5 py-2.5 w-full sm:w-60">
                         </div>
                         <button onclick="mostrarTab('integrantes')" class="solo-admin w-full sm:w-auto btn-oro text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded-xl">
                             <i class="fa-solid fa-user-plus mr-1.5"></i> Gestionar Curules
@@ -617,37 +638,37 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mt-5 md:mt-6 pt-4 md:pt-5 border-t border-white/10">
-                    <div class="kpi-card p-3.5 md:p-4 rounded-xl border border-[#c9a24b]/40 flex justify-between items-center">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mt-5 md:mt-6 pt-4 md:pt-5 border-t border-[#f3cf7a]/25">
+                    <div class="kpi-card p-4 rounded-2xl border-2 border-[#f3cf7a]/60 flex justify-between items-center">
                         <div>
-                            <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#c9a24b]">Plan de Desarrollo y Bienes</span>
+                            <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#f3cf7a]">Plan de Desarrollo y Bienes</span>
                             <h3 class="font-solemne text-base md:text-lg uppercase font-bold text-white mt-0.5">Comisión Primera</h3>
                         </div>
                         <div class="text-right">
-                            <span id="total-comision-1" class="font-mono-digital text-2xl md:text-3xl font-extrabold text-[#f0d078]">0</span>
-                            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Miembros</p>
+                            <span id="total-comision-1" class="font-mono-digital text-2xl md:text-3xl font-extrabold text-[#fff3c4]">0</span>
+                            <p class="text-[10px] text-slate-300 uppercase font-bold tracking-wider">Miembros</p>
                         </div>
                     </div>
 
-                    <div class="kpi-card p-3.5 md:p-4 rounded-xl border border-sky-500/40 flex justify-between items-center">
+                    <div class="kpi-card p-4 rounded-2xl border-2 border-sky-400/60 flex justify-between items-center">
                         <div>
-                            <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-sky-400">Presupuesto y Hacienda Pública</span>
+                            <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-sky-300">Presupuesto y Hacienda Pública</span>
                             <h3 class="font-solemne text-base md:text-lg uppercase font-bold text-white mt-0.5">Comisión Segunda</h3>
                         </div>
                         <div class="text-right">
                             <span id="total-comision-2" class="font-mono-digital text-2xl md:text-3xl font-extrabold text-sky-300">0</span>
-                            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Miembros</p>
+                            <p class="text-[10px] text-slate-300 uppercase font-bold tracking-wider">Miembros</p>
                         </div>
                     </div>
 
-                    <div class="kpi-card p-3.5 md:p-4 rounded-xl border border-slate-600/45 flex justify-between items-center">
+                    <div class="kpi-card p-4 rounded-2xl border-2 border-slate-500/50 flex justify-between items-center">
                         <div>
-                            <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Pendientes de Designación</span>
+                            <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-300">Pendientes de Designación</span>
                             <h3 class="font-solemne text-base md:text-lg uppercase font-bold text-white mt-0.5">Sin Comisión</h3>
                         </div>
                         <div class="text-right">
-                            <span id="total-comision-0" class="font-mono-digital text-2xl md:text-3xl font-extrabold text-slate-300">0</span>
-                            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Miembros</p>
+                            <span id="total-comision-0" class="font-mono-digital text-2xl md:text-3xl font-extrabold text-slate-200">0</span>
+                            <p class="text-[10px] text-slate-300 uppercase font-bold tracking-wider">Miembros</p>
                         </div>
                     </div>
                 </div>
@@ -663,35 +684,35 @@
         <section id="tab-intervenciones" class="tab-content hidden">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 items-start">
                 
-                <div id="panel-cronometro" class="lg:col-span-7 panel-institucional p-5 md:p-9 rounded-3xl flex flex-col items-center justify-between text-center border border-[#c9a24b]/45 relative overflow-hidden">
+                <div id="panel-cronometro" class="lg:col-span-7 panel-institucional p-5 md:p-9 rounded-3xl flex flex-col items-center justify-between text-center border-2 border-[#f3cf7a]/55 relative overflow-hidden">
                     
-                    <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-48 bg-[#c9a24b]/15 blur-3xl pointer-events-none"></div>
+                    <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-48 bg-[#f3cf7a]/20 blur-3xl pointer-events-none"></div>
 
                     <div class="w-full flex flex-wrap justify-between items-center gap-2 z-10">
-                        <div class="flex items-center gap-2 bg-black/50 border border-[#c9a24b]/35 px-3.5 py-1.5 rounded-full shadow-inner">
+                        <div class="flex items-center gap-2 bg-[#060d1c]/80 border border-[#f3cf7a]/50 px-3.5 py-1.5 rounded-full shadow-inner">
                             <span id="indicador-estado-reloj" class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
-                            <span class="text-[10px] md:text-[11px] uppercase tracking-[0.14em] md:tracking-[0.16em] font-bold text-[#f0d078]">
+                            <span class="text-[10px] md:text-[11px] uppercase tracking-[0.15em] font-bold text-[#fff3c4]">
                                 Consola de Curul
                             </span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="probarSonidos()" class="solo-admin bg-white/5 hover:bg-white/10 text-[#f0d078] text-xs font-bold px-3 py-1.5 rounded-xl border border-white/15 transition">
+                            <button onclick="probarSonidos()" class="solo-admin bg-white/10 hover:bg-white/20 text-[#fff3c4] text-xs font-bold px-3 py-1.5 rounded-xl border border-[#f3cf7a]/35 transition">
                                 <i class="fa-solid fa-bell mr-1"></i> Timbre
                             </button>
-                            <button onclick="togglePantallaCompletaCrono()" class="bg-white/5 hover:bg-white/10 text-white text-xs font-bold px-3 py-1.5 rounded-xl border border-white/15 transition">
+                            <button onclick="togglePantallaCompletaCrono()" class="bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-xl border border-white/20 transition">
                                 <i class="fa-solid fa-expand mr-1"></i> Proyectar
                             </button>
                         </div>
                     </div>
 
                     <div class="mt-4 md:mt-6 mb-2 z-10">
-                        <span id="crono-tipo-badge" class="hidden inline-block text-[10px] font-bold uppercase tracking-[0.2em] px-3.5 py-1 rounded-full bg-[#c9a24b]/15 text-[#f0d078] border border-[#c9a24b]/45 mb-2">
+                        <span id="crono-tipo-badge" class="hidden inline-block text-[10px] font-bold uppercase tracking-[0.2em] px-3.5 py-1 rounded-full bg-[#f3cf7a]/20 text-[#fff3c4] border border-[#f3cf7a]/60 mb-2">
                             Intervención
                         </span>
                         <h3 id="crono-nombre" class="font-solemne text-xl sm:text-3xl md:text-4xl uppercase font-bold text-white drop-shadow">
                             En Espera de Orador
                         </h3>
-                        <p id="crono-bancada" class="text-xs md:text-sm text-slate-400 font-medium mt-1.5">
+                        <p id="crono-bancada" class="text-xs md:text-sm text-slate-300 font-medium mt-1.5">
                             Orden de oradores del recinto del Concejo Municipal
                         </p>
                     </div>
@@ -699,81 +720,81 @@
                     <div id="crono-alerta-visual" class="hidden w-full max-w-md py-1.5 px-4 rounded-xl font-extrabold text-xs uppercase tracking-widest my-1 z-10"></div>
 
                     <div class="relative w-64 h-64 md:w-72 md:h-72 my-3 flex items-center justify-center z-10">
-                        <svg class="w-full h-full drop-shadow-[0_0_30px_rgba(201,162,75,0.28)]" viewBox="0 0 260 260">
-                            <circle cx="130" cy="130" r="114" fill="rgba(4,8,18,0.65)" stroke="rgba(255,255,255,0.08)" stroke-width="9"/>
-                            <circle cx="130" cy="130" r="102" fill="none" stroke="rgba(201,162,75,0.3)" stroke-width="1" stroke-dasharray="2,6"/>
-                            <circle id="anillo-tiempo" class="anillo-progreso" cx="130" cy="130" r="114" fill="none" stroke="#c9a24b" stroke-width="9" stroke-linecap="round" stroke-dasharray="716.28" stroke-dashoffset="0"/>
+                        <svg class="w-full h-full drop-shadow-[0_0_35px_rgba(243,207,122,0.35)]" viewBox="0 0 260 260">
+                            <circle cx="130" cy="130" r="114" fill="rgba(5,11,24,0.75)" stroke="rgba(255,255,255,0.12)" stroke-width="9"/>
+                            <circle cx="130" cy="130" r="102" fill="none" stroke="rgba(243,207,122,0.4)" stroke-width="1.5" stroke-dasharray="2,6"/>
+                            <circle id="anillo-tiempo" class="anillo-progreso" cx="130" cy="130" r="114" fill="none" stroke="#f3cf7a" stroke-width="9" stroke-linecap="round" stroke-dasharray="716.28" stroke-dashoffset="0"/>
                         </svg>
 
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
-                            <span class="text-[9px] md:text-[10px] uppercase tracking-[0.22em] text-slate-400 font-bold mb-1">Tiempo Restante</span>
-                            <div id="crono-display" class="font-mono-digital text-5xl md:text-7xl font-extrabold text-[#f0d078] tracking-tight select-none leading-none drop-shadow-[0_4px_15px_rgba(201,162,75,0.3)]">
+                            <span class="text-[9px] md:text-[10px] uppercase tracking-[0.22em] text-slate-300 font-bold mb-1">Tiempo Restante</span>
+                            <div id="crono-display" class="font-mono-digital text-5xl md:text-7xl font-extrabold text-[#fff3c4] tracking-tight select-none leading-none drop-shadow-[0_4px_18px_rgba(243,207,122,0.4)]">
                                 03:00
                             </div>
-                            <span id="crono-subtitulo-tiempo" class="text-[11px] text-slate-400 font-semibold mt-2">
+                            <span id="crono-subtitulo-tiempo" class="text-[11px] text-slate-300 font-semibold mt-2">
                                 Reglamentario: 03:00
                             </span>
                         </div>
                     </div>
 
-                    <div class="solo-admin flex flex-wrap justify-center items-center gap-1.5 md:gap-2 mb-4 md:mb-5 bg-black/40 p-2.5 md:p-3 rounded-2xl border border-white/10 w-full z-10">
-                        <button onclick="ajustarTiempo(-60)" class="bg-[#060a14] hover:bg-slate-900 text-rose-400 border border-rose-500/25 font-bold text-xs px-2.5 md:px-3 py-2 rounded-xl transition">-1m</button>
-                        <button onclick="ajustarTiempo(-30)" class="bg-[#060a14] hover:bg-slate-900 text-rose-300 border border-rose-500/25 font-bold text-xs px-2.5 md:px-3 py-2 rounded-xl transition">-30s</button>
+                    <div class="solo-admin flex flex-wrap justify-center items-center gap-1.5 md:gap-2 mb-4 md:mb-5 bg-[#060d1c]/70 p-2.5 md:p-3 rounded-2xl border border-[#f3cf7a]/25 w-full z-10">
+                        <button onclick="ajustarTiempo(-60)" class="bg-[#0a162e] hover:bg-slate-900 text-rose-300 border border-rose-400/40 font-bold text-xs px-2.5 md:px-3 py-2 rounded-xl transition">-1m</button>
+                        <button onclick="ajustarTiempo(-30)" class="bg-[#0a162e] hover:bg-slate-900 text-rose-200 border border-rose-400/40 font-bold text-xs px-2.5 md:px-3 py-2 rounded-xl transition">-30s</button>
                         
-                        <div class="flex items-center gap-1 bg-black/80 px-2.5 py-1.5 rounded-xl border border-[#c9a24b]/35">
-                            <input type="number" id="edit-minutos" min="0" max="60" value="3" class="w-11 bg-transparent text-center text-sm font-extrabold text-white" title="Minutos">
-                            <span class="font-bold text-[#c9a24b]">:</span>
-                            <input type="number" id="edit-segundos" min="0" max="59" value="0" class="w-11 bg-transparent text-center text-sm font-extrabold text-white" title="Segundos">
+                        <div class="flex items-center gap-1 bg-[#050b18] px-2.5 py-1.5 rounded-xl border border-[#f3cf7a]/45">
+                            <input type="number" id="edit-minutos" min="0" max="60" value="3" class="w-11 !bg-transparent !border-0 text-center text-sm font-extrabold text-white" title="Minutos">
+                            <span class="font-bold text-[#f3cf7a]">:</span>
+                            <input type="number" id="edit-segundos" min="0" max="59" value="0" class="w-11 !bg-transparent !border-0 text-center text-sm font-extrabold text-white" title="Segundos">
                             <button onclick="aplicarTiempoManual()" class="bg-[#1e3a8a] hover:bg-blue-700 text-white text-[11px] uppercase font-bold px-2.5 py-1 rounded-lg ml-1 transition">Fijar</button>
                         </div>
 
-                        <button onclick="ajustarTiempo(30)" class="bg-[#060a14] hover:bg-slate-900 text-emerald-300 border border-emerald-500/25 font-bold text-xs px-2.5 md:px-3 py-2 rounded-xl transition">+30s</button>
-                        <button onclick="ajustarTiempo(60)" class="bg-[#060a14] hover:bg-slate-900 text-emerald-400 border border-emerald-500/25 font-bold text-xs px-2.5 md:px-3 py-2 rounded-xl transition">+1m</button>
+                        <button onclick="ajustarTiempo(30)" class="bg-[#0a162e] hover:bg-slate-900 text-emerald-200 border border-emerald-400/40 font-bold text-xs px-2.5 md:px-3 py-2 rounded-xl transition">+30s</button>
+                        <button onclick="ajustarTiempo(60)" class="bg-[#0a162e] hover:bg-slate-900 text-emerald-300 border border-emerald-400/40 font-bold text-xs px-2.5 md:px-3 py-2 rounded-xl transition">+1m</button>
                     </div>
 
                     <div class="solo-admin grid grid-cols-3 gap-2 md:gap-3 w-full z-10">
-                        <button onclick="iniciarCrono()" class="bg-gradient-to-b from-emerald-600 to-emerald-800 hover:from-emerald-500 hover:to-emerald-700 text-white py-3 md:py-3.5 px-2 md:px-4 rounded-2xl text-[11px] md:text-sm uppercase font-extrabold tracking-wider border border-emerald-400/30 shadow-lg transition flex items-center justify-center gap-1.5 md:gap-2">
+                        <button onclick="iniciarCrono()" class="bg-gradient-to-b from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white py-3 md:py-3.5 px-2 md:px-4 rounded-2xl text-[11px] md:text-sm uppercase font-extrabold tracking-wider border border-emerald-300/45 shadow-lg transition flex items-center justify-center gap-1.5 md:gap-2">
                             <i class="fa-solid fa-play"></i> Conceder
                         </button>
                         <button onclick="pausarCrono()" class="btn-oro py-3 md:py-3.5 px-2 md:px-4 rounded-2xl text-[11px] md:text-sm uppercase font-extrabold tracking-wider flex items-center justify-center gap-1.5 md:gap-2">
                             <i class="fa-solid fa-pause"></i> Suspender
                         </button>
-                        <button onclick="finalizarTurnoActual()" class="bg-gradient-to-b from-rose-700 to-rose-900 hover:from-rose-600 hover:to-rose-800 text-white py-3 md:py-3.5 px-2 md:px-4 rounded-2xl text-[11px] md:text-sm uppercase font-extrabold tracking-wider border border-rose-400/30 shadow-lg transition flex items-center justify-center gap-1.5 md:gap-2">
+                        <button onclick="finalizarTurnoActual()" class="bg-gradient-to-b from-rose-600 to-rose-800 hover:from-rose-500 hover:to-rose-700 text-white py-3 md:py-3.5 px-2 md:px-4 rounded-2xl text-[11px] md:text-sm uppercase font-extrabold tracking-wider border border-rose-300/45 shadow-lg transition flex items-center justify-center gap-1.5 md:gap-2">
                             <i class="fa-solid fa-microphone-slash"></i> Cerrar
                         </button>
                     </div>
                 </div>
 
                 <div class="lg:col-span-5 panel-institucional p-4 md:p-6 rounded-3xl flex flex-col">
-                    <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+                    <div class="flex justify-between items-center mb-4 border-b border-[#f3cf7a]/25 pb-3">
                         <div>
                             <h3 class="font-solemne text-base md:text-lg uppercase font-bold text-white">Orden de Uso de la Palabra</h3>
-                            <p class="text-xs text-slate-400">Lista oficial de oradores inscritos ante Presidencia.</p>
+                            <p class="text-xs text-slate-300">Lista oficial de oradores inscritos ante Presidencia.</p>
                         </div>
-                        <span class="bg-[#c9a24b]/15 text-[#f0d078] border border-[#c9a24b]/40 text-xs font-extrabold px-2.5 md:px-3 py-1 rounded-lg shrink-0">
+                        <span class="bg-[#f3cf7a]/20 text-[#fff3c4] border border-[#f3cf7a]/55 text-xs font-extrabold px-3 py-1 rounded-lg shrink-0">
                             <span id="contador-turnos">0</span> inscritos
                         </span>
                     </div>
                     
-                    <div class="solo-admin space-y-3 mb-5 bg-[#060a14]/90 p-3.5 md:p-4 rounded-2xl border border-white/10">
+                    <div class="solo-admin space-y-3 mb-5 bg-[#060d1c]/80 p-3.5 md:p-4 rounded-2xl border border-[#f3cf7a]/25">
                         <div>
                             <div class="flex justify-between items-center mb-1">
-                                <label class="block text-xs font-bold uppercase text-slate-400">Honorable Concejal</label>
-                                <span id="contador-oradores-disponibles" class="text-[10px] font-bold text-[#c9a24b]"></span>
+                                <label class="block text-xs font-bold uppercase text-slate-300">Honorable Concejal</label>
+                                <span id="contador-oradores-disponibles" class="text-[10px] font-bold text-[#f3cf7a]"></span>
                             </div>
                             <div class="relative mb-2">
-                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                                <input type="text" id="filtro-nombre-orador" oninput="filtrarSelectOradores()" placeholder="Filtrar concejal por nombre..." class="w-full border border-white/15 rounded-xl pl-8 pr-7 py-2 text-xs bg-[#0b1222] text-white placeholder-slate-500">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#f3cf7a] text-xs"></i>
+                                <input type="text" id="filtro-nombre-orador" oninput="filtrarSelectOradores()" placeholder="Filtrar concejal por nombre..." class="w-full border rounded-xl pl-8 pr-7 py-2 text-xs text-white placeholder-slate-400">
                                 <button type="button" id="btn-limpiar-filtro-orador" onclick="limpiarFiltroSelectOradores()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs" title="Limpiar búsqueda">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
                             </div>
-                            <select id="select-orador" class="w-full border border-white/15 rounded-xl px-3 py-2.5 text-sm bg-[#0b1222] text-white font-medium"></select>
+                            <select id="select-orador" class="w-full border rounded-xl px-3 py-2.5 text-sm text-white font-medium"></select>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Modalidad</label>
-                                <select id="select-tipo-intervencion" onchange="autocompletarSegundos()" class="w-full border border-white/15 rounded-xl px-3 py-2 text-sm bg-[#0b1222] text-white">
+                                <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Modalidad</label>
+                                <select id="select-tipo-intervencion" onchange="autocompletarSegundos()" class="w-full border rounded-xl px-3 py-2 text-sm text-white">
                                     <option value="Ordinaria" data-seg="180">Ordinaria (3 min)</option>
                                     <option value="Vocero Bancada" data-seg="300">Vocero Bancada (5 min)</option>
                                     <option value="Réplica" data-seg="120">Réplica (2 min)</option>
@@ -781,8 +802,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Tiempo (Segundos)</label>
-                                <input type="number" id="input-segundos" value="180" min="5" class="w-full border border-white/15 rounded-xl px-3 py-2 text-sm font-bold bg-[#0b1222] text-[#f0d078]">
+                                <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Tiempo (Segundos)</label>
+                                <input type="number" id="input-segundos" value="180" min="5" class="w-full border rounded-xl px-3 py-2 text-sm font-bold text-[#fff3c4]">
                             </div>
                         </div>
                         <button onclick="agregarIntervencion()" class="w-full btn-oro font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider">
@@ -791,10 +812,10 @@
                     </div>
 
                     <div class="flex flex-wrap justify-between items-center gap-2 mb-2.5">
-                        <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider">Turnos Inscritos</h4>
+                        <h4 class="text-xs font-bold uppercase text-slate-300 tracking-wider">Turnos Inscritos</h4>
                         <div class="relative w-full sm:w-48">
-                            <i class="fa-solid fa-filter absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-[10px]"></i>
-                            <input type="text" id="filtro-cola-intervenciones" oninput="renderizarListaIntervenciones()" placeholder="Buscar en turnos..." class="w-full bg-[#060a14] border border-white/15 rounded-lg pl-7 pr-6 py-1.5 text-xs text-white placeholder-slate-500">
+                            <i class="fa-solid fa-filter absolute left-2.5 top-1/2 -translate-y-1/2 text-[#f3cf7a] text-[10px]"></i>
+                            <input type="text" id="filtro-cola-intervenciones" oninput="renderizarListaIntervenciones()" placeholder="Buscar en turnos..." class="w-full border rounded-lg pl-7 pr-6 py-1.5 text-xs text-white placeholder-slate-400">
                             <button type="button" id="btn-limpiar-cola" onclick="limpiarFiltroCola()" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-[10px]" title="Limpiar filtro">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
@@ -810,22 +831,22 @@
         <!-- ===================================================================== -->
         <section id="tab-votacion" class="tab-content hidden">
             
-            <div class="panel-institucional rounded-2xl p-4 md:p-6 mb-6 border-t-4 border-t-[#c9a24b]">
+            <div class="panel-institucional rounded-2xl p-4 md:p-6 mb-6 border-t-4 border-t-[#f3cf7a]">
                 <div class="flex flex-wrap justify-between items-center gap-4">
                     <div>
-                        <span class="text-[10px] font-bold uppercase tracking-[0.22em] text-[#c9a24b] block mb-1">
+                        <span class="text-[10px] font-extrabold uppercase tracking-[0.24em] text-[#f3cf7a] block mb-1">
                             Sistema Electrónico de Votación Nominal
                         </span>
-                        <h2 class="font-solemne text-lg md:text-3xl uppercase text-white">
+                        <h2 class="font-solemne text-lg md:text-3xl uppercase text-white font-bold">
                             Urna de Votación del Concejo Municipal
                         </h2>
-                        <p class="text-xs text-slate-400 mt-1">
+                        <p class="text-xs text-slate-300 mt-1">
                             Cada Honorable Concejal dispone de un único ingreso y un solo voto dentro del tiempo reglamentario fijado para la urna.
                         </p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-                        <select id="select-votacion-activa" onchange="cambiarVotacionSeleccionada()" class="bg-[#060a14] border border-[#c9a24b]/45 text-white text-xs font-bold rounded-xl px-3.5 py-2.5 w-full sm:w-auto sm:min-w-[240px]">
+                        <select id="select-votacion-activa" onchange="cambiarVotacionSeleccionada()" class="border text-white text-xs font-bold rounded-xl px-3.5 py-2.5 w-full sm:w-auto sm:min-w-[240px]">
                             <option value="">-- Sin votaciones creadas --</option>
                         </select>
                         <button onclick="toggleFormNuevaVotacion()" class="solo-admin w-full sm:w-auto btn-oro font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl">
@@ -834,33 +855,33 @@
                     </div>
                 </div>
 
-                <div id="panel-form-votacion" class="solo-admin hidden mt-5 pt-5 border-t border-white/10">
+                <div id="panel-form-votacion" class="solo-admin hidden mt-5 pt-5 border-t border-[#f3cf7a]/25">
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                         <div class="md:col-span-4">
-                            <label class="block text-xs font-bold uppercase text-[#f0d078] mb-1">
+                            <label class="block text-xs font-bold uppercase text-[#fff3c4] mb-1">
                                 <i class="fa-solid fa-scale-balanced mr-1"></i> Proyecto / Proposición Radicada
                             </label>
-                            <select id="vot-select-proyecto" onchange="autocompletarDatosDesdeProyecto()" class="w-full border border-[#c9a24b]/50 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm font-semibold">
+                            <select id="vot-select-proyecto" onchange="autocompletarDatosDesdeProyecto()" class="w-full border text-white rounded-xl px-3 py-2.5 text-sm font-semibold">
                                 <option value="">-- Seleccionar proyecto del Orden del Día --</option>
                             </select>
                         </div>
                         <div class="md:col-span-4">
-                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Asunto a Someter a Votación</label>
-                            <input type="text" id="vot-titulo" placeholder="Seleccione un proyecto o escriba el asunto..." class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm">
+                            <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Asunto a Someter a Votación</label>
+                            <input type="text" id="vot-titulo" placeholder="Seleccione un proyecto o escriba el asunto..." class="w-full border text-white rounded-xl px-3 py-2.5 text-sm">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Ámbito</label>
-                            <select id="vot-ambito" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm font-semibold">
+                            <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Ámbito</label>
+                            <select id="vot-ambito" class="w-full border text-white rounded-xl px-3 py-2.5 text-sm font-semibold">
                                 <option value="Plenaria">Plenaria (Todos)</option>
                                 <option value="Comisión Primera">Comisión Primera</option>
                                 <option value="Comisión Segunda">Comisión Segunda</option>
                             </select>
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-bold uppercase text-[#f0d078] mb-1">
+                            <label class="block text-xs font-bold uppercase text-[#fff3c4] mb-1">
                                 <i class="fa-solid fa-hourglass-half mr-1"></i> Tiempo Urna
                             </label>
-                            <select id="vot-duracion-seg" class="w-full border border-[#c9a24b]/50 bg-[#060a14] text-[#f0d078] rounded-xl px-3 py-2.5 text-sm font-extrabold">
+                            <select id="vot-duracion-seg" class="w-full border text-[#fff3c4] rounded-xl px-3 py-2.5 text-sm font-extrabold">
                                 <option value="60">1 Minuto (60s)</option>
                                 <option value="120" selected>2 Minutos (120s)</option>
                                 <option value="180">3 Minutos (180s)</option>
@@ -872,12 +893,12 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end mt-3">
                         <div class="md:col-span-8">
-                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Detalle / Ponente / Observación</label>
-                            <input type="text" id="vot-descripcion" placeholder="Ej: Aprobación en Primer Debate del articulado completo" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm">
+                            <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Detalle / Ponente / Observación</label>
+                            <input type="text" id="vot-descripcion" placeholder="Ej: Aprobación en Primer Debate del articulado completo" class="w-full border text-white rounded-xl px-3 py-2 text-sm">
                         </div>
                         <div class="md:col-span-4 flex justify-end gap-2">
-                            <button onclick="toggleFormNuevaVotacion()" class="px-4 py-2.5 text-xs font-bold uppercase text-slate-400 hover:text-white">Cancelar</button>
-                            <button onclick="crearVotacion()" class="flex-1 sm:flex-initial bg-gradient-to-b from-emerald-600 to-emerald-800 hover:from-emerald-500 hover:to-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-lg">
+                            <button onclick="toggleFormNuevaVotacion()" class="px-4 py-2.5 text-xs font-bold uppercase text-slate-300 hover:text-white">Cancelar</button>
+                            <button onclick="crearVotacion()" class="flex-1 sm:flex-initial bg-gradient-to-b from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-extrabold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-lg">
                                 <i class="fa-solid fa-box-open mr-1.5"></i> Iniciar Urna
                             </button>
                         </div>
@@ -888,36 +909,36 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 items-start">
                 
                 <!-- COLUMNA IZQUIERDA (5 cols): CABINA DE AUTENTICACIÓN Y VOTO ÚNICO -->
-                <div class="lg:col-span-5 panel-institucional rounded-2xl p-4 md:p-6 border border-[#c9a24b]/45">
-                    <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                <div class="lg:col-span-5 panel-institucional rounded-2xl p-4 md:p-6 border-2 border-[#f3cf7a]/55">
+                    <div class="flex items-center justify-between border-b border-[#f3cf7a]/25 pb-3 mb-4">
                         <div>
-                            <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#c9a24b]">Curul Electrónica</span>
+                            <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#f3cf7a]">Curul Electrónica</span>
                             <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-white">Cabina de Votación</h3>
                         </div>
-                        <span class="bg-amber-500/15 border border-amber-500/45 text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg text-amber-300">
+                        <span class="bg-amber-500/20 border border-amber-400/55 text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg text-amber-200">
                             Ingreso Único
                         </span>
                     </div>
 
                     <div id="cabina-login-form" class="space-y-4">
-                        <div class="bg-[#060a14]/90 p-3.5 rounded-xl border border-[#c9a24b]/30 text-xs text-slate-300">
-                            <i class="fa-solid fa-shield-halved text-[#f0d078] mr-1.5"></i>
+                        <div class="bg-[#060d1c]/90 p-3.5 rounded-xl border border-[#f3cf7a]/35 text-xs text-slate-200">
+                            <i class="fa-solid fa-shield-halved text-[#f3cf7a] mr-1.5"></i>
                             Inicie sesión con su <strong>Primer Nombre</strong> y <strong>Primer Apellido</strong>. Una vez registrado en esta ronda, no podrá volver a ingresar.
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Primer Nombre</label>
-                            <input type="text" id="login-primer-nombre" autocapitalize="words" placeholder="Ej: Kaory" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-3 text-base">
+                            <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Primer Nombre</label>
+                            <input type="text" id="login-primer-nombre" autocapitalize="words" placeholder="Ej: Kaory" class="w-full border text-white rounded-xl px-3.5 py-3 text-base">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Primer Apellido</label>
-                            <input type="text" id="login-primer-apellido" autocapitalize="words" placeholder="Ej: Carrero" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-3 text-base">
+                            <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Primer Apellido</label>
+                            <input type="text" id="login-primer-apellido" autocapitalize="words" placeholder="Ej: Carrero" class="w-full border text-white rounded-xl px-3.5 py-3 text-base">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Contraseña (Cualquiera para prueba)</label>
-                            <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter') iniciarSesionConcejal()" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-3 text-base">
+                            <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Contraseña (Cualquiera para prueba)</label>
+                            <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter') iniciarSesionConcejal()" class="w-full border text-white rounded-xl px-3.5 py-3 text-base">
                         </div>
 
                         <button type="button" onclick="iniciarSesionConcejal()" class="w-full btn-oro font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider">
@@ -926,33 +947,33 @@
                     </div>
 
                     <div id="cabina-concejal-autenticado" class="hidden space-y-5">
-                        <div class="bg-[#060a14] p-4 rounded-2xl border border-[#c9a24b]/50 flex justify-between items-start gap-3 shadow-inner">
+                        <div class="bg-[#060d1c] p-4 rounded-2xl border-2 border-[#f3cf7a]/60 flex justify-between items-start gap-3 shadow-inner">
                             <div>
                                 <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
                                     <i class="fa-solid fa-circle-check mr-1"></i> Identidad Verificada
                                 </span>
                                 <h4 id="concejal-logueado-nombre" class="font-solemne text-base md:text-lg uppercase font-bold text-white mt-0.5">--</h4>
-                                <p id="concejal-logueado-detalle" class="text-xs text-slate-400 mt-0.5">--</p>
+                                <p id="concejal-logueado-detalle" class="text-xs text-slate-300 mt-0.5">--</p>
                             </div>
-                            <button type="button" onclick="cerrarSesionConcejal()" class="bg-white/5 hover:bg-rose-900/40 text-slate-300 hover:text-rose-300 border border-white/10 px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase transition shrink-0">
+                            <button type="button" onclick="cerrarSesionConcejal()" class="bg-white/10 hover:bg-rose-900/50 text-slate-200 hover:text-rose-200 border border-white/15 px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase transition shrink-0">
                                 Salir
                             </button>
                         </div>
 
-                        <div id="estado-mi-voto-box" class="bg-white/[0.03] p-3.5 rounded-xl border border-white/10 text-center">
-                            <span class="text-xs text-slate-400">Estado de su participación: </span>
-                            <strong id="mi-voto-actual-texto" class="text-sm uppercase text-[#f0d078]">Habilitado para emitir 1 voto</strong>
+                        <div id="estado-mi-voto-box" class="bg-white/[0.05] p-3.5 rounded-xl border border-[#f3cf7a]/25 text-center">
+                            <span class="text-xs text-slate-300">Estado de su participación: </span>
+                            <strong id="mi-voto-actual-texto" class="text-sm uppercase text-[#fff3c4]">Habilitado para emitir 1 voto</strong>
                         </div>
 
                         <div id="botones-emitir-voto" class="space-y-3">
-                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 text-center">Seleccione su sentido de votación (Definitivo):</p>
-                            <button type="button" onclick="emitirVoto('SI')" class="w-full bg-gradient-to-b from-emerald-600 to-emerald-800 hover:from-emerald-500 hover:to-emerald-700 active:scale-[0.99] text-white font-extrabold py-4 px-5 rounded-2xl text-sm md:text-base uppercase tracking-wider border border-emerald-400/40 shadow-lg shadow-emerald-950/50 transition flex items-center justify-center gap-3">
+                            <p class="text-xs font-bold uppercase tracking-wider text-slate-300 text-center">Seleccione su sentido de votación (Definitivo):</p>
+                            <button type="button" onclick="emitirVoto('SI')" class="w-full bg-gradient-to-b from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 active:scale-[0.99] text-white font-extrabold py-4 px-5 rounded-2xl text-sm md:text-base uppercase tracking-wider border border-emerald-300/50 shadow-lg shadow-emerald-950/60 transition flex items-center justify-center gap-3">
                                 <i class="fa-solid fa-thumbs-up text-lg"></i> VOTAR SÍ (POSITIVO)
                             </button>
-                            <button type="button" onclick="emitirVoto('NO')" class="w-full bg-gradient-to-b from-rose-700 to-rose-900 hover:from-rose-600 hover:to-rose-800 active:scale-[0.99] text-white font-extrabold py-4 px-5 rounded-2xl text-sm md:text-base uppercase tracking-wider border border-rose-400/40 shadow-lg shadow-rose-950/50 transition flex items-center justify-center gap-3">
+                            <button type="button" onclick="emitirVoto('NO')" class="w-full bg-gradient-to-b from-rose-600 to-rose-800 hover:from-rose-500 hover:to-rose-700 active:scale-[0.99] text-white font-extrabold py-4 px-5 rounded-2xl text-sm md:text-base uppercase tracking-wider border border-rose-300/50 shadow-lg shadow-rose-950/60 transition flex items-center justify-center gap-3">
                                 <i class="fa-solid fa-thumbs-down text-lg"></i> VOTAR NO (NEGATIVO)
                             </button>
-                            <button type="button" onclick="emitirVoto('ABSTENCION')" class="w-full bg-gradient-to-b from-slate-700 to-slate-900 hover:from-slate-600 hover:to-slate-800 active:scale-[0.99] text-amber-300 font-extrabold py-3.5 px-5 rounded-2xl text-xs uppercase tracking-wider border border-amber-500/35 shadow transition flex items-center justify-center gap-2">
+                            <button type="button" onclick="emitirVoto('ABSTENCION')" class="w-full bg-gradient-to-b from-slate-700 to-slate-900 hover:from-slate-600 hover:to-slate-800 active:scale-[0.99] text-amber-200 font-extrabold py-3.5 px-5 rounded-2xl text-xs uppercase tracking-wider border border-amber-400/45 shadow transition flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-hand"></i> ABSTENCIÓN / IMPEDIMENTO
                             </button>
                         </div>
@@ -961,21 +982,21 @@
 
                 <!-- COLUMNA DERECHA (7 cols): RESULTADOS, VEREDICTO OFICIAL Y CRONÓMETRO DE URNA -->
                 <div class="lg:col-span-7 panel-institucional rounded-2xl p-4 md:p-6">
-                    <div class="flex flex-wrap justify-between items-start gap-3 border-b border-white/10 pb-4 mb-4">
+                    <div class="flex flex-wrap justify-between items-start gap-3 border-b border-[#f3cf7a]/25 pb-4 mb-4">
                         <div class="flex-1 min-w-[200px]">
                             <div class="flex items-center gap-2 flex-wrap mb-1">
-                                <span id="vot-visor-estado" class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded">URNA ABIERTA</span>
-                                <span id="vot-visor-ronda" class="bg-[#c9a24b]/20 text-[#f0d078] border border-[#c9a24b]/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded">Ronda 1</span>
-                                <span id="vot-visor-ambito" class="text-xs font-bold text-[#c9a24b]">Plenaria</span>
-                                <span id="vot-visor-proyecto-badge" class="hidden bg-[#c9a24b]/20 text-[#f0d078] border border-[#c9a24b]/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded"></span>
+                                <span id="vot-visor-estado" class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded">URNA ABIERTA</span>
+                                <span id="vot-visor-ronda" class="bg-[#f3cf7a]/20 text-[#fff3c4] border border-[#f3cf7a]/50 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded">Ronda 1</span>
+                                <span id="vot-visor-ambito" class="text-xs font-bold text-[#f3cf7a]">Plenaria</span>
+                                <span id="vot-visor-proyecto-badge" class="hidden bg-[#f3cf7a]/20 text-[#fff3c4] border border-[#f3cf7a]/50 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded"></span>
                             </div>
                             <h3 id="vot-visor-titulo" class="font-solemne text-lg md:text-2xl uppercase font-bold text-white">Seleccione o cree una votación</h3>
-                            <p id="vot-visor-desc" class="text-xs text-slate-400 mt-1">--</p>
+                            <p id="vot-visor-desc" class="text-xs text-slate-300 mt-1">--</p>
                         </div>
 
-                        <div class="bg-[#060a14] border border-[#c9a24b]/50 px-3.5 md:px-4 py-2 md:py-2.5 rounded-2xl text-center shrink-0 shadow-[0_0_20px_rgba(201,162,75,0.15)]">
-                            <span class="block text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Tiempo Urna</span>
-                            <span id="vot-cronometro-display" class="font-mono-digital text-xl md:text-3xl font-extrabold text-[#f0d078]">--:--</span>
+                        <div class="bg-[#060d1c] border-2 border-[#f3cf7a]/65 px-4 py-2.5 rounded-2xl text-center shrink-0 shadow-[0_0_24px_rgba(243,207,122,0.2)]">
+                            <span class="block text-[9px] font-bold uppercase tracking-[0.2em] text-slate-300">Tiempo Urna</span>
+                            <span id="vot-cronometro-display" class="font-mono-digital text-xl md:text-3xl font-extrabold text-[#fff3c4]">--:--</span>
                         </div>
                     </div>
 
@@ -984,28 +1005,28 @@
                     <div id="vot-controles-mesa" class="flex items-center justify-end gap-2 flex-wrap mb-5"></div>
 
                     <div class="grid grid-cols-3 gap-2 md:gap-3 mb-6">
-                        <div class="kpi-card p-3 md:p-4 rounded-2xl border border-emerald-500/40 text-center">
-                            <span class="text-[10px] md:text-[11px] font-extrabold uppercase tracking-widest text-emerald-400 block">Votos SÍ</span>
+                        <div class="kpi-card p-3 md:p-4 rounded-2xl border-2 border-emerald-400/50 text-center">
+                            <span class="text-[10px] md:text-[11px] font-extrabold uppercase tracking-widest text-emerald-300 block">Votos SÍ</span>
                             <p id="res-votos-si" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-emerald-400 my-1">0</p>
-                            <span id="pct-votos-si" class="text-[11px] font-bold text-slate-400">0%</span>
+                            <span id="pct-votos-si" class="text-[11px] font-bold text-slate-300">0%</span>
                         </div>
 
-                        <div class="kpi-card p-3 md:p-4 rounded-2xl border border-rose-500/40 text-center">
-                            <span class="text-[10px] md:text-[11px] font-extrabold uppercase tracking-widest text-rose-400 block">Votos NO</span>
+                        <div class="kpi-card p-3 md:p-4 rounded-2xl border-2 border-rose-400/50 text-center">
+                            <span class="text-[10px] md:text-[11px] font-extrabold uppercase tracking-widest text-rose-300 block">Votos NO</span>
                             <p id="res-votos-no" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-rose-400 my-1">0</p>
-                            <span id="pct-votos-no" class="text-[11px] font-bold text-slate-400">0%</span>
+                            <span id="pct-votos-no" class="text-[11px] font-bold text-slate-300">0%</span>
                         </div>
 
-                        <div class="kpi-card p-3 md:p-4 rounded-2xl border border-amber-500/40 text-center">
-                            <span class="text-[10px] md:text-[11px] font-extrabold uppercase tracking-widest text-amber-300 block">Abstenc.</span>
+                        <div class="kpi-card p-3 md:p-4 rounded-2xl border-2 border-amber-400/50 text-center">
+                            <span class="text-[10px] md:text-[11px] font-extrabold uppercase tracking-widest text-amber-200 block">Abstenc.</span>
                             <p id="res-votos-abs" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-amber-300 my-1">0</p>
-                            <span id="pct-votos-abs" class="text-[11px] font-bold text-slate-400">0%</span>
+                            <span id="pct-votos-abs" class="text-[11px] font-bold text-slate-300">0%</span>
                         </div>
                     </div>
 
                     <div>
                         <div class="flex justify-between items-center mb-3">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-200">
                                 Registro Nominal (<span id="total-votos-emitidos">0</span> votos)
                             </h4>
                             <span class="text-[11px] font-bold text-emerald-400 flex items-center gap-1.5">
@@ -1023,41 +1044,41 @@
         <!-- ===================================================================== -->
         <section id="tab-proyectos" class="tab-content hidden">
             
-            <div class="panel-institucional p-4 rounded-2xl mb-6 flex flex-wrap justify-between items-center gap-3 border-b-2 border-b-[#c9a24b]">
+            <div class="panel-institucional p-4 rounded-2xl mb-6 flex flex-wrap justify-between items-center gap-3 border-b-2 border-b-[#f3cf7a]">
                 <div class="flex flex-wrap items-center gap-2">
-                    <span class="font-solemne text-sm md:text-base uppercase text-[#f0d078] mr-1 md:mr-2">
-                        <i class="fa-solid fa-filter mr-1.5"></i>Comisión:
+                    <span class="font-solemne text-sm md:text-base uppercase text-[#fff3c4] mr-1 md:mr-2 font-bold">
+                        <i class="fa-solid fa-filter mr-1.5 text-[#f3cf7a]"></i>Comisión:
                     </span>
-                    <button onclick="filtrarProyectos('TODOS')" id="filtro-TODOS" class="filtro-proy-btn bg-[#c9a24b] text-slate-950 font-extrabold text-xs uppercase px-3.5 py-2 rounded-xl shadow">Todos</button>
-                    <button onclick="filtrarProyectos('Primera')" id="filtro-Primera" class="filtro-proy-btn bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-xs uppercase px-3.5 py-2 rounded-xl border border-white/10">Comisión Primera</button>
-                    <button onclick="filtrarProyectos('Segunda')" id="filtro-Segunda" class="filtro-proy-btn bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-xs uppercase px-3.5 py-2 rounded-xl border border-white/10">Comisión Segunda</button>
-                    <button onclick="filtrarProyectos('Plenaria')" id="filtro-Plenaria" class="filtro-proy-btn bg-white/5 hover:bg-white/10 text-slate-200 font-bold text-xs uppercase px-3.5 py-2 rounded-xl border border-white/10">Plenaria</button>
+                    <button onclick="filtrarProyectos('TODOS')" id="filtro-TODOS" class="filtro-proy-btn bg-[#f3cf7a] text-slate-950 font-extrabold text-xs uppercase px-3.5 py-2 rounded-xl shadow">Todos</button>
+                    <button onclick="filtrarProyectos('Primera')" id="filtro-Primera" class="filtro-proy-btn bg-white/10 hover:bg-white/15 text-slate-200 font-bold text-xs uppercase px-3.5 py-2 rounded-xl border border-white/15">Comisión Primera</button>
+                    <button onclick="filtrarProyectos('Segunda')" id="filtro-Segunda" class="filtro-proy-btn bg-white/10 hover:bg-white/15 text-slate-200 font-bold text-xs uppercase px-3.5 py-2 rounded-xl border border-white/15">Comisión Segunda</button>
+                    <button onclick="filtrarProyectos('Plenaria')" id="filtro-Plenaria" class="filtro-proy-btn bg-white/10 hover:bg-white/15 text-slate-200 font-bold text-xs uppercase px-3.5 py-2 rounded-xl border border-white/15">Plenaria</button>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                     <button type="button" onclick="toggleFormularioProposicionConcejal()" class="flex-1 sm:flex-initial btn-oro font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl">
                         <i class="fa-solid fa-feather-pointed mr-1.5"></i> Radicar Proposición
                     </button>
-                    <button type="button" onclick="toggleFormularioProyecto()" class="solo-admin flex-1 sm:flex-initial bg-gradient-to-b from-blue-700 to-blue-950 hover:from-blue-600 hover:to-blue-900 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-blue-400/35 transition shadow-lg">
+                    <button type="button" onclick="toggleFormularioProyecto()" class="solo-admin flex-1 sm:flex-initial bg-gradient-to-b from-blue-600 to-blue-900 hover:from-blue-500 hover:to-blue-800 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-blue-300/45 transition shadow-lg">
                         <i class="fa-solid fa-file-signature mr-1.5"></i> Radicar Acto (Admin)
                     </button>
                 </div>
             </div>
 
             <!-- FORMULARIO PARA CONCEJALES: RADICACIÓN DE PROPOSICIÓN EN ORDEN DE LLEGADA -->
-            <div id="panel-form-proposicion-concejal" class="hidden panel-institucional p-4 md:p-6 rounded-2xl mb-6 border border-[#c9a24b]">
-                <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+            <div id="panel-form-proposicion-concejal" class="hidden panel-institucional p-4 md:p-6 rounded-2xl mb-6 border-2 border-[#f3cf7a]">
+                <div class="flex justify-between items-center mb-4 border-b border-[#f3cf7a]/25 pb-3">
                     <div>
-                        <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#c9a24b] block">Ventanilla Única de Radicación • Orden de Llegada</span>
+                        <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#f3cf7a] block">Ventanilla Única de Radicación • Orden de Llegada</span>
                         <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-white">Radicar Proposición (Honorable Concejal)</h3>
                     </div>
-                    <button type="button" onclick="toggleFormularioProposicionConcejal()" class="text-slate-400 hover:text-white text-sm font-bold shrink-0">
+                    <button type="button" onclick="toggleFormularioProposicionConcejal()" class="text-slate-300 hover:text-white text-sm font-bold shrink-0">
                         <i class="fa-solid fa-xmark"></i> Cerrar
                     </button>
                 </div>
 
-                <div class="bg-[#060a14]/90 p-3.5 rounded-xl border border-[#c9a24b]/35 text-xs text-slate-300 mb-4 flex items-start gap-2.5">
-                    <i class="fa-solid fa-lock text-[#f0d078] mt-0.5"></i>
+                <div class="bg-[#060d1c]/90 p-3.5 rounded-xl border border-[#f3cf7a]/40 text-xs text-slate-200 mb-4 flex items-start gap-2.5">
+                    <i class="fa-solid fa-lock text-[#f3cf7a] mt-0.5"></i>
                     <div>
                         Inicie sesión con su <strong>Primer Nombre</strong>, <strong>Primer Apellido</strong> y <strong>cualquier contraseña de prueba</strong>. Su proposición quedará registrada en estricto <strong>orden de llegada</strong> en la bandeja de Secretaría General y <strong>solo el Secretario / Administrador podrá visualizarla y proyectarla</strong> al recinto.
                     </div>
@@ -1065,20 +1086,20 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Primer Nombre</label>
-                        <input type="text" id="prop-conc-nombre" placeholder="Ej: Kaory" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Primer Nombre</label>
+                        <input type="text" id="prop-conc-nombre" placeholder="Ej: Kaory" class="w-full border text-white rounded-xl px-3 py-2 text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Primer Apellido</label>
-                        <input type="text" id="prop-conc-apellido" placeholder="Ej: Carrero" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Primer Apellido</label>
+                        <input type="text" id="prop-conc-apellido" placeholder="Ej: Carrero" class="w-full border text-white rounded-xl px-3 py-2 text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Contraseña (Cualquiera de prueba)</label>
-                        <input type="password" id="prop-conc-password" placeholder="••••••••" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Contraseña (Cualquiera de prueba)</label>
+                        <input type="password" id="prop-conc-password" placeholder="••••••••" class="w-full border text-white rounded-xl px-3 py-2 text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Destino / Comisión</label>
-                        <select id="prop-conc-comision" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm font-semibold">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Destino / Comisión</label>
+                        <select id="prop-conc-comision" class="w-full border text-white rounded-xl px-3 py-2 text-sm font-semibold">
                             <option value="">Plenaria (General)</option>
                             <option value="1">Comisión Primera</option>
                             <option value="2">Comisión Segunda</option>
@@ -1088,22 +1109,22 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-[#f0d078] mb-1">Título / Asunto de la Proposición</label>
-                        <input type="text" id="prop-conc-titulo" placeholder="Ej: Proposición de citación a debate de control político..." class="w-full border border-[#c9a24b]/40 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm">
+                        <label class="block text-xs font-bold uppercase text-[#fff3c4] mb-1">Título / Asunto de la Proposición</label>
+                        <input type="text" id="prop-conc-titulo" placeholder="Ej: Proposición de citación a debate de control político..." class="w-full border text-white rounded-xl px-3 py-2 text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Archivo Adjunto (Opcional: PDF, .docx o .txt)</label>
-                        <input type="file" id="prop-conc-archivo" accept=".pdf,.docx,.txt" class="w-full border border-white/15 bg-[#060a14] text-slate-300 rounded-xl px-3 py-1.5 text-sm">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Archivo Adjunto (Opcional: PDF, .docx o .txt)</label>
+                        <input type="file" id="prop-conc-archivo" accept=".pdf,.docx,.txt" class="w-full border border-[#f3cf7a]/35 bg-[#071022] text-slate-200 rounded-xl px-3 py-1.5 text-sm">
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Texto Completo de la Proposición</label>
-                    <textarea id="prop-conc-descripcion" rows="4" placeholder="Redacte aquí el contenido completo de su proposición para que Secretaría la proyecte..." class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm"></textarea>
+                    <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Texto Completo de la Proposición</label>
+                    <textarea id="prop-conc-descripcion" rows="4" placeholder="Redacte aquí el contenido completo de su proposición para que Secretaría la proyecte..." class="w-full border text-white rounded-xl px-3 py-2 text-sm"></textarea>
                 </div>
 
                 <div class="flex justify-end gap-2">
-                    <button type="button" onclick="toggleFormularioProposicionConcejal()" class="px-4 py-2.5 text-xs font-bold uppercase text-slate-400 hover:text-white">Cancelar</button>
+                    <button type="button" onclick="toggleFormularioProposicionConcejal()" class="px-4 py-2.5 text-xs font-bold uppercase text-slate-300 hover:text-white">Cancelar</button>
                     <button type="button" onclick="enviarProposicionConcejal()" class="flex-1 sm:flex-initial btn-oro rounded-xl px-6 py-2.5 text-xs uppercase tracking-wider font-extrabold">
                         <i class="fa-solid fa-paper-plane mr-1.5"></i> Enviar Proposición a Secretaría
                     </button>
@@ -1111,51 +1132,51 @@
             </div>
 
             <!-- FORMULARIO DE SECRETARÍA / ADMIN -->
-            <div id="panel-form-proyecto" class="solo-admin hidden panel-institucional p-4 md:p-6 rounded-2xl mb-6 border border-[#c9a24b]">
-                <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
-                    <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-[#f0d078]">Radicación Oficial en Secretaría General</h3>
-                    <button onclick="toggleFormularioProyecto()" class="text-slate-400 hover:text-white text-sm font-bold"><i class="fa-solid fa-xmark"></i> Cerrar</button>
+            <div id="panel-form-proyecto" class="solo-admin hidden panel-institucional p-4 md:p-6 rounded-2xl mb-6 border-2 border-[#f3cf7a]">
+                <div class="flex justify-between items-center mb-4 border-b border-[#f3cf7a]/25 pb-2">
+                    <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-[#fff3c4]">Radicación Oficial en Secretaría General</h3>
+                    <button onclick="toggleFormularioProyecto()" class="text-slate-300 hover:text-white text-sm font-bold"><i class="fa-solid fa-xmark"></i> Cerrar</button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Tipo de Acto</label>
-                        <select id="proy-tipo" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm font-semibold">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Tipo de Acto</label>
+                        <select id="proy-tipo" class="w-full border text-white rounded-xl px-3 py-2 text-sm font-semibold">
                             <option value="Proyecto de Acuerdo">Proyecto de Acuerdo</option>
                             <option value="Proposición">Proposición</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Número de Radicado</label>
-                        <input type="text" id="proy-codigo" placeholder="Ej: PA-001-2026" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Número de Radicado</label>
+                        <input type="text" id="proy-codigo" placeholder="Ej: PA-001-2026" class="w-full border text-white rounded-xl px-3 py-2 text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Comisión Asignada</label>
-                        <select id="proy-comision" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm font-semibold">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Comisión Asignada</label>
+                        <select id="proy-comision" class="w-full border text-white rounded-xl px-3 py-2 text-sm font-semibold">
                             <option value="1">Comisión Primera</option>
                             <option value="2">Comisión Segunda</option>
                             <option value="">Plenaria (General)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Concejal Ponente / Autor</label>
-                        <select id="proy-autor" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm"></select>
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Concejal Ponente / Autor</label>
+                        <select id="proy-autor" class="w-full border text-white rounded-xl px-3 py-2 text-sm"></select>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Epígrafe / Título Oficial</label>
-                        <input type="text" id="proy-titulo" placeholder="Por medio del cual se..." class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Epígrafe / Título Oficial</label>
+                        <input type="text" id="proy-titulo" placeholder="Por medio del cual se..." class="w-full border text-white rounded-xl px-3 py-2 text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Documento Adjunto (PDF, .docx o .txt)</label>
-                        <input type="file" id="proy-archivo" accept=".pdf,.docx,.txt" class="w-full border border-white/15 bg-[#060a14] text-slate-300 rounded-xl px-3 py-1.5 text-sm">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Documento Adjunto (PDF, .docx o .txt)</label>
+                        <input type="file" id="proy-archivo" accept=".pdf,.docx,.txt" class="w-full border border-[#f3cf7a]/35 bg-[#071022] text-slate-200 rounded-xl px-3 py-1.5 text-sm">
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Articulado o Texto de la Proposición (Opcional si adjunta archivo)</label>
-                    <textarea id="proy-descripcion" rows="4" placeholder="Transcriba o pegue el contenido..." class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm"></textarea>
+                    <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Articulado o Texto de la Proposición (Opcional si adjunta archivo)</label>
+                    <textarea id="proy-descripcion" rows="4" placeholder="Transcriba o pegue el contenido..." class="w-full border text-white rounded-xl px-3 py-2 text-sm"></textarea>
                 </div>
 
                 <div class="flex justify-end">
@@ -1168,29 +1189,29 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
                 <div class="lg:col-span-4 space-y-3">
                     <div class="flex justify-between items-center px-1">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-200">
                             Orden de Llegada / Trámite (<span id="contador-docs">0</span>)
                         </h4>
-                        <span class="solo-admin text-[10px] font-bold text-[#f0d078]">Vista Secretaría</span>
+                        <span class="solo-admin text-[10px] font-bold text-[#fff3c4]">Vista Secretaría</span>
                     </div>
                     <div id="lista-lateral-proyectos" class="space-y-3 max-h-[82vh] overflow-y-auto pr-1"></div>
                 </div>
 
-                <div id="visor-directo-container" class="lg:col-span-8 bg-white rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.9)] border-2 border-[#c9a24b]/60 overflow-hidden flex flex-col min-h-[75vh]">
-                    <div class="bg-gradient-to-r from-[#050914] via-[#0b1324] to-[#050914] text-white p-3.5 md:p-4 border-b-2 border-[#c9a24b] flex flex-wrap justify-between items-center gap-3">
+                <div id="visor-directo-container" class="lg:col-span-8 bg-white rounded-2xl shadow-[0_25px_65px_rgba(0,0,0,0.95)] border-2 border-[#f3cf7a] overflow-hidden flex flex-col min-h-[75vh]">
+                    <div class="bg-gradient-to-r from-[#071126] via-[#102247] to-[#071126] text-white p-3.5 md:p-4 border-b-2 border-[#f3cf7a] flex flex-wrap justify-between items-center gap-3">
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-2 mb-1 flex-wrap">
-                                <span id="visor-badge" class="bg-[#c9a24b] text-slate-950 text-[10px] md:text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded">DOCUMENTO</span>
-                                <span id="visor-comision" class="text-xs text-[#f0d078] font-bold">Comisión</span>
+                                <span id="visor-badge" class="bg-[#f3cf7a] text-slate-950 text-[10px] md:text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded">DOCUMENTO</span>
+                                <span id="visor-comision" class="text-xs text-[#fff3c4] font-bold">Comisión</span>
                             </div>
                             <h3 id="visor-titulo" class="font-solemne text-base md:text-xl uppercase font-bold text-white leading-snug">Seleccione un documento del orden del día</h3>
-                            <p id="visor-autor" class="text-xs text-slate-400 mt-0.5">--</p>
+                            <p id="visor-autor" class="text-xs text-slate-300 mt-0.5">--</p>
                         </div>
 
                         <div class="flex items-center gap-2 flex-wrap" id="visor-acciones"></div>
                     </div>
 
-                    <div id="visor-contenido" class="flex-1 bg-slate-200/90 p-3 md:p-6 overflow-y-auto flex justify-center items-start">
+                    <div id="visor-contenido" class="flex-1 bg-slate-200 p-3 md:p-6 overflow-y-auto flex justify-center items-start">
                         <div class="text-center text-slate-400 my-auto py-20">
                             <i class="fa-solid fa-file-lines text-5xl mb-3 text-slate-300"></i>
                             <p class="font-bold text-slate-600">Sin documentos seleccionados en el visor.</p>
@@ -1204,34 +1225,34 @@
         <!-- TAB 6: ADMINISTRACIÓN DE CURULES Y CONCEJALES                         -->
         <!-- ===================================================================== -->
         <section id="tab-integrantes" class="tab-content hidden">
-            <div class="solo-admin panel-institucional p-4 md:p-6 rounded-2xl mb-6 border-t-4 border-t-[#c9a24b]">
+            <div class="solo-admin panel-institucional p-4 md:p-6 rounded-2xl mb-6 border-t-4 border-t-[#f3cf7a]">
                 <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-white mb-1">Acreditación de Curul / Honorable Concejal</h3>
-                <p class="text-xs text-slate-400 mb-4">El registro se sincroniza automáticamente con el tablero de quórum, votación y comisiones.</p>
+                <p class="text-xs text-slate-300 mb-4">El registro se sincroniza automáticamente con el tablero de quórum, votación y comisiones.</p>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                     <div class="md:col-span-4">
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Nombres y Apellidos</label>
-                        <input type="text" id="nuevo-int-nombre" placeholder="Ej: Juan Sebastián Pérez" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Nombres y Apellidos</label>
+                        <input type="text" id="nuevo-int-nombre" placeholder="Ej: Juan Sebastián Pérez" class="w-full border text-white rounded-xl px-3 py-2 text-sm">
                     </div>
                     <div class="md:col-span-3">
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Bancada Política</label>
-                        <select id="nuevo-int-bancada" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm font-semibold">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Bancada Política</label>
+                        <select id="nuevo-int-bancada" class="w-full border text-white rounded-xl px-3 py-2 text-sm font-semibold">
                             <option value="3">Independientes</option>
                             <option value="1">Gobierno</option>
                             <option value="2">Oposición</option>
                         </select>
                     </div>
                     <div class="md:col-span-3">
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Comisión Permanente</label>
-                        <select id="nuevo-int-comision" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2 text-sm font-semibold">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Comisión Permanente</label>
+                        <select id="nuevo-int-comision" class="w-full border text-white rounded-xl px-3 py-2 text-sm font-semibold">
                             <option value="1">Comisión Primera</option>
                             <option value="2">Comisión Segunda</option>
                             <option value="">Sin Comisión</option>
                         </select>
                     </div>
                     <div class="md:col-span-2 flex items-center gap-2 pb-2">
-                        <input type="checkbox" id="nuevo-int-directiva" class="w-4 h-4 accent-[#c9a24b]">
-                        <label for="nuevo-int-directiva" class="text-xs font-bold uppercase text-slate-300 cursor-pointer">Mesa Directiva (P)</label>
+                        <input type="checkbox" id="nuevo-int-directiva" class="w-4 h-4 accent-[#f3cf7a]">
+                        <label for="nuevo-int-directiva" class="text-xs font-bold uppercase text-slate-200 cursor-pointer">Mesa Directiva (P)</label>
                     </div>
                 </div>
 
@@ -1243,17 +1264,17 @@
             </div>
 
             <div class="panel-institucional rounded-2xl overflow-hidden">
-                <div class="bg-[#060a14] p-4 border-b border-white/10 flex flex-wrap justify-between items-center gap-3">
+                <div class="bg-[#071126] p-4 border-b border-[#f3cf7a]/25 flex flex-wrap justify-between items-center gap-3">
                     <div>
-                        <h3 class="font-solemne text-base md:text-lg uppercase text-white">Libro Oficial de Curules, Bancadas y Comisiones</h3>
-                        <p class="text-xs text-slate-400">Directorio oficial de los Honorables Concejales acreditados.</p>
+                        <h3 class="font-solemne text-base md:text-lg uppercase text-white font-bold">Libro Oficial de Curules, Bancadas y Comisiones</h3>
+                        <p class="text-xs text-slate-300">Directorio oficial de los Honorables Concejales acreditados.</p>
                     </div>
-                    <input type="text" id="buscar-integrante" onkeyup="renderizarGestionIntegrantes()" placeholder="Filtrar por nombre..." class="bg-[#0b1222] border border-white/15 text-white text-xs rounded-xl px-3.5 py-2.5 w-full sm:w-64">
+                    <input type="text" id="buscar-integrante" onkeyup="renderizarGestionIntegrantes()" placeholder="Filtrar por nombre..." class="border text-white text-xs rounded-xl px-3.5 py-2.5 w-full sm:w-64">
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
-                        <thead class="bg-[#04070f] text-[11px] uppercase font-bold text-[#f0d078] border-b border-white/10 tracking-wider">
+                        <thead class="bg-[#050b18] text-[11px] uppercase font-bold text-[#fff3c4] border-b border-[#f3cf7a]/30 tracking-wider">
                             <tr>
                                 <th class="p-3 md:p-4">Honorable Concejal</th>
                                 <th class="p-3 md:p-4">Bancada</th>
@@ -1262,7 +1283,7 @@
                                 <th class="solo-admin p-3 md:p-4 text-right">Acción</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-gestion-integrantes" class="divide-y divide-white/5 text-sm"></tbody>
+                        <tbody id="tabla-gestion-integrantes" class="divide-y divide-white/10 text-sm"></tbody>
                     </table>
                 </div>
             </div>
@@ -1271,46 +1292,46 @@
     </main>
 
     <!-- PIE DE PÁGINA INSTITUCIONAL -->
-    <footer class="bg-[#03060d]/95 text-slate-400 text-xs py-4 px-3 md:px-4 border-t border-[#c9a24b]/30 mt-10 relative z-10">
+    <footer class="bg-[#050b18]/95 text-slate-300 text-xs py-4 px-3 md:px-4 border-t-2 border-[#f3cf7a]/40 mt-10 relative z-10">
         <div class="max-w-[1440px] mx-auto flex flex-wrap justify-between items-center gap-3">
             <div class="flex items-center gap-3">
-                <img id="img-logo-footer" src="/logo-creer-y-merecer.png" alt="Emblema" class="w-8 h-8 rounded-full border border-[#c9a24b]/60 object-cover hidden">
+                <img id="img-logo-footer" src="/logo-creer-y-merecer.png" alt="Emblema" class="w-9 h-9 rounded-full border-2 border-[#f3cf7a] object-cover hidden">
                 <div>
                     <p class="font-solemne font-bold text-white text-xs uppercase tracking-wider">Concejo Municipal de Ibagué • Fundación Creer y Merecer</p>
-                    <p class="text-[11px] text-slate-500">Colectivo Juvenil • Formación Democrática y Control Político</p>
+                    <p class="text-[11px] text-slate-400">Colectivo Juvenil • Formación Democrática y Control Político</p>
                 </div>
             </div>
-            <p class="uppercase tracking-[0.18em] text-[10px] font-bold text-[#c9a24b]/85">Ibagué, Tolima • República de Colombia</p>
+            <p class="uppercase tracking-[0.18em] text-[10px] font-bold text-[#f3cf7a]">Ibagué, Tolima • República de Colombia</p>
         </div>
     </footer>
 
     <!-- MODAL REGISTRO / ACCESO ADMINISTRATIVO -->
     <div id="modal-admin" class="fixed inset-0 bg-black/85 hidden items-center justify-center p-4 z-50 backdrop-blur-md">
-        <div class="panel-institucional rounded-2xl max-w-md w-full p-5 md:p-6 border border-[#c9a24b]">
+        <div class="panel-institucional rounded-2xl max-w-md w-full p-5 md:p-6 border-2 border-[#f3cf7a]">
             <div class="flex justify-between items-start mb-4">
                 <div>
-                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#c9a24b]">Mesa Directiva • Secretaría General</span>
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#f3cf7a]">Mesa Directiva • Secretaría General</span>
                     <h3 class="font-solemne text-xl md:text-2xl uppercase font-bold text-white mt-0.5">Registro Administrativo</h3>
                 </div>
-                <button type="button" onclick="cerrarModalAdmin()" class="text-slate-400 hover:text-white text-base p-1">
+                <button type="button" onclick="cerrarModalAdmin()" class="text-slate-300 hover:text-white text-base p-1">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <p class="text-xs text-slate-300 bg-[#060a14]/90 p-3 rounded-xl border border-white/10 mb-4">
-                <i class="fa-solid fa-lock text-[#f0d078] mr-1.5"></i>
+            <p class="text-xs text-slate-200 bg-[#060d1c]/90 p-3 rounded-xl border border-[#f3cf7a]/30 mb-4">
+                <i class="fa-solid fa-lock text-[#f3cf7a] mr-1.5"></i>
                 Regístrese con su nombre, cargo y la clave institucional para habilitar el control de sesiones, quórum, uso de la palabra, urnas, logo y proyección de proposiciones.
             </p>
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Nombre Completo del Administrador</label>
-                    <input type="text" id="admin-reg-nombre" placeholder="Ej: Secretario General / Presidente" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-2.5 text-sm">
+                    <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Nombre Completo del Administrador</label>
+                    <input type="text" id="admin-reg-nombre" placeholder="Ej: Secretario General / Presidente" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Cargo o Rol</label>
-                    <select id="admin-reg-cargo" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3.5 py-2.5 text-sm font-semibold">
+                    <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Cargo o Rol</label>
+                    <select id="admin-reg-cargo" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm font-semibold">
                         <option value="Secretaría General">Secretaría General</option>
                         <option value="Presidencia del Concejo">Presidencia del Concejo</option>
                         <option value="Vicepresidencia">Vicepresidencia</option>
@@ -1319,12 +1340,12 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase text-[#f0d078] mb-1">Clave Institucional Administrativa</label>
-                    <input type="password" id="admin-reg-password" placeholder="Ingrese la clave de administrador" onkeydown="if(event.key==='Enter') registrarAccesoAdmin()" class="w-full border border-[#c9a24b]/50 bg-[#060a14] text-white rounded-xl px-3.5 py-2.5 text-sm">
+                    <label class="block text-xs font-bold uppercase text-[#fff3c4] mb-1">Clave Institucional Administrativa</label>
+                    <input type="password" id="admin-reg-password" placeholder="Ingrese la clave de administrador" onkeydown="if(event.key==='Enter') registrarAccesoAdmin()" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm">
                 </div>
 
-                <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-white/10">
-                    <button type="button" onclick="cerrarModalAdmin()" class="px-4 py-2 text-xs font-bold uppercase text-slate-400 hover:text-white rounded-xl">Cancelar</button>
+                <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-[#f3cf7a]/25">
+                    <button type="button" onclick="cerrarModalAdmin()" class="px-4 py-2 text-xs font-bold uppercase text-slate-300 hover:text-white rounded-xl">Cancelar</button>
                     <button type="button" onclick="registrarAccesoAdmin()" class="btn-oro font-extrabold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider">
                         <i class="fa-solid fa-key mr-1.5"></i> Ingresar como Admin
                     </button>
@@ -1335,17 +1356,17 @@
 
     <!-- MODAL ABRIR SESIÓN -->
     <div id="modal-sesion" class="fixed inset-0 bg-black/85 hidden items-center justify-center p-4 z-50 backdrop-blur-md">
-        <div class="panel-institucional rounded-2xl max-w-md w-full p-5 md:p-6 border border-[#c9a24b]">
-            <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#c9a24b]">Secretaría General</span>
+        <div class="panel-institucional rounded-2xl max-w-md w-full p-5 md:p-6 border-2 border-[#f3cf7a]">
+            <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#f3cf7a]">Secretaría General</span>
             <h3 class="font-solemne text-xl md:text-2xl uppercase font-bold text-white mt-0.5 mb-4">Convocar Nueva Sesión</h3>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Denominación de la Sesión</label>
-                    <input type="text" id="nueva-sesion-titulo" placeholder="Ej: Sesión Plenaria Ordinaria No. 01" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm">
+                    <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Denominación de la Sesión</label>
+                    <input type="text" id="nueva-sesion-titulo" placeholder="Ej: Sesión Plenaria Ordinaria No. 01" class="w-full border text-white rounded-xl px-3 py-2.5 text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Naturaleza de la Sesión</label>
-                    <input type="text" id="nueva-sesion-tipo" list="sugerencias-tipo" value="Plenaria" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm">
+                    <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Naturaleza de la Sesión</label>
+                    <input type="text" id="nueva-sesion-tipo" list="sugerencias-tipo" value="Plenaria" class="w-full border text-white rounded-xl px-3 py-2.5 text-sm">
                     <datalist id="sugerencias-tipo">
                         <option value="Plenaria">
                         <option value="Comisión Primera">
@@ -1355,15 +1376,15 @@
                     </datalist>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Curules Convocadas al Llamado a Lista</label>
-                    <select id="nueva-sesion-comision" class="w-full border border-white/15 bg-[#060a14] text-white rounded-xl px-3 py-2.5 text-sm">
+                    <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Curules Convocadas al Llamado a Lista</label>
+                    <select id="nueva-sesion-comision" class="w-full border text-white rounded-xl px-3 py-2.5 text-sm">
                         <option value="">Plenaria (Todos los Honorables Concejales)</option>
                         <option value="1">Exclusivamente Comisión Primera</option>
                         <option value="2">Exclusivamente Comisión Segunda</option>
                     </select>
                 </div>
-                <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-white/10">
-                    <button type="button" onclick="cerrarModalSesion()" class="px-4 py-2 text-xs font-bold uppercase text-slate-400 hover:text-white rounded-xl">Cancelar</button>
+                <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-[#f3cf7a]/25">
+                    <button type="button" onclick="cerrarModalSesion()" class="px-4 py-2 text-xs font-bold uppercase text-slate-300 hover:text-white rounded-xl">Cancelar</button>
                     <button type="button" onclick="guardarSesion()" class="btn-oro font-extrabold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider">Instalar Sesión</button>
                 </div>
             </div>
@@ -1394,7 +1415,7 @@
             logo_base64: null,
             marca_agua_visible: true,
             marca_agua_estilo: 'oro',
-            marca_agua_opacidad: 11,
+            marca_agua_opacidad: 13,
             marca_agua_tamano: 560,
         };
 
@@ -1568,7 +1589,7 @@
             if (!dot || !texto) return;
 
             if (conectado) {
-                dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+                dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]';
                 texto.className = 'hidden md:inline text-emerald-400 font-bold';
                 texto.innerText = 'EN VIVO SINCRONIZADO';
             } else {
@@ -1678,7 +1699,7 @@
         function aplicarEstilosVisualesEnDOM(cfg) {
             configVisualActual = { ...configVisualActual, ...cfg };
 
-            const opacidad = cfg.marca_agua_opacidad ?? 11;
+            const opacidad = cfg.marca_agua_opacidad ?? 13;
             const tamano = cfg.marca_agua_tamano ?? 560;
             const estilo = cfg.marca_agua_estilo || 'oro';
             const visible = cfg.marca_agua_visible !== false;
@@ -1708,7 +1729,7 @@
                 } else if (estilo === 'claro') {
                     imgMarca.style.filter = 'grayscale(100%) invert(100%) contrast(140%) brightness(1.05) sepia(45%) hue-rotate(8deg)';
                 } else {
-                    imgMarca.style.filter = 'grayscale(100%) contrast(135%) brightness(1.05) sepia(45%) hue-rotate(8deg)';
+                    imgMarca.style.filter = 'grayscale(100%) contrast(135%) brightness(1.1) sepia(55%) hue-rotate(8deg)';
                 }
             }
 
@@ -1907,7 +1928,7 @@
                     if (segundosRestantesUrna <= 10) {
                         displayUrna.className = 'font-mono-digital text-xl md:text-3xl font-extrabold text-rose-400 animate-pulse';
                     } else {
-                        displayUrna.className = 'font-mono-digital text-xl md:text-3xl font-extrabold text-[#f0d078]';
+                        displayUrna.className = 'font-mono-digital text-xl md:text-3xl font-extrabold text-[#fff3c4]';
                     }
                     if (segundosRestantesUrna === 0) {
                         sonarTiempoFinalizado();
@@ -1923,12 +1944,12 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('border-[#c9a24b]', 'text-[#e5c16c]');
-                btn.classList.add('border-transparent', 'text-slate-400');
+                btn.classList.remove('border-[#f3cf7a]', 'text-[#fff3c4]');
+                btn.classList.add('border-transparent', 'text-slate-300');
             });
             const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
-            activeBtn.classList.add('border-[#c9a24b]', 'text-[#e5c16c]');
-            activeBtn.classList.remove('border-transparent', 'text-slate-400');
+            activeBtn.classList.add('border-[#f3cf7a]', 'text-[#fff3c4]');
+            activeBtn.classList.remove('border-transparent', 'text-slate-300');
 
             if (tabId === 'votacion') {
                 actualizarSelectProyectosVotacion();
@@ -2036,29 +2057,29 @@
                 const estadoAsis = regAsistencia ? regAsistencia.estado : null;
 
                 const badgeBancada = i.id_bancada === 1 
-                    ? 'bg-emerald-500/12 text-emerald-300 border-emerald-500/35' 
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50' 
                     : i.id_bancada === 2 
-                        ? 'bg-rose-500/12 text-rose-300 border-rose-500/35' 
-                        : 'bg-purple-500/12 text-purple-300 border-purple-500/35';
+                        ? 'bg-rose-500/20 text-rose-300 border-rose-400/50' 
+                        : 'bg-purple-500/20 text-purple-300 border-purple-400/50';
 
                 const badgeAsistenciaHtml = estadoAsis ? `
                     <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded border ${
-                        estadoAsis === 'Presente' ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40' :
-                        estadoAsis === 'Retardo' ? 'bg-amber-500/15 text-amber-300 border-amber-500/40' :
-                        estadoAsis === 'Excusa' ? 'bg-purple-500/15 text-purple-300 border-purple-500/40' :
-                        'bg-rose-500/15 text-rose-300 border-rose-500/40'
+                        estadoAsis === 'Presente' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50' :
+                        estadoAsis === 'Retardo' ? 'bg-amber-500/20 text-amber-200 border-amber-400/50' :
+                        estadoAsis === 'Excusa' ? 'bg-purple-500/20 text-purple-200 border-purple-400/50' :
+                        'bg-rose-500/20 text-rose-300 border-rose-400/50'
                     }">${estadoAsis}</span>
                 ` : '';
 
                 const controlesAdminComision = esModoAdmin ? `
                     <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end mt-2 sm:mt-0">
-                        <select onchange="recolocarIntegrante(${i.id_integrante}, 'comision', this.value)" title="Reasignar comisión" class="flex-1 sm:flex-initial bg-[#060a14] border border-white/15 text-slate-200 text-[11px] font-semibold rounded-lg px-2.5 py-1.5">
+                        <select onchange="recolocarIntegrante(${i.id_integrante}, 'comision', this.value)" title="Reasignar comisión" class="flex-1 sm:flex-initial border text-slate-100 text-[11px] font-semibold rounded-lg px-2.5 py-1.5">
                             <option value="1" ${i.id_comision === 1 ? 'selected' : ''}>Comisión Primera</option>
                             <option value="2" ${i.id_comision === 2 ? 'selected' : ''}>Comisión Segunda</option>
                             <option value="" ${!i.id_comision ? 'selected' : ''}>Sin Comisión</option>
                         </select>
 
-                        <button onclick="inscribirRapidoDesdeComision(${i.id_integrante})" class="bg-white/5 hover:bg-[#c9a24b] text-[#f0d078] hover:text-slate-950 border border-[#c9a24b]/40 px-2.5 py-1.5 rounded-lg text-xs font-bold transition" title="Inscribir en Uso de la Palabra">
+                        <button onclick="inscribirRapidoDesdeComision(${i.id_integrante})" class="bg-white/10 hover:bg-[#f3cf7a] text-[#fff3c4] hover:text-slate-950 border border-[#f3cf7a]/50 px-2.5 py-1.5 rounded-lg text-xs font-bold transition" title="Inscribir en Uso de la Palabra">
                             <i class="fa-solid fa-microphone-lines"></i>
                         </button>
                     </div>
@@ -2067,13 +2088,13 @@
                 return `
                     <div class="curul-institucional p-3.5 md:p-4 rounded-xl flex flex-wrap justify-between items-center gap-2 md:gap-3">
                         <div class="flex items-center gap-3 min-w-0 flex-1">
-                            <span class="w-8 h-8 rounded-lg bg-[#060a14] border border-[#c9a24b]/40 flex items-center justify-center font-mono-digital text-xs font-bold text-[#f0d078] shrink-0 shadow-inner">
+                            <span class="w-8 h-8 rounded-lg bg-[#050b18] border border-[#f3cf7a]/55 flex items-center justify-center font-mono-digital text-xs font-bold text-[#fff3c4] shrink-0 shadow-inner">
                                 ${String(idx + 1).padStart(2, '0')}
                             </span>
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <span class="font-bold text-sm md:text-[15px] text-white">H.C. ${i.nombre_completo}</span>
-                                    ${i.es_directiva ? '<span class="bg-[#c9a24b] text-slate-950 text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded">Mesa Directiva (P)</span>' : ''}
+                                    ${i.es_directiva ? '<span class="bg-[#f3cf7a] text-slate-950 text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded">Mesa Directiva (P)</span>' : ''}
                                 </div>
                                 <div class="flex items-center gap-2 flex-wrap mt-1.5">
                                     <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded border ${badgeBancada}">
@@ -2092,15 +2113,15 @@
                 {
                     titulo: 'Comisión Primera Permanente',
                     subtitulo: 'Plan de Desarrollo, Ordenamiento Territorial, Educación, Cultura y Asuntos Sociales',
-                    gradiente: 'from-[#1a160b] via-[#131826] to-[#090e1a] border-[#c9a24b]',
+                    gradiente: 'from-[#29200b] via-[#1b2238] to-[#0c1933] border-[#f3cf7a]',
                     icono: 'fa-landmark',
-                    colorAcento: 'text-[#f0d078]',
+                    colorAcento: 'text-[#fff3c4]',
                     lista: comision1
                 },
                 {
                     titulo: 'Comisión Segunda Permanente',
                     subtitulo: 'Presupuesto, Hacienda Pública, Crédito Municipal, Impuestos y Control Fiscal',
-                    gradiente: 'from-[#0b192c] via-[#10192b] to-[#090e1a] border-sky-500/80',
+                    gradiente: 'from-[#0d2747] via-[#122645] to-[#0c1933] border-sky-400',
                     icono: 'fa-scale-balanced',
                     colorAcento: 'text-sky-300',
                     lista: comision2
@@ -2116,16 +2137,16 @@
                                 <span>Concejo Municipal de Ibagué</span>
                             </div>
                             <h3 class="font-solemne text-lg md:text-2xl uppercase font-bold text-white">${sec.titulo}</h3>
-                            <p class="text-xs text-slate-300/85 mt-1">${sec.subtitulo}</p>
+                            <p class="text-xs text-slate-200 mt-1">${sec.subtitulo}</p>
                         </div>
-                        <span class="bg-black/60 border border-white/15 px-3 md:px-3.5 py-1.5 rounded-xl font-mono-digital text-sm font-extrabold text-white shrink-0">
+                        <span class="bg-[#050b18]/80 border border-[#f3cf7a]/45 px-3.5 py-1.5 rounded-xl font-mono-digital text-sm font-extrabold text-[#fff3c4] shrink-0">
                             ${sec.lista.length}
                         </span>
                     </div>
                     <div class="p-3.5 md:p-4 space-y-2.5 flex-1">
                         ${sec.lista.length > 0 
                             ? sec.lista.map((item, idx) => generarTarjetaConcejalComision(item, idx)).join('') 
-                            : '<p class="text-center text-xs text-slate-500 py-10">No hay Honorables Concejales asignados a esta comisión.</p>'
+                            : '<p class="text-center text-xs text-slate-400 py-10">No hay Honorables Concejales asignados a esta comisión.</p>'
                         }
                     </div>
                 </div>
@@ -2133,10 +2154,10 @@
 
             if (sinComision.length > 0) {
                 contenedorSin.innerHTML = `
-                    <div class="panel-institucional rounded-2xl overflow-hidden border border-slate-700/50">
-                        <div class="bg-[#090e1c] p-4 border-b border-white/10 flex justify-between items-center">
-                            <h3 class="font-solemne text-sm md:text-base uppercase font-bold text-slate-300">
-                                <i class="fa-solid fa-user-clock mr-2 text-[#c9a24b]"></i>Concejales Pendientes de Asignación a Comisión (${sinComision.length})
+                    <div class="panel-institucional rounded-2xl overflow-hidden border border-slate-600/60">
+                        <div class="bg-[#0a162e] p-4 border-b border-white/15 flex justify-between items-center">
+                            <h3 class="font-solemne text-sm md:text-base uppercase font-bold text-slate-200">
+                                <i class="fa-solid fa-user-clock mr-2 text-[#f3cf7a]"></i>Concejales Pendientes de Asignación a Comisión (${sinComision.length})
                             </h3>
                         </div>
                         <div class="p-3.5 md:p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -2177,16 +2198,16 @@
             filtrados.forEach(i => {
                 if (esModoAdmin) {
                     tbody.innerHTML += `
-                        <tr class="hover:bg-white/[0.03] transition">
+                        <tr class="hover:bg-white/[0.05] transition">
                             <td class="p-3 md:p-4 whitespace-nowrap">
                                 <span class="font-bold text-white">H.C. ${i.nombre_completo}</span>
-                                ${i.es_directiva ? '<span class="ml-2 bg-[#c9a24b] text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded">MESA (P)</span>' : ''}
+                                ${i.es_directiva ? '<span class="ml-2 bg-[#f3cf7a] text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded">MESA (P)</span>' : ''}
                             </td>
                             <td class="p-3 md:p-4 whitespace-nowrap">
-                                <select onchange="recolocarIntegrante(${i.id_integrante}, 'bancada', this.value)" class="border border-white/15 rounded-xl px-3 py-1.5 text-xs font-bold ${
-                                    i.id_bancada === 1 ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' :
-                                    i.id_bancada === 2 ? 'bg-rose-950 text-rose-300 border-rose-500/40' :
-                                    'bg-purple-950 text-purple-300 border-purple-500/40'
+                                <select onchange="recolocarIntegrante(${i.id_integrante}, 'bancada', this.value)" class="border rounded-xl px-3 py-1.5 text-xs font-bold ${
+                                    i.id_bancada === 1 ? '!bg-emerald-950 text-emerald-300 !border-emerald-400/50' :
+                                    i.id_bancada === 2 ? '!bg-rose-950 text-rose-300 !border-rose-400/50' :
+                                    '!bg-purple-950 text-purple-300 !border-purple-400/50'
                                 }">
                                     <option value="1" ${i.id_bancada === 1 ? 'selected' : ''}>Gobierno</option>
                                     <option value="2" ${i.id_bancada === 2 ? 'selected' : ''}>Oposición</option>
@@ -2194,17 +2215,17 @@
                                 </select>
                             </td>
                             <td class="p-3 md:p-4 whitespace-nowrap">
-                                <select onchange="recolocarIntegrante(${i.id_integrante}, 'comision', this.value)" class="border border-white/15 rounded-xl px-3 py-1.5 text-xs font-bold bg-[#060a14] text-slate-200">
+                                <select onchange="recolocarIntegrante(${i.id_integrante}, 'comision', this.value)" class="border rounded-xl px-3 py-1.5 text-xs font-bold text-slate-100">
                                     <option value="1" ${i.id_comision === 1 ? 'selected' : ''}>Comisión Primera</option>
                                     <option value="2" ${i.id_comision === 2 ? 'selected' : ''}>Comisión Segunda</option>
                                     <option value="" ${i.id_comision === null ? 'selected' : ''}>Sin Comisión</option>
                                 </select>
                             </td>
                             <td class="p-3 md:p-4 text-center whitespace-nowrap">
-                                <input type="checkbox" ${i.es_directiva ? 'checked' : ''} onchange="recolocarIntegrante(${i.id_integrante}, 'directiva', this.checked)" class="w-4 h-4 accent-[#c9a24b] cursor-pointer">
+                                <input type="checkbox" ${i.es_directiva ? 'checked' : ''} onchange="recolocarIntegrante(${i.id_integrante}, 'directiva', this.checked)" class="w-4 h-4 accent-[#f3cf7a] cursor-pointer">
                             </td>
                             <td class="p-3 md:p-4 text-right whitespace-nowrap">
-                                <button onclick="eliminarIntegrante(${i.id_integrante}, '${i.nombre_completo}')" class="bg-rose-500/10 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                                <button onclick="eliminarIntegrante(${i.id_integrante}, '${i.nombre_completo}')" class="bg-rose-500/15 hover:bg-rose-700 text-rose-300 hover:text-white border border-rose-400/40 px-3 py-1.5 rounded-xl text-xs font-bold transition">
                                     <i class="fa-solid fa-user-minus mr-1"></i> Retirar
                                 </button>
                             </td>
@@ -2212,20 +2233,20 @@
                     `;
                 } else {
                     tbody.innerHTML += `
-                        <tr class="hover:bg-white/[0.03] transition">
+                        <tr class="hover:bg-white/[0.05] transition">
                             <td class="p-3 md:p-4 whitespace-nowrap">
                                 <span class="font-bold text-white">H.C. ${i.nombre_completo}</span>
                             </td>
                             <td class="p-3 md:p-4 whitespace-nowrap">
                                 <span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${
-                                    i.id_bancada === 1 ? 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40' :
-                                    i.id_bancada === 2 ? 'bg-rose-950/60 text-rose-300 border-rose-500/40' :
-                                    'bg-purple-950/60 text-purple-300 border-purple-500/40'
+                                    i.id_bancada === 1 ? 'bg-emerald-950/80 text-emerald-300 border-emerald-400/50' :
+                                    i.id_bancada === 2 ? 'bg-rose-950/80 text-rose-300 border-rose-400/50' :
+                                    'bg-purple-950/80 text-purple-300 border-purple-400/50'
                                 }">${i.bancada}</span>
                             </td>
-                            <td class="p-3 md:p-4 text-slate-300 font-semibold text-xs whitespace-nowrap">${i.comision}</td>
+                            <td class="p-3 md:p-4 text-slate-200 font-semibold text-xs whitespace-nowrap">${i.comision}</td>
                             <td class="p-3 md:p-4 text-center whitespace-nowrap">
-                                ${i.es_directiva ? '<span class="bg-[#c9a24b] text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded">MESA (P)</span>' : '<span class="text-slate-600 text-xs">—</span>'}
+                                ${i.es_directiva ? '<span class="bg-[#f3cf7a] text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded">MESA (P)</span>' : '<span class="text-slate-500 text-xs">—</span>'}
                             </td>
                         </tr>
                     `;
@@ -2451,17 +2472,17 @@
             const bancadasConfig = [
                 { 
                     nombre: 'Gobierno', 
-                    headerGrad: 'from-emerald-950 via-[#0d1f1c] to-[#090e1a] border-emerald-500/80',
+                    headerGrad: 'from-emerald-900 via-[#0e2a29] to-[#0c1933] border-emerald-400',
                     badgeText: 'text-emerald-300'
                 },
                 { 
                     nombre: 'Oposición', 
-                    headerGrad: 'from-rose-950 via-[#231019] to-[#090e1a] border-rose-500/80',
+                    headerGrad: 'from-rose-900 via-[#2c1321] to-[#0c1933] border-rose-400',
                     badgeText: 'text-rose-300'
                 },
                 { 
                     nombre: 'Independientes', 
-                    headerGrad: 'from-purple-950 via-[#1a112b] to-[#090e1a] border-purple-500/80',
+                    headerGrad: 'from-purple-900 via-[#22153b] to-[#0c1933] border-purple-400',
                     badgeText: 'text-purple-300'
                 }
             ];
@@ -2474,19 +2495,19 @@
 
                 let filasHtml = '';
                 if (miembros.length === 0) {
-                    filasHtml = `<p class="p-8 text-center text-xs text-slate-500">Sin curules convocadas en esta bancada.</p>`;
+                    filasHtml = `<p class="p-8 text-center text-xs text-slate-400">Sin curules convocadas en esta bancada.</p>`;
                 } else {
                     filasHtml = miembros.map(m => {
-                        const ledClass = m.estado === 'Presente' ? 'bg-emerald-500 led-glow-green' :
+                        const ledClass = m.estado === 'Presente' ? 'bg-emerald-400 led-glow-green' :
                                          m.estado === 'Retardo' ? 'bg-amber-400 led-glow-amber' :
-                                         m.estado === 'Excusa' ? 'bg-purple-500 led-glow-purple' : 'bg-rose-500 led-glow-red';
+                                         m.estado === 'Excusa' ? 'bg-purple-400 led-glow-purple' : 'bg-rose-500 led-glow-red';
 
                         const botonesAsistenciaHtml = esModoAdmin ? `
                             <div class="grid grid-cols-4 gap-1.5 mt-2">
-                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Presente')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Presente'?'bg-emerald-700 text-white shadow':'bg-white/5 hover:bg-emerald-500/20 text-slate-300'}">Presente</button>
-                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Retardo')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Retardo'?'bg-[#c9a24b] text-slate-950 shadow':'bg-white/5 hover:bg-amber-500/20 text-slate-300'}">Retardo</button>
-                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Excusa')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Excusa'?'bg-purple-700 text-white shadow':'bg-white/5 hover:bg-purple-500/20 text-slate-300'}">Excusa</button>
-                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Ausente')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Ausente'?'bg-rose-700 text-white shadow':'bg-white/5 hover:bg-rose-500/20 text-slate-300'}">Ausente</button>
+                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Presente')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Presente'?'bg-emerald-600 text-white shadow':'bg-white/10 hover:bg-emerald-500/25 text-slate-200'}">Presente</button>
+                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Retardo')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Retardo'?'bg-[#f3cf7a] text-slate-950 shadow':'bg-white/10 hover:bg-amber-500/25 text-slate-200'}">Retardo</button>
+                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Excusa')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Excusa'?'bg-purple-600 text-white shadow':'bg-white/10 hover:bg-purple-500/25 text-slate-200'}">Excusa</button>
+                                <button onclick="marcarAsistencia(${m.id_asistencia}, 'Ausente')" class="py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-extrabold transition ${m.estado==='Ausente'?'bg-rose-600 text-white shadow':'bg-white/10 hover:bg-rose-500/25 text-slate-200'}">Ausente</button>
                             </div>
                         ` : '';
 
@@ -2498,18 +2519,18 @@
                                     <div>
                                         <p class="font-bold text-sm text-white leading-snug">
                                             H.C. ${m.nombre_completo}
-                                            ${m.es_directiva ? '<span class="ml-1.5 bg-[#c9a24b] text-slate-950 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded">Mesa (P)</span>' : ''}
+                                            ${m.es_directiva ? '<span class="ml-1.5 bg-[#f3cf7a] text-slate-950 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded">Mesa (P)</span>' : ''}
                                         </p>
-                                        <span class="inline-block mt-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-white/5 text-slate-400 border border-white/10">
+                                        <span class="inline-block mt-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-white/10 text-slate-300 border border-white/15">
                                             Comisión ${m.comision}
                                         </span>
                                     </div>
                                 </div>
                                 <span class="text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg border shrink-0 ${
-                                    m.estado === 'Presente' ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40' :
-                                    m.estado === 'Retardo' ? 'bg-amber-500/15 text-amber-300 border-amber-500/40' :
-                                    m.estado === 'Excusa' ? 'bg-purple-500/15 text-purple-300 border-purple-500/40' : 
-                                    'bg-rose-500/15 text-rose-300 border-rose-500/40'
+                                    m.estado === 'Presente' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50' :
+                                    m.estado === 'Retardo' ? 'bg-amber-500/20 text-amber-200 border-amber-400/50' :
+                                    m.estado === 'Excusa' ? 'bg-purple-500/20 text-purple-200 border-purple-400/50' : 
+                                    'bg-rose-500/20 text-rose-300 border-rose-400/50'
                                 }">${m.estado}</span>
                             </div>
                             ${botonesAsistenciaHtml}
@@ -2524,7 +2545,7 @@
                                 <span class="text-[10px] uppercase tracking-[0.18em] ${b.badgeText} font-bold">Bancada Parlamentaria</span>
                                 <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-white mt-0.5">${b.nombre}</h3>
                             </div>
-                            <div class="bg-black/60 border border-white/15 px-3.5 py-1.5 rounded-xl font-mono-digital text-sm font-extrabold text-white shrink-0">
+                            <div class="bg-[#050b18]/80 border border-white/20 px-3.5 py-1.5 rounded-xl font-mono-digital text-sm font-extrabold text-white shrink-0">
                                 ${presentesBancada} / ${miembros.length}
                             </div>
                         </div>
@@ -2612,7 +2633,7 @@
             div.innerHTML = '';
 
             if (intervencionesGlobal.length === 0) {
-                div.innerHTML = '<div class="text-center py-10 bg-[#060a14] rounded-2xl border border-dashed border-white/10"><i class="fa-solid fa-microphone-slash text-2xl text-slate-600 mb-2"></i><p class="text-xs font-semibold text-slate-500">Sin turnos inscritos ante Presidencia.</p></div>';
+                div.innerHTML = '<div class="text-center py-10 bg-[#060d1c] rounded-2xl border border-dashed border-[#f3cf7a]/25"><i class="fa-solid fa-microphone-slash text-2xl text-slate-500 mb-2"></i><p class="text-xs font-semibold text-slate-400">Sin turnos inscritos ante Presidencia.</p></div>';
                 return;
             }
 
@@ -2621,45 +2642,45 @@
             );
 
             if (filtradas.length === 0) {
-                div.innerHTML = '<div class="text-center py-8 bg-[#060a14] rounded-2xl border border-dashed border-white/10"><p class="text-xs font-semibold text-slate-400">No hay turnos inscritos con ese nombre.</p></div>';
+                div.innerHTML = '<div class="text-center py-8 bg-[#060d1c] rounded-2xl border border-dashed border-[#f3cf7a]/25"><p class="text-xs font-semibold text-slate-300">No hay turnos inscritos con ese nombre.</p></div>';
                 return;
             }
 
             filtradas.forEach(item => {
                 const esActivo = item.id_intervencion === intervencionActivaId;
                 const badgeEstado = item.estado === 'Finalizada' 
-                    ? 'bg-white/10 text-slate-400' 
+                    ? 'bg-white/10 text-slate-300' 
                     : item.estado === 'En Curso' 
-                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' 
-                        : 'bg-[#c9a24b]/20 text-[#f0d078] border border-[#c9a24b]/40';
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/45' 
+                        : 'bg-[#f3cf7a]/20 text-[#fff3c4] border border-[#f3cf7a]/50';
 
                 const botonesTurnoHtml = esModoAdmin ? `
                     <div class="flex items-center gap-1.5 shrink-0">
                         <button onclick="seleccionarOrador(${item.id_intervencion}, 'H.C. ${item.nombre_completo}', '${item.bancada} — Comisión ${item.comision}', '${item.tipo_intervencion}', ${item.tiempo_asignado_seg})" class="btn-oro text-xs font-extrabold uppercase px-3 py-2 rounded-xl" title="Conceder uso de la palabra">
                             <i class="fa-solid fa-microphone-lines mr-1"></i> ${Math.floor(item.tiempo_asignado_seg/60)}m ${item.tiempo_asignado_seg%60}s
                         </button>
-                        <button onclick="retirarIntervencion(${item.id_intervencion}, 'H.C. ${item.nombre_completo}')" class="bg-rose-500/15 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/30 px-2.5 py-2 rounded-xl text-xs font-bold transition" title="Retirar turno">
+                        <button onclick="retirarIntervencion(${item.id_intervencion}, 'H.C. ${item.nombre_completo}')" class="bg-rose-500/20 hover:bg-rose-700 text-rose-300 hover:text-white border border-rose-400/40 px-2.5 py-2 rounded-xl text-xs font-bold transition" title="Retirar turno">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
                 ` : `
-                    <span class="text-xs font-mono-digital font-bold text-[#f0d078] shrink-0">
+                    <span class="text-xs font-mono-digital font-bold text-[#fff3c4] shrink-0">
                         ${Math.floor(item.tiempo_asignado_seg/60)}m ${item.tiempo_asignado_seg%60}s
                     </span>
                 `;
 
                 div.innerHTML += `
                     <div class="p-3.5 rounded-2xl border transition flex flex-wrap justify-between items-center gap-2 ${
-                        esActivo ? 'bg-[#c9a24b]/15 border-[#c9a24b] shadow-lg' : 'bg-[#060a14]/90 border-white/10 hover:border-white/25'
+                        esActivo ? 'bg-[#f3cf7a]/20 border-[#f3cf7a] shadow-lg' : 'bg-[#071022]/95 border-white/15 hover:border-[#f3cf7a]/50'
                     }">
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-1.5 flex-wrap">
-                                <span class="font-mono-digital font-extrabold text-xs text-slate-950 bg-[#c9a24b] px-2 py-0.5 rounded">#${item.orden_turno}</span>
+                                <span class="font-mono-digital font-extrabold text-xs text-slate-950 bg-[#f3cf7a] px-2 py-0.5 rounded">#${item.orden_turno}</span>
                                 <span class="font-bold text-sm text-white truncate">H.C. ${item.nombre_completo}</span>
                                 <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${badgeEstado}">${item.estado}</span>
                             </div>
-                            <p class="text-xs text-slate-400 mt-1">
-                                ${item.bancada} • Com. ${item.comision} • <strong class="text-slate-200">${item.tipo_intervencion}</strong>
+                            <p class="text-xs text-slate-300 mt-1">
+                                ${item.bancada} • Com. ${item.comision} • <strong class="text-white">${item.tipo_intervencion}</strong>
                             </p>
                         </div>
                         ${botonesTurnoHtml}
@@ -2786,8 +2807,8 @@
                 display.className = 'font-mono-digital text-5xl md:text-7xl font-extrabold text-amber-300 tracking-tight select-none leading-none animate-pulse';
                 anillo.setAttribute('stroke', '#fbbf24');
             } else {
-                display.className = 'font-mono-digital text-5xl md:text-7xl font-extrabold text-[#f0d078] tracking-tight select-none leading-none drop-shadow-[0_4px_15px_rgba(201,162,75,0.3)]';
-                anillo.setAttribute('stroke', '#c9a24b');
+                display.className = 'font-mono-digital text-5xl md:text-7xl font-extrabold text-[#fff3c4] tracking-tight select-none leading-none drop-shadow-[0_4px_18px_rgba(243,207,122,0.4)]';
+                anillo.setAttribute('stroke', '#f3cf7a');
             }
         }
 
@@ -2808,7 +2829,7 @@
 
                     if (segundosRestantes === 10) {
                         sonarAdvertencia10Seg();
-                        mostrarAlertaVisualCrono('⚠️ Últimos 10 segundos reglamentarios', 'bg-amber-500/20 text-amber-300 border border-amber-500');
+                        mostrarAlertaVisualCrono('⚠️ Últimos 10 segundos reglamentarios', 'bg-amber-500/25 text-amber-200 border border-amber-400');
                     }
 
                     if (segundosRestantes === 0) {
@@ -2842,7 +2863,7 @@
             timerInterval = null;
             actualizarEstadoVisualIndicador('detenido');
             if (!automatico) {
-                mostrarAlertaVisualCrono('⏹️ Intervención cerrada por Presidencia', 'bg-slate-800 text-slate-300 border border-slate-600');
+                mostrarAlertaVisualCrono('⏹️ Intervención cerrada por Presidencia', 'bg-slate-800 text-slate-200 border border-slate-500');
             }
             if (intervencionActivaId && esModoAdmin) {
                 const usado = Math.max(0, segundosBase - segundosRestantes);
@@ -3146,11 +3167,11 @@
                     }
                 }
 
-                banner.className = 'mb-5 p-3.5 rounded-2xl border border-[#c9a24b]/45 bg-[#c9a24b]/10 flex items-center gap-3';
+                banner.className = 'mb-5 p-3.5 rounded-2xl border border-[#f3cf7a]/55 bg-[#f3cf7a]/15 flex items-center gap-3';
                 banner.innerHTML = `
-                    <i class="fa-solid fa-scale-balanced text-[#f0d078] text-lg shrink-0"></i>
-                    <div class="text-xs text-slate-200">
-                        <span class="font-extrabold uppercase tracking-wider text-[#f0d078] block">Escrutinio Parcial en Curso (Ronda ${ronda})</span>
+                    <i class="fa-solid fa-scale-balanced text-[#fff3c4] text-lg shrink-0"></i>
+                    <div class="text-xs text-slate-100">
+                        <span class="font-extrabold uppercase tracking-wider text-[#fff3c4] block">Escrutinio Parcial en Curso (Ronda ${ronda})</span>
                         <span>${tendenciaTexto}</span>
                     </div>
                 `;
@@ -3188,17 +3209,17 @@
                 }
             }
 
-            let estilos = 'border-rose-500 bg-rose-950/60 text-rose-100';
-            let icono = 'fa-box-archive text-rose-400';
+            let estilos = 'border-rose-400 bg-rose-950/75 text-rose-100';
+            let icono = 'fa-box-archive text-rose-300';
             let tituloDictamen = 'DICTAMEN OFICIAL: ARCHIVADA';
             let botonRepetirHtml = '';
 
             if (resultado === 'ACEPTADA') {
-                estilos = 'border-emerald-500 bg-emerald-950/60 text-emerald-100';
-                icono = 'fa-circle-check text-emerald-400';
+                estilos = 'border-emerald-400 bg-emerald-950/75 text-emerald-100';
+                icono = 'fa-circle-check text-emerald-300';
                 tituloDictamen = 'DICTAMEN OFICIAL: PROPUESTA ACEPTADA Y AÑADIDA';
             } else if (resultado === 'EMPATE_REPETIR') {
-                estilos = 'border-amber-400 bg-amber-950/65 text-amber-100';
+                estilos = 'border-amber-300 bg-amber-950/75 text-amber-100';
                 icono = 'fa-rotate-right text-amber-300';
                 tituloDictamen = 'DICTAMEN OFICIAL: EMPATE — SE REPITE LA ELECCIÓN';
                 if (esModoAdmin) {
@@ -3253,12 +3274,12 @@
                 tituloEl.innerText = 'No hay ninguna votación activa';
                 descEl.innerText = 'A la espera de que Mesa Directiva o Secretaría abra la urna de votación.';
                 estadoEl.innerText = 'EN ESPERA';
-                estadoEl.className = 'bg-slate-700 text-slate-300 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
+                estadoEl.className = 'bg-slate-700 text-slate-200 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
                 if (rondaEl) rondaEl.innerText = 'Ronda 1';
                 ambitoEl.innerText = '--';
                 if (proyectoBadgeEl) proyectoBadgeEl.classList.add('hidden');
                 controlesEl.innerHTML = '';
-                listaEl.innerHTML = '<p class="text-center text-xs text-slate-500 py-8">Sin registros en urna.</p>';
+                listaEl.innerHTML = '<p class="text-center text-xs text-slate-400 py-8">Sin registros en urna.</p>';
                 document.getElementById('res-votos-si').innerText = '0';
                 document.getElementById('res-votos-no').innerText = '0';
                 document.getElementById('res-votos-abs').innerText = '0';
@@ -3294,28 +3315,28 @@
             if (displayUrnaEl) {
                 displayUrnaEl.innerText = estaAbierta ? formatearMMSS(segundosRestantesUrna) : '00:00';
                 displayUrnaEl.className = estaAbierta
-                    ? 'font-mono-digital text-xl md:text-3xl font-extrabold text-[#f0d078]'
-                    : 'font-mono-digital text-xl md:text-3xl font-extrabold text-rose-500';
+                    ? 'font-mono-digital text-xl md:text-3xl font-extrabold text-[#fff3c4]'
+                    : 'font-mono-digital text-xl md:text-3xl font-extrabold text-rose-400';
             }
 
             if (estaAbierta) {
                 estadoEl.innerText = 'URNA ABIERTA';
-                estadoEl.className = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
+                estadoEl.className = 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
             } else {
                 estadoEl.innerText = 'URNA CERRADA';
-                estadoEl.className = 'bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
+                estadoEl.className = 'bg-rose-500/20 text-rose-300 border border-rose-400/50 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
             }
 
             const btnVerDocumento = (votacion.id_proyecto && proyectosGlobal.some(p => p.id_proyecto === votacion.id_proyecto))
-                ? `<button onclick="irAVerProyecto(${votacion.id_proyecto})" class="bg-[#1e3a8a] hover:bg-blue-700 text-white font-bold text-xs uppercase px-3 py-2 rounded-xl border border-blue-400/30 transition"><i class="fa-solid fa-file-lines mr-1"></i> Ver Documento</button>`
+                ? `<button onclick="irAVerProyecto(${votacion.id_proyecto})" class="bg-[#1e3a8a] hover:bg-blue-700 text-white font-bold text-xs uppercase px-3 py-2 rounded-xl border border-blue-300/40 transition"><i class="fa-solid fa-file-lines mr-1"></i> Ver Documento</button>`
                 : '';
 
             const botonesAdminUrna = esModoAdmin ? `
                 ${estaAbierta
-                    ? `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Cerrada')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock mr-1"></i> Cerrar Urna y Dictaminar</button>`
-                    : `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Abierta')" class="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock-open mr-1"></i> Reabrir Urna</button>`
+                    ? `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Cerrada')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock mr-1"></i> Cerrar Urna y Dictaminar</button>`
+                    : `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Abierta')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock-open mr-1"></i> Reabrir Urna</button>`
                 }
-                <button onclick="eliminarVotacion(${votacion.id_votacion})" class="bg-rose-500/15 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/30 px-3 py-2 rounded-xl text-xs font-bold transition" title="Eliminar votación">
+                <button onclick="eliminarVotacion(${votacion.id_votacion})" class="bg-rose-500/20 hover:bg-rose-700 text-rose-300 hover:text-white border border-rose-400/40 px-3 py-2 rounded-xl text-xs font-bold transition" title="Eliminar votación">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
             ` : '';
@@ -3353,23 +3374,23 @@
             }
 
             if (votos.length === 0) {
-                listaEl.innerHTML = '<div class="text-center py-8 bg-[#060a14] rounded-xl border border-dashed border-white/10 text-xs text-slate-400">Ningún Honorable Concejal ha depositado su voto todavía.</div>';
+                listaEl.innerHTML = '<div class="text-center py-8 bg-[#060d1c] rounded-xl border border-dashed border-[#f3cf7a]/25 text-xs text-slate-300">Ningún Honorable Concejal ha depositado su voto todavía.</div>';
                 return;
             }
 
             listaEl.innerHTML = votos.map(v => {
                 const badgeVoto = v.opcion === 'SI'
-                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50'
                     : v.opcion === 'NO'
-                        ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
-                        : 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+                        ? 'bg-rose-500/20 text-rose-300 border-rose-400/50'
+                        : 'bg-amber-500/20 text-amber-200 border-amber-400/50';
                 const textoVoto = v.opcion === 'SI' ? 'SÍ' : v.opcion === 'NO' ? 'NO' : 'ABSTENCIÓN';
 
                 return `
-                    <div class="bg-[#060a14]/90 p-3 rounded-xl border border-white/10 flex justify-between items-center gap-2">
+                    <div class="bg-[#071022]/95 p-3 rounded-xl border border-white/15 flex justify-between items-center gap-2">
                         <div class="min-w-0">
                             <p class="font-bold text-sm text-white truncate">H.C. ${v.nombre_completo}</p>
-                            <p class="text-[11px] text-slate-400 truncate">Bancada ${v.bancada} • ${v.comision}</p>
+                            <p class="text-[11px] text-slate-300 truncate">Bancada ${v.bancada} • ${v.comision}</p>
                         </div>
                         <span class="px-3 py-1 rounded-lg border text-xs font-extrabold uppercase shrink-0 ${badgeVoto}">
                             ${textoVoto}
@@ -3608,12 +3629,12 @@
         function filtrarProyectos(comision) {
             filtroComisionActual = comision;
             document.querySelectorAll('.filtro-proy-btn').forEach(btn => {
-                btn.classList.remove('bg-[#c9a24b]', 'text-slate-950', 'font-extrabold', 'shadow');
-                btn.classList.add('bg-white/5', 'text-slate-200', 'border', 'border-white/10', 'font-bold');
+                btn.classList.remove('bg-[#f3cf7a]', 'text-slate-950', 'font-extrabold', 'shadow');
+                btn.classList.add('bg-white/10', 'text-slate-200', 'border', 'border-white/15', 'font-bold');
             });
             const activo = document.getElementById(`filtro-${comision}`);
-            activo.classList.add('bg-[#c9a24b]', 'text-slate-950', 'font-extrabold', 'shadow');
-            activo.classList.remove('bg-white/5', 'text-slate-200', 'border', 'border-white/10', 'font-bold');
+            activo.classList.add('bg-[#f3cf7a]', 'text-slate-950', 'font-extrabold', 'shadow');
+            activo.classList.remove('bg-white/10', 'text-slate-200', 'border', 'border-white/15', 'font-bold');
 
             renderizarProyectos();
         }
@@ -3630,7 +3651,7 @@
             document.getElementById('contador-docs').innerText = filtrados.length;
 
             if (filtrados.length === 0) {
-                listaLateral.innerHTML = '<div class="panel-institucional p-6 rounded-2xl text-center text-xs text-slate-400">No hay documentos proyectados en este filtro.</div>';
+                listaLateral.innerHTML = '<div class="panel-institucional p-6 rounded-2xl text-center text-xs text-slate-300">No hay documentos proyectados en este filtro.</div>';
                 limpiarVisorDirecto();
                 return;
             }
@@ -3646,40 +3667,40 @@
                 const turnoOrden = idx + 1;
 
                 const estadoColor = p.estado === 'Aprobado'
-                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50'
                     : p.estado === 'Archivado'
-                        ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
-                        : 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+                        ? 'bg-rose-500/20 text-rose-300 border-rose-400/50'
+                        : 'bg-amber-500/20 text-amber-200 border-amber-400/50';
 
                 const badgePrivacidad = esModoAdmin
                     ? (esPrivado
-                        ? '<span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40"><i class="fa-solid fa-eye-slash mr-1"></i>Solo Admin</span>'
-                        : '<span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"><i class="fa-solid fa-eye mr-1"></i>Proyectado</span>')
+                        ? '<span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-rose-500/25 text-rose-200 border border-rose-400/50"><i class="fa-solid fa-eye-slash mr-1"></i>Solo Admin</span>'
+                        : '<span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-500/25 text-emerald-200 border border-emerald-400/50"><i class="fa-solid fa-eye mr-1"></i>Proyectado</span>')
                     : '';
 
                 listaLateral.innerHTML += `
-                    <div onclick="seleccionarDocumentoVisor(${p.id_proyecto})" class="cursor-pointer p-3.5 md:p-4 rounded-2xl transition border ${
+                    <div onclick="seleccionarDocumentoVisor(${p.id_proyecto})" class="cursor-pointer p-3.5 md:p-4 rounded-2xl transition border-2 ${
                         esSeleccionado 
-                            ? 'bg-[#c9a24b]/18 border-[#c9a24b] shadow-lg' 
-                            : 'panel-institucional border-white/10 hover:border-[#c9a24b]/55'
+                            ? 'bg-[#f3cf7a]/20 border-[#f3cf7a] shadow-lg' 
+                            : 'panel-institucional border-white/15 hover:border-[#f3cf7a]/65'
                     }">
                         <div class="flex justify-between items-center gap-1 mb-1.5 flex-wrap">
                             <div class="flex items-center gap-1.5 flex-wrap">
-                                <span class="font-mono-digital text-[10px] font-extrabold bg-[#c9a24b] text-slate-950 px-2 py-0.5 rounded">
+                                <span class="font-mono-digital text-[10px] font-extrabold bg-[#f3cf7a] text-slate-950 px-2 py-0.5 rounded">
                                     #${turnoOrden}
                                 </span>
                                 <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${
-                                    esProposicion ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                                    esProposicion ? 'bg-amber-500/25 text-amber-200 border border-amber-400/45' : 'bg-blue-500/25 text-blue-200 border border-blue-400/45'
                                 }">${p.tipo_documento || 'Proyecto'}</span>
                                 ${badgePrivacidad}
                             </div>
                             <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded border ${estadoColor}">${p.estado}</span>
                         </div>
-                        <p class="text-[11px] font-mono-digital font-bold text-[#f0d078] mb-0.5">${p.codigo_radicado} • Com. ${p.comision}</p>
+                        <p class="text-[11px] font-mono-digital font-bold text-[#fff3c4] mb-0.5">${p.codigo_radicado} • Com. ${p.comision}</p>
                         <h4 class="font-bold text-sm text-white leading-snug line-clamp-2">${p.titulo}</h4>
-                        <div class="flex justify-between items-center mt-2 pt-2 border-t border-white/10 text-[11px] text-slate-400">
-                            <span class="truncate"><i class="fa-solid fa-user-tie mr-1 text-[#c9a24b]"></i>${p.autor}</span>
-                            ${p.archivo_nombre ? '<span class="text-[#f0d078] font-bold"><i class="fa-solid fa-paperclip"></i></span>' : ''}
+                        <div class="flex justify-between items-center mt-2 pt-2 border-t border-white/15 text-[11px] text-slate-300">
+                            <span class="truncate"><i class="fa-solid fa-user-tie mr-1 text-[#f3cf7a]"></i>${p.autor}</span>
+                            ${p.archivo_nombre ? '<span class="text-[#fff3c4] font-bold"><i class="fa-solid fa-paperclip"></i></span>' : ''}
                         </div>
                     </div>
                 `;
@@ -3734,13 +3755,13 @@
             const esPrivado = p.visible_publico === false;
 
             const controlesAdminVisor = esModoAdmin ? `
-                <button onclick="alternarVisibilidadProyecto(${p.id_proyecto}, ${esPrivado ? 'true' : 'false'})" class="${esPrivado ? 'bg-emerald-700 hover:bg-emerald-600 text-white' : 'bg-slate-700 hover:bg-slate-600 text-amber-200'} font-extrabold text-xs uppercase px-3 py-1.5 rounded-xl transition shadow" title="Controlar si los concejales ven este documento">
+                <button onclick="alternarVisibilidadProyecto(${p.id_proyecto}, ${esPrivado ? 'true' : 'false'})" class="${esPrivado ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-700 hover:bg-slate-600 text-amber-200'} font-extrabold text-xs uppercase px-3 py-1.5 rounded-xl transition shadow" title="Controlar si los concejales ven este documento">
                     <i class="fa-solid ${esPrivado ? 'fa-eye' : 'fa-eye-slash'} mr-1"></i> ${esPrivado ? 'Proyectar a Todos' : 'Ocultar al Público'}
                 </button>
                 <button onclick="someterProyectoAVotacion(${p.id_proyecto})" class="btn-oro font-extrabold text-xs uppercase px-3 py-1.5 rounded-xl">
                     <i class="fa-solid fa-check-to-slot mr-1"></i> Someter a Votación
                 </button>
-                <select onchange="cambiarEstadoProyecto(${p.id_proyecto}, this.value)" class="bg-slate-900 border border-[#c9a24b]/50 text-white text-xs font-bold rounded-xl px-2.5 py-1.5">
+                <select onchange="cambiarEstadoProyecto(${p.id_proyecto}, this.value)" class="border text-white text-xs font-bold rounded-xl px-2.5 py-1.5">
                     <option value="Radicado" ${p.estado==='Radicado'?'selected':''}>Radicado</option>
                     <option value="En Debate" ${p.estado==='En Debate'?'selected':''}>En Debate</option>
                     <option value="Aprobado" ${p.estado==='Aprobado'?'selected':''}>Aprobado</option>
@@ -3752,9 +3773,9 @@
             ` : '';
 
             accionesDiv.innerHTML = `
-                <button onclick="cambiarZoom(-2)" class="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold" title="Reducir letra">A-</button>
-                <button onclick="cambiarZoom(2)" class="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold" title="Aumentar letra">A+</button>
-                <button onclick="pantallaCompletaVisor()" class="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold" title="Pantalla Completa">
+                <button onclick="cambiarZoom(-2)" class="bg-white/15 hover:bg-white/25 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold" title="Reducir letra">A-</button>
+                <button onclick="cambiarZoom(2)" class="bg-white/15 hover:bg-white/25 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold" title="Aumentar letra">A+</button>
+                <button onclick="pantallaCompletaVisor()" class="bg-white/15 hover:bg-white/25 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold" title="Pantalla Completa">
                     <i class="fa-solid fa-expand"></i>
                 </button>
                 ${controlesAdminVisor}
