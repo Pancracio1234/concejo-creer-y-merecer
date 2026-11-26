@@ -487,7 +487,6 @@ app.post('/api/votacion/login', async (req, res) => {
                 });
             }
 
-            // Verificar si ya votó o ya se registró previamente en esta votación
             const votoPrevio = await pool.query(
                 'SELECT id_voto FROM votos WHERE id_votacion = $1 AND id_integrante = $2',
                 [idVot, encontrado.id_integrante]
@@ -503,7 +502,6 @@ app.post('/api/votacion/login', async (req, res) => {
                 });
             }
 
-            // Registrar ingreso único para esta votación
             await pool.query(
                 `INSERT INTO votacion_registros (id_votacion, id_integrante)
                  VALUES ($1, $2) ON CONFLICT DO NOTHING`,
@@ -552,7 +550,7 @@ app.post('/api/votaciones', async (req, res) => {
 
         const result = await pool.query(
             `INSERT INTO votaciones (id_sesion, id_proyecto, titulo, descripcion, ambito, estado, duracion_seg, fecha_cierre)
-             VALUES ($1, $2, $3, $4, $5, 'Abierta', $6, NOW() + ($6 * INTERVAL '1 second'))
+             VALUES ($1, $2, $3, $4, $5, 'Abierta', $6::INTEGER, NOW() + make_interval(secs => $6::INTEGER))
              RETURNING *, GREATEST(0, EXTRACT(EPOCH FROM (fecha_cierre - NOW())))::INTEGER AS segundos_restantes`,
             [sesionVal, proyectoVal, titulo.trim(), descripcion || '', ambito || 'Plenaria', duracionVal]
         );
@@ -572,7 +570,7 @@ app.put('/api/votaciones/:id_votacion/estado', async (req, res) => {
             result = await pool.query(
                 `UPDATE votaciones 
                  SET estado = 'Abierta',
-                     fecha_cierre = NOW() + (COALESCE(duracion_seg, 120) * INTERVAL '1 second')
+                     fecha_cierre = NOW() + make_interval(secs => COALESCE(duracion_seg, 120)::INTEGER)
                  WHERE id_votacion = $1 RETURNING *`,
                 [idVot]
             );
@@ -657,7 +655,6 @@ app.post('/api/votaciones/:id_votacion/votar', async (req, res) => {
             return res.status(403).json({ error: 'El tiempo expiró y la urna de votación se encuentra cerrada.' });
         }
 
-        // Impedir doble voto bajo cualquier circunstancia
         const yaVoto = await pool.query(
             'SELECT id_voto FROM votos WHERE id_votacion = $1 AND id_integrante = $2',
             [idVotacion, idInt]
