@@ -198,7 +198,6 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <!-- ESTADO Y BOTÓN DE ACCESO ADMINISTRATIVO -->
                     <div id="barra-admin-status" class="flex items-center gap-2">
                         <button type="button" id="btn-abrir-login-admin" onclick="abrirModalAdmin()" class="bg-[#c9a24b]/15 hover:bg-[#c9a24b] text-[#e5c16c] hover:text-slate-950 border border-[#c9a24b]/45 px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition flex items-center gap-1.5">
                             <i class="fa-solid fa-shield-halved"></i> Acceso Administrativo
@@ -595,7 +594,7 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 4: SISTEMA DE VOTACIÓN NOMINAL CON TIEMPO Y REGISTRO ÚNICO        -->
+        <!-- TAB 4: SISTEMA DE VOTACIÓN NOMINAL CON VEREDICTO Y DESEMPATE          -->
         <!-- ===================================================================== -->
         <section id="tab-votacion" class="tab-content hidden">
             
@@ -676,7 +675,7 @@
 
             <div class="grid lg:grid-cols-12 gap-6 items-start">
                 
-                <!-- COLUMNA IZQUIERDA (5 cols): CABINA DE AUTENTICACIÓN Y VOTO ÚNICO (SIEMPRE ACCESIBLE PARA CONCEJALES) -->
+                <!-- COLUMNA IZQUIERDA (5 cols): CABINA DE AUTENTICACIÓN Y VOTO ÚNICO -->
                 <div class="lg:col-span-5 panel-institucional rounded-2xl p-6 border border-[#c9a24b]/40">
                     <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
                         <div>
@@ -691,7 +690,7 @@
                     <div id="cabina-login-form" class="space-y-4">
                         <div class="bg-[#060a14]/85 p-3.5 rounded-xl border border-[#c9a24b]/25 text-xs text-slate-300">
                             <i class="fa-solid fa-shield-halved text-[#e5c16c] mr-1.5"></i>
-                            Inicie sesión con su <strong>Primer Nombre</strong> y <strong>Primer Apellido</strong>. Una vez registrado en esta votación, no podrá volver a ingresar.
+                            Inicie sesión con su <strong>Primer Nombre</strong> y <strong>Primer Apellido</strong>. Una vez registrado en esta ronda, no podrá volver a ingresar.
                         </div>
 
                         <div>
@@ -748,12 +747,13 @@
                     </div>
                 </div>
 
-                <!-- COLUMNA DERECHA (7 cols): RESULTADOS EN TIEMPO REAL Y CRONÓMETRO DE URNA -->
+                <!-- COLUMNA DERECHA (7 cols): RESULTADOS, VEREDICTO OFICIAL Y CRONÓMETRO DE URNA -->
                 <div class="lg:col-span-7 panel-institucional rounded-2xl p-6">
-                    <div class="flex flex-wrap justify-between items-start gap-3 border-b border-white/10 pb-4 mb-5">
+                    <div class="flex flex-wrap justify-between items-start gap-3 border-b border-white/10 pb-4 mb-4">
                         <div class="flex-1 min-w-[220px]">
                             <div class="flex items-center gap-2 flex-wrap mb-1">
                                 <span id="vot-visor-estado" class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded">URNA ABIERTA</span>
+                                <span id="vot-visor-ronda" class="bg-[#c9a24b]/20 text-[#e5c16c] border border-[#c9a24b]/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded">Ronda 1</span>
                                 <span id="vot-visor-ambito" class="text-xs font-bold text-[#c9a24b]">Plenaria</span>
                                 <span id="vot-visor-proyecto-badge" class="hidden bg-[#c9a24b]/20 text-[#e5c16c] border border-[#c9a24b]/40 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded"></span>
                             </div>
@@ -766,6 +766,9 @@
                             <span id="vot-cronometro-display" class="font-mono-digital text-2xl md:text-3xl font-extrabold text-[#e5c16c]">--:--</span>
                         </div>
                     </div>
+
+                    <!-- BANNER DE DICTAMEN / VEREDICTO OFICIAL DE LA VOTACIÓN -->
+                    <div id="banner-veredicto-votacion" class="hidden mb-5 p-4 rounded-2xl border-2 shadow-xl"></div>
 
                     <div id="vot-controles-mesa" class="flex items-center justify-end gap-2 flex-wrap mb-5"></div>
 
@@ -1569,7 +1572,7 @@
                     }
                     if (segundosRestantesUrna === 0) {
                         sonarTiempoFinalizado();
-                        notificar('🔔 Tiempo reglamentario de votación concluido. Urna cerrada.');
+                        notificar('🔔 Tiempo reglamentario de votación concluido. Calculando veredicto...');
                         cargarVotaciones();
                     }
                 }
@@ -2523,7 +2526,7 @@
         }
 
         // =====================================================================
-        // 5. SISTEMA DE VOTACIÓN NOMINAL CON TIEMPO LÍMITE Y REGISTRO ÚNICO
+        // 5. SISTEMA DE VOTACIÓN NOMINAL, VEREDICTO Y DESEMPATE
         // =====================================================================
         function actualizarSelectProyectosVotacion() {
             const selectProy = document.getElementById('vot-select-proyecto');
@@ -2690,10 +2693,31 @@
                 document.getElementById('vot-titulo').value = '';
                 document.getElementById('vot-descripcion').value = '';
                 document.getElementById('panel-form-votacion').classList.add('hidden');
-                notificar(`🗳️ Urna abierta por ${Math.floor(duracion_seg / 60)} min`);
+                notificar(`🗳️ Urna abierta (Ronda 1) por ${Math.floor(duracion_seg / 60)} min`);
                 await cargarVotaciones();
             } catch (err) {
                 alert('Error de red: ' + err.message);
+            }
+        }
+
+        async function repetirVotacionPorEmpate(id_votacion) {
+            if (!confirm('Se abrirá la SEGUNDA RONDA de votación por empate (se reinician los votos de esta urna y si vuelve a empatar se archivará). ¿Continuar?')) {
+                return;
+            }
+            try {
+                const res = await fetchAdmin(`/api/votaciones/${id_votacion}/repetir`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    return alert(data.error || 'No se pudo repetir la votación.');
+                }
+                cerrarSesionConcejal();
+                notificar('🔁 Segunda ronda de votación abierta por empate');
+                await cargarVotaciones();
+            } catch (err) {
+                alert('Error de red al repetir votación: ' + err.message);
             }
         }
 
@@ -2716,7 +2740,8 @@
                 }
 
                 votacionesGlobal.forEach(v => {
-                    select.innerHTML += `<option value="${v.id_votacion}" class="bg-slate-900">${v.titulo} [${v.estado}]</option>`;
+                    const rondaTxt = (parseInt(v.ronda_numero, 10) || 1) > 1 ? ` • Ronda ${v.ronda_numero}` : '';
+                    select.innerHTML += `<option value="${v.id_votacion}" class="bg-slate-900">${v.titulo} [${v.estado}${rondaTxt}]</option>`;
                 });
 
                 if (!votacionSeleccionadaId || !votacionesGlobal.some(v => String(v.id_votacion) === String(votacionSeleccionadaId))) {
@@ -2750,10 +2775,130 @@
             }
         }
 
+        function renderizarBannerVeredicto(votacion, si, no, abs, total) {
+            const banner = document.getElementById('banner-veredicto-votacion');
+            if (!banner) return;
+
+            if (!votacion) {
+                banner.classList.add('hidden');
+                return;
+            }
+
+            const estaAbierta = votacion.estado === 'Abierta';
+            const ronda = parseInt(votacion.ronda_numero, 10) || 1;
+
+            if (estaAbierta) {
+                let tendenciaTexto = 'A la espera de los primeros votos en la urna...';
+                if (total > 0) {
+                    if (si > no && si > abs) {
+                        tendenciaTexto = `Tendencia parcial: Va ganando el SÍ (${si} vs. ${no} NO, ${abs} Abstenciones).`;
+                    } else if (no > si && no >= abs) {
+                        tendenciaTexto = `Tendencia parcial: Va ganando el NO (${no} vs. ${si} SÍ, ${abs} Abstenciones).`;
+                    } else if (abs > si && abs > no) {
+                        tendenciaTexto = `Tendencia parcial: Va ganando la ABSTENCIÓN (${abs} vs. ${si} SÍ, ${no} NO).`;
+                    } else if (si === no && si > 0) {
+                        tendenciaTexto = ronda < 2
+                            ? `Tendencia parcial: EMPATE (${si} SÍ vs. ${no} NO). Si cierra así, se repetirá la elección.`
+                            : `Tendencia parcial: SEGUNDO EMPATE (${si} SÍ vs. ${no} NO). Si cierra así, se archivará.`;
+                    } else {
+                        tendenciaTexto = `Conteo parcial en curso: ${si} SÍ • ${no} NO • ${abs} Abstenciones.`;
+                    }
+                }
+
+                banner.className = 'mb-5 p-3.5 rounded-2xl border border-[#c9a24b]/45 bg-[#c9a24b]/10 flex items-center gap-3';
+                banner.innerHTML = `
+                    <i class="fa-solid fa-scale-balanced text-[#e5c16c] text-lg shrink-0"></i>
+                    <div class="text-xs text-slate-200">
+                        <span class="font-extrabold uppercase tracking-wider text-[#e5c16c] block">Escrutinio Parcial en Curso (Ronda ${ronda})</span>
+                        <span>${tendenciaTexto}</span>
+                    </div>
+                `;
+                banner.classList.remove('hidden');
+                return;
+            }
+
+            // URNA CERRADA: DETERMINAR VEREDICTO FINAL
+            let resultado = votacion.resultado_final || '';
+            let mensaje = votacion.mensaje_veredicto || '';
+
+            if (!resultado) {
+                if (total === 0) {
+                    resultado = 'ARCHIVADA_SIN_VOTOS';
+                    mensaje = 'La urna cerró sin votos registrados. Por falta de pronunciamiento afirmativo, la proposición / proyecto será ARCHIVADO.';
+                } else if (si > no && si > abs) {
+                    resultado = 'ACEPTADA';
+                    mensaje = `¡PROPOSICIÓN / PROYECTO ACEPTADO! (${si} votos SÍ vs. ${no} NO y ${abs} Abstenciones). Se tomará en cuenta la proposición y será añadida oficialmente al trámite del Concejo.`;
+                } else if (no > si && no >= abs) {
+                    resultado = 'RECHAZADA';
+                    mensaje = `PROPOSICIÓN / PROYECTO RECHAZADO (${no} votos NO vs. ${si} SÍ y ${abs} Abstenciones). Al perder la votación, la iniciativa será ARCHIVADA.`;
+                } else if (abs > si && abs > no) {
+                    resultado = 'ARCHIVADA_ABSTENCION';
+                    mensaje = `GANÓ LA ABSTENCIÓN (${abs} Abstenciones vs. ${si} SÍ y ${no} NO). Al no obtener mayoría afirmativa, la proposición / proyecto será ARCHIVADO.`;
+                } else if (si === no && si > 0) {
+                    if (ronda < 2) {
+                        resultado = 'EMPATE_REPETIR';
+                        mensaje = `EMPATE EN PRIMERA VOTACIÓN (${si} votos SÍ vs. ${no} votos NO). Conforme al reglamento, se debe repetir nuevamente la elección.`;
+                    } else {
+                        resultado = 'ARCHIVADA_SEGUNDO_EMPATE';
+                        mensaje = `SEGUNDO EMPATE CONSECUTIVO (${si} votos SÍ vs. ${no} votos NO). Al persistir el empate tras repetir la elección, la proposición / proyecto se ARCHIVA definitivamente.`;
+                    }
+                } else {
+                    resultado = 'ARCHIVADA_SIN_MAYORIA';
+                    mensaje = `NO SE ALCANZÓ MAYORÍA AFIRMATIVA (${si} SÍ, ${no} NO, ${abs} Abstenciones). Por reglamento, la iniciativa será ARCHIVADA.`;
+                }
+            }
+
+            let estilos = 'border-rose-500 bg-rose-950/55 text-rose-100';
+            let icono = 'fa-box-archive text-rose-400';
+            let tituloDictamen = 'DICTAMEN OFICIAL: ARCHIVADA';
+            let botonRepetirHtml = '';
+
+            if (resultado === 'ACEPTADA') {
+                estilos = 'border-emerald-500 bg-emerald-950/55 text-emerald-100';
+                icono = 'fa-circle-check text-emerald-400';
+                tituloDictamen = 'DICTAMEN OFICIAL: PROPUESTA ACEPTADA Y AÑADIDA';
+            } else if (resultado === 'EMPATE_REPETIR') {
+                estilos = 'border-amber-400 bg-amber-950/60 text-amber-100';
+                icono = 'fa-rotate-right text-amber-300';
+                tituloDictamen = 'DICTAMEN OFICIAL: EMPATE — SE REPITE LA ELECCIÓN';
+                if (esModoAdmin) {
+                    botonRepetirHtml = `
+                        <button type="button" onclick="repetirVotacionPorEmpate(${votacion.id_votacion})" class="mt-3 bg-gradient-to-b from-[#d9b45b] to-[#b58d36] hover:from-[#e5c16c] hover:to-[#c9a24b] text-slate-950 font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-lg transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-repeat"></i> Repetir Votación Ahora (Ronda 2)
+                        </button>
+                    `;
+                }
+            } else if (resultado === 'RECHAZADA') {
+                tituloDictamen = 'DICTAMEN OFICIAL: RECHAZADA Y ARCHIVADA';
+            } else if (resultado === 'ARCHIVADA_ABSTENCION') {
+                tituloDictamen = 'DICTAMEN OFICIAL: GANÓ ABSTENCIÓN — ARCHIVADA';
+            } else if (resultado === 'ARCHIVADA_SEGUNDO_EMPATE') {
+                tituloDictamen = 'DICTAMEN OFICIAL: SEGUNDO EMPATE — ARCHIVADA';
+            }
+
+            banner.className = `mb-5 p-4 rounded-2xl border-2 shadow-xl ${estilos}`;
+            banner.innerHTML = `
+                <div class="flex items-start gap-3.5">
+                    <i class="fa-solid ${icono} text-2xl mt-0.5 shrink-0"></i>
+                    <div class="flex-1">
+                        <span class="font-solemne text-sm md:text-base font-extrabold uppercase tracking-wider block">
+                            ${tituloDictamen}
+                        </span>
+                        <p class="text-xs md:text-sm font-medium mt-1 leading-relaxed">
+                            ${mensaje}
+                        </p>
+                        ${botonRepetirHtml}
+                    </div>
+                </div>
+            `;
+            banner.classList.remove('hidden');
+        }
+
         function renderizarDetalleVotacion(votacion, votos) {
             const tituloEl = document.getElementById('vot-visor-titulo');
             const descEl = document.getElementById('vot-visor-desc');
             const estadoEl = document.getElementById('vot-visor-estado');
+            const rondaEl = document.getElementById('vot-visor-ronda');
             const ambitoEl = document.getElementById('vot-visor-ambito');
             const proyectoBadgeEl = document.getElementById('vot-visor-proyecto-badge');
             const controlesEl = document.getElementById('vot-controles-mesa');
@@ -2769,6 +2914,7 @@
                 descEl.innerText = 'A la espera de que Mesa Directiva o Secretaría abra la urna de votación.';
                 estadoEl.innerText = 'EN ESPERA';
                 estadoEl.className = 'bg-slate-700 text-slate-300 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
+                if (rondaEl) rondaEl.innerText = 'Ronda 1';
                 ambitoEl.innerText = '--';
                 if (proyectoBadgeEl) proyectoBadgeEl.classList.add('hidden');
                 controlesEl.innerHTML = '';
@@ -2782,12 +2928,17 @@
                 document.getElementById('total-votos-emitidos').innerText = '0';
                 if (miVotoEl) miVotoEl.innerText = 'Sin votación seleccionada';
                 if (botonesVotoEl) botonesVotoEl.classList.add('opacity-40', 'pointer-events-none');
+                renderizarBannerVeredicto(null, 0, 0, 0, 0);
                 return;
             }
 
             tituloEl.innerText = votacion.titulo;
             descEl.innerText = votacion.descripcion || 'Votación nominal registrada en Secretaría General.';
             ambitoEl.innerText = `Ámbito: ${votacion.ambito}`;
+            if (rondaEl) {
+                const rNum = parseInt(votacion.ronda_numero, 10) || 1;
+                rondaEl.innerText = rNum === 2 ? 'Ronda 2 (Desempate)' : 'Ronda 1';
+            }
 
             if (proyectoBadgeEl) {
                 if (votacion.id_proyecto) {
@@ -2821,7 +2972,7 @@
 
             const botonesAdminUrna = esModoAdmin ? `
                 ${estaAbierta
-                    ? `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Cerrada')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock mr-1"></i> Cerrar Urna Ahora</button>`
+                    ? `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Cerrada')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock mr-1"></i> Cerrar Urna y Dictaminar</button>`
                     : `<button onclick="cambiarEstadoVotacion(${votacion.id_votacion}, 'Abierta')" class="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase px-3 py-2 rounded-xl transition"><i class="fa-solid fa-lock-open mr-1"></i> Reabrir Urna</button>`
                 }
                 <button onclick="eliminarVotacion(${votacion.id_votacion})" class="bg-rose-500/15 hover:bg-rose-700 text-rose-400 hover:text-white border border-rose-500/30 px-3 py-2 rounded-xl text-xs font-bold transition" title="Eliminar votación">
@@ -2843,6 +2994,8 @@
             document.getElementById('pct-votos-no').innerText = total ? `${Math.round((no / total) * 100)}%` : '0%';
             document.getElementById('pct-votos-abs').innerText = total ? `${Math.round((abs / total) * 100)}%` : '0%';
             document.getElementById('total-votos-emitidos').innerText = total;
+
+            renderizarBannerVeredicto(votacion, si, no, abs, total);
 
             if (concejalAutenticado) {
                 const miVoto = votos.find(v => v.id_integrante === concejalAutenticado.id_integrante);
@@ -2923,8 +3076,9 @@
                 body: JSON.stringify({ estado })
             });
             if (res.ok) {
-                notificar(estado === 'Cerrada' ? '🔒 Urna de votación cerrada' : '🔓 Urna de votación reabierta');
+                notificar(estado === 'Cerrada' ? '🔒 Urna cerrada y veredicto emitido' : '🔓 Urna de votación reabierta');
                 await cargarVotaciones();
+                await cargarProyectos(true);
             }
         }
 
@@ -3064,6 +3218,11 @@
             filtrados.forEach(p => {
                 const esActivo = p.id_proyecto === proyectoSeleccionadoId;
                 const esProposicion = p.tipo_documento === 'Proposición';
+                const colorEstado = p.estado === 'Aprobado'
+                    ? 'text-emerald-400'
+                    : (p.estado === 'Archivado' || p.estado === 'Retirado')
+                        ? 'text-rose-400'
+                        : 'text-[#e5c16c]';
 
                 listaLateral.innerHTML += `
                     <div onclick="seleccionarProyectoVisor(${p.id_proyecto})" class="cursor-pointer rounded-2xl p-4 border transition shadow-md ${
@@ -3078,7 +3237,7 @@
                         <h5 class="font-solemne text-sm uppercase font-bold text-white leading-snug">${p.titulo}</h5>
                         <div class="flex justify-between items-center mt-2.5 pt-2 border-t border-white/10 text-[11px]">
                             <span class="text-slate-400 truncate max-w-[160px]"><i class="fa-solid fa-user-tie mr-1 text-[#c9a24b]"></i>${p.autor}</span>
-                            <span class="font-extrabold text-emerald-400">${p.estado}</span>
+                            <span class="font-extrabold ${colorEstado}">${p.estado}</span>
                         </div>
                     </div>
                 `;

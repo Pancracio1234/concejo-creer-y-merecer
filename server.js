@@ -156,6 +156,9 @@ async function asegurarTablasSistema() {
             ambito VARCHAR(50) DEFAULT 'Plenaria',
             estado VARCHAR(30) DEFAULT 'Abierta',
             duracion_seg INTEGER DEFAULT 120,
+            ronda_numero INTEGER DEFAULT 1,
+            resultado_final VARCHAR(60),
+            mensaje_veredicto TEXT,
             fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             fecha_cierre TIMESTAMP
         );
@@ -163,6 +166,9 @@ async function asegurarTablasSistema() {
     await pool.query(`ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS id_proyecto INTEGER;`);
     await pool.query(`ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS duracion_seg INTEGER DEFAULT 120;`);
     await pool.query(`ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS fecha_cierre TIMESTAMP;`);
+    await pool.query(`ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS ronda_numero INTEGER DEFAULT 1;`);
+    await pool.query(`ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS resultado_final VARCHAR(60);`);
+    await pool.query(`ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS mensaje_veredicto TEXT;`);
 
     await pool.query(`
         CREATE TABLE IF NOT EXISTS votos (
@@ -190,6 +196,78 @@ async function asegurarTablasSistema() {
 asegurarTablasSistema()
     .then(() => console.log('✅ Conexión exitosa a PostgreSQL y tablas verificadas'))
     .catch((err) => console.error('❌ ERROR INICIALIZANDO POSTGRESQL:', err.message));
+
+// =========================================================================
+// CÁLCULO DE VEREDICTO PARLAMENTARIO Y DESEMPATE AUTOMÁTICO
+// =========================================================================
+async function evaluarYGuardarVeredictoVotacion(idVotacion) {
+    const votRes = await pool.query('SELECT * FROM votaciones WHERE id_votacion = $1', [idVotacion]);
+    if (votRes.rows.length === 0) return null;
+    const vot = votRes.rows[0];
+
+    const votosRes = await pool.query('SELECT opcion FROM votos WHERE id_votacion = $1', [idVotacion]);
+    const si = votosRes.rows.filter((v) => v.opcion === 'SI').length;
+    const no = votosRes.rows.filter((v) => v.opcion === 'NO').length;
+    const abs = votosRes.rows.filter((v) => v.opcion === 'ABSTENCION').length;
+    const total = votosRes.rows.length;
+    const ronda = parseInt(vot.ronda_numero, 10) || 1;
+
+    let resultado_final = '';
+    let mensaje_veredicto = '';
+    let nuevoEstadoProyecto = null;
+
+    if (total === 0) {
+        resultado_final = 'ARCHIVADA_SIN_VOTOS';
+        mensaje_veredicto = 'La urna cerró sin votos registrados. Por falta de pronunciamiento afirmativo, la proposición / proyecto será ARCHIVADO.';
+        nuevoEstadoProyecto = 'Archivado';
+    } else if (si > no && si > abs) {
+        resultado_final = 'ACEPTADA';
+        mensaje_veredicto = `¡PROPOSICIÓN / PROYECTO ACEPTADO! (${si} votos SÍ vs. ${no} NO y ${abs} Abstenciones). Se tomará en cuenta la proposición y será añadida oficialmente al trámite del Concejo.`;
+        nuevoEstadoProyecto = 'Aprobado';
+    } else if (no > si && no >= abs) {
+        resultado_final = 'RECHAZADA';
+        mensaje_veredicto = `PROPOSICIÓN / PROYECTO RECHAZADO (${no} votos NO vs. ${si} SÍ y ${abs} Abstenciones). Al perder la votación, la iniciativa será ARCHIVADA.`;
+        nuevoEstadoProyecto = 'Archivado';
+    } else if (abs > si && abs > no) {
+        resultado_final = 'ARCHIVADA_ABSTENCION';
+        mensaje_veredicto = `GANÓ LA ABSTENCIÓN (${abs} Abstenciones vs. ${si} SÍ y ${no} NO). Al no obtener mayoría afirmativa, la proposición / proyecto será ARCHIVADO.`;
+        nuevoEstadoProyecto = 'Archivado';
+    } else if (si === no && si > 0) {
+        if (ronda < 2) {
+            resultado_final = 'EMPATE_REPETIR';
+            mensaje_veredicto = `EMPATE EN PRIMERA VOTACIÓN (${si} votos SÍ vs. ${no} votos NO). Conforme al reglamento, se debe repetir nuevamente la elección.`;
+        } else {
+            resultado_final = 'ARCHIVADA_SEGUNDO_EMPATE';
+            mensaje_veredicto = `SEGUNDO EMPATE CONSECUTIVO (${si} votos SÍ vs. ${no} votos NO). Al persistir el empate tras repetir la elección, la proposición / proyecto se ARCHIVA definitivamente.`;
+            nuevoEstadoProyecto = 'Archivado';
+        }
+    } else {
+        resultado_final = 'ARCHIVADA_SIN_MAYORIA';
+        mensaje_veredicto = `NO SE ALCANZÓ MAYORÍA AFIRMATIVA (${si} SÍ, ${no} NO, ${abs} Abstenciones). Por reglamento, la iniciativa será ARCHIVADA.`;
+        nuevoEstadoProyecto = 'Archivado';
+    }
+
+    const updated = await pool.query(
+        `UPDATE votaciones
+         SET estado = 'Cerrada',
+             fecha_cierre = COALESCE(fecha_cierre, NOW()),
+             resultado_final = $1,
+             mensaje_veredicto = $2
+         WHERE id_votacion = $3
+         RETURNING *`,
+        [resultado_final, mensaje_veredicto, idVotacion]
+    );
+
+    if (vot.id_proyecto && nuevoEstadoProyecto) {
+        await pool.query(
+            'UPDATE proyectos SET estado = $1 WHERE id_proyecto = $2',
+            [nuevoEstadoProyecto, vot.id_proyecto]
+        );
+        emitirActualizacionGlobal('proyectos');
+    }
+
+    return updated.rows[0];
+}
 
 // =========================================================================
 // 1. GESTIÓN DE CONCEJALES (LECTURA PÚBLICA / EDICIÓN SOLO ADMIN)
@@ -549,7 +627,7 @@ app.delete('/api/intervenciones/:id_intervencion', verificarAdmin, async (req, r
 });
 
 // =========================================================================
-// 5. SISTEMA DE VOTACIÓN NOMINAL (VOTO CONCEJAL LIBRE / ABRIR-CERRAR URNA ADMIN)
+// 5. SISTEMA DE VOTACIÓN NOMINAL, VEREDICTO Y REPETICIÓN POR EMPATE
 // =========================================================================
 function limpiarTextoComparacion(txt) {
     return (txt || '')
@@ -563,14 +641,15 @@ function limpiarTextoComparacion(txt) {
 async function cerrarVotacionesExpiradas() {
     await asegurarTablasSistema();
     const res = await pool.query(`
-        UPDATE votaciones
-        SET estado = 'Cerrada'
+        SELECT id_votacion FROM votaciones
         WHERE estado = 'Abierta'
           AND fecha_cierre IS NOT NULL
           AND fecha_cierre <= NOW()
-        RETURNING id_votacion
     `);
     if (res.rowCount > 0) {
+        for (const row of res.rows) {
+            await evaluarYGuardarVeredictoVotacion(row.id_votacion);
+        }
         emitirActualizacionGlobal('votaciones');
     }
 }
@@ -630,7 +709,7 @@ app.post('/api/votacion/login', async (req, res) => {
 
             if (votoPrevio.rows.length > 0 || regPrevio.rows.length > 0) {
                 return res.status(409).json({
-                    error: `El H.C. ${encontrado.nombre_completo} ya se registró previamente en esta votación y no puede volver a ingresar.`,
+                    error: `El H.C. ${encontrado.nombre_completo} ya se registró previamente en esta ronda de votación y no puede volver a ingresar.`,
                 });
             }
 
@@ -681,8 +760,10 @@ app.post('/api/votaciones', verificarAdmin, async (req, res) => {
         const duracionVal = Math.max(15, parseInt(duracion_seg, 10) || 120);
 
         const result = await pool.query(
-            `INSERT INTO votaciones (id_sesion, id_proyecto, titulo, descripcion, ambito, estado, duracion_seg, fecha_cierre)
-             VALUES ($1, $2, $3, $4, $5, 'Abierta', $6::INTEGER, NOW() + make_interval(secs => $6::INTEGER))
+            `INSERT INTO votaciones (
+                id_sesion, id_proyecto, titulo, descripcion, ambito, estado, duracion_seg, ronda_numero, fecha_cierre
+             )
+             VALUES ($1, $2, $3, $4, $5, 'Abierta', $6::INTEGER, 1, NOW() + make_interval(secs => $6::INTEGER))
              RETURNING *, GREATEST(0, EXTRACT(EPOCH FROM (fecha_cierre - NOW())))::INTEGER AS segundos_restantes`,
             [sesionVal, proyectoVal, titulo.trim(), descripcion || '', ambito || 'Plenaria', duracionVal]
         );
@@ -693,28 +774,72 @@ app.post('/api/votaciones', verificarAdmin, async (req, res) => {
     }
 });
 
+// REPETIR VOTACIÓN EN CASO DE EMPATE (RONDA 2)
+app.post('/api/votaciones/:id_votacion/repetir', verificarAdmin, async (req, res) => {
+    const idVot = parseInt(req.params.id_votacion, 10);
+    try {
+        await asegurarTablasSistema();
+        const votRes = await pool.query('SELECT * FROM votaciones WHERE id_votacion = $1', [idVot]);
+        if (votRes.rows.length === 0) {
+            return res.status(404).json({ error: 'Votación no encontrada.' });
+        }
+        const vot = votRes.rows[0];
+        const rondaActual = parseInt(vot.ronda_numero, 10) || 1;
+        if (rondaActual >= 2) {
+            return res.status(400).json({
+                error: 'Esta votación ya tuvo su segunda ronda de desempate. Por reglamento, si vuelve a empatar se archiva.',
+            });
+        }
+
+        const duracionVal = Math.max(15, parseInt(vot.duracion_seg, 10) || 120);
+        await pool.query('DELETE FROM votos WHERE id_votacion = $1', [idVot]);
+        await pool.query('DELETE FROM votacion_registros WHERE id_votacion = $1', [idVot]);
+
+        const updated = await pool.query(
+            `UPDATE votaciones
+             SET estado = 'Abierta',
+                 ronda_numero = 2,
+                 resultado_final = NULL,
+                 mensaje_veredicto = NULL,
+                 fecha_cierre = NOW() + make_interval(secs => $1::INTEGER)
+             WHERE id_votacion = $2
+             RETURNING *, GREATEST(0, EXTRACT(EPOCH FROM (fecha_cierre - NOW())))::INTEGER AS segundos_restantes`,
+            [duracionVal, idVot]
+        );
+
+        emitirActualizacionGlobal('votaciones', { id_votacion: idVot });
+        res.json({ ok: true, votacion: updated.rows[0] });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.put('/api/votaciones/:id_votacion/estado', verificarAdmin, async (req, res) => {
     const { estado } = req.body;
     const idVot = parseInt(req.params.id_votacion, 10);
     try {
         await asegurarTablasSistema();
-        let result;
+        let resultRow;
         if (estado === 'Abierta') {
-            result = await pool.query(
+            const result = await pool.query(
                 `UPDATE votaciones 
                  SET estado = 'Abierta',
+                     resultado_final = NULL,
+                     mensaje_veredicto = NULL,
                      fecha_cierre = NOW() + make_interval(secs => COALESCE(duracion_seg, 120)::INTEGER)
                  WHERE id_votacion = $1 RETURNING *`,
                 [idVot]
             );
+            resultRow = result.rows[0];
         } else {
-            result = await pool.query(
-                `UPDATE votaciones SET estado = 'Cerrada', fecha_cierre = NOW() WHERE id_votacion = $1 RETURNING *`,
+            await pool.query(
+                `UPDATE votaciones SET estado = 'Cerrada', fecha_cierre = NOW() WHERE id_votacion = $1`,
                 [idVot]
             );
+            resultRow = await evaluarYGuardarVeredictoVotacion(idVot);
         }
         emitirActualizacionGlobal('votaciones', { id_votacion: idVot });
-        res.json(result.rows[0]);
+        res.json(resultRow);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -750,6 +875,22 @@ app.get('/api/votaciones/:id_votacion/votos', async (req, res) => {
             WHERE v.id_votacion = $1
         `, [idVotacion]);
 
+        let votacionActual = votRes.rows[0] || null;
+        if (votacionActual && votacionActual.estado === 'Cerrada' && !votacionActual.resultado_final) {
+            await evaluarYGuardarVeredictoVotacion(idVotacion);
+            const recarga = await pool.query(`
+                SELECT v.*,
+                       GREATEST(0, EXTRACT(EPOCH FROM (v.fecha_cierre - NOW())))::INTEGER AS segundos_restantes,
+                       p.codigo_radicado AS proyecto_codigo,
+                       p.titulo AS proyecto_titulo,
+                       p.tipo_documento AS proyecto_tipo
+                FROM votaciones v
+                LEFT JOIN proyectos p ON v.id_proyecto = p.id_proyecto
+                WHERE v.id_votacion = $1
+            `, [idVotacion]);
+            votacionActual = recarga.rows[0] || null;
+        }
+
         const votosRes = await pool.query(`
             SELECT v.id_voto, v.id_votacion, v.id_integrante, v.opcion, v.fecha_voto,
                    i.nombre_completo, i.es_directiva, b.nombre AS bancada,
@@ -763,7 +904,7 @@ app.get('/api/votaciones/:id_votacion/votos', async (req, res) => {
         `, [idVotacion]);
 
         res.json({
-            votacion: votRes.rows[0] || null,
+            votacion: votacionActual,
             votos: votosRes.rows
         });
     } catch (err) {
