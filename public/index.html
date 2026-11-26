@@ -186,11 +186,11 @@
             <div class="max-w-[1440px] mx-auto flex flex-wrap justify-between items-center text-[11px] tracking-[0.16em] uppercase font-semibold">
                 <div class="flex items-center gap-3 text-[#e5c16c]">
                     <span class="flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span id="indicador-en-vivo-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         REPÚBLICA DE COLOMBIA • DEPARTAMENTO DEL TOLIMA
                     </span>
                     <span class="hidden md:inline text-slate-600">|</span>
-                    <span class="hidden md:inline text-slate-300">SECRETARÍA GENERAL Y MESA DIRECTIVA</span>
+                    <span id="estado-conexion-vivo" class="hidden md:inline text-emerald-400 font-bold">EN VIVO SINCRONIZADO</span>
                 </div>
                 <div class="flex items-center gap-4 text-slate-300 font-mono-digital text-xs">
                     <span id="fecha-protocolo-hoy" class="hidden sm:inline text-slate-400 uppercase font-sans text-[10px] tracking-widest"></span>
@@ -579,7 +579,6 @@
         <!-- ===================================================================== -->
         <section id="tab-votacion" class="tab-content hidden">
             
-            <!-- Encabezado y Gestión de Urnas -->
             <div class="panel-institucional rounded-2xl p-6 mb-6 border-t-4 border-t-[#c9a24b]">
                 <div class="flex flex-wrap justify-between items-center gap-4">
                     <div>
@@ -604,7 +603,6 @@
                     </div>
                 </div>
 
-                <!-- Formulario Colapsable para Crear Votación con Tiempo Límite -->
                 <div id="panel-form-votacion" class="hidden mt-5 pt-5 border-t border-white/10">
                     <div class="grid md:grid-cols-12 gap-4 items-end">
                         <div class="md:col-span-4">
@@ -670,7 +668,6 @@
                         </span>
                     </div>
 
-                    <!-- Vista 1: Formulario de Inicio de Sesión -->
                     <div id="cabina-login-form" class="space-y-4">
                         <div class="bg-[#060a14]/85 p-3.5 rounded-xl border border-[#c9a24b]/25 text-xs text-slate-300">
                             <i class="fa-solid fa-shield-halved text-[#e5c16c] mr-1.5"></i>
@@ -697,7 +694,6 @@
                         </button>
                     </div>
 
-                    <!-- Vista 2: Panel del Concejal Autenticado -->
                     <div id="cabina-concejal-autenticado" class="hidden space-y-5">
                         <div class="bg-[#060a14] p-4 rounded-2xl border border-[#c9a24b]/45 flex justify-between items-start gap-3">
                             <div>
@@ -745,7 +741,6 @@
                             <p id="vot-visor-desc" class="text-xs text-slate-400 mt-1">--</p>
                         </div>
 
-                        <!-- Cronómetro Reglamentario de Votación -->
                         <div class="bg-[#060a14] border border-[#c9a24b]/45 px-4 py-2.5 rounded-2xl text-center shrink-0">
                             <span class="block text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Tiempo de Urna</span>
                             <span id="vot-cronometro-display" class="font-mono-digital text-2xl md:text-3xl font-extrabold text-[#e5c16c]">--:--</span>
@@ -754,7 +749,6 @@
 
                     <div id="vot-controles-mesa" class="flex items-center justify-end gap-2 flex-wrap mb-5"></div>
 
-                    <!-- Marcador de Resultados -->
                     <div class="grid grid-cols-3 gap-3 mb-6">
                         <div class="bg-[#060a14]/90 p-4 rounded-2xl border border-emerald-500/35 text-center">
                             <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-400 block">Votos SÍ</span>
@@ -775,15 +769,14 @@
                         </div>
                     </div>
 
-                    <!-- Registro Nominal de Votos -->
                     <div>
                         <div class="flex justify-between items-center mb-3">
                             <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300">
                                 Registro Nominal de Votación (<span id="total-votos-emitidos">0</span> votos)
                             </h4>
-                            <button onclick="cargarDetalleVotacion()" class="text-xs font-bold text-[#e5c16c] hover:underline">
-                                <i class="fa-solid fa-rotate mr-1"></i> Actualizar
-                            </button>
+                            <span class="text-[11px] font-bold text-emerald-400 flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Actualización en vivo
+                            </span>
                         </div>
                         <div id="lista-votos-nominales" class="space-y-2 max-h-[340px] overflow-y-auto pr-1"></div>
                     </div>
@@ -1029,9 +1022,12 @@
         let votacionesGlobal = [];
         let votacionSeleccionadaId = null;
         let concejalAutenticado = null;
-        let intervaloVotacion = null;
+        let intervaloSyncGlobal = null;
         let intervaloCuentaRegresivaUrna = null;
         let segundosRestantesUrna = 0;
+        let tabActivaActual = 'asistencia';
+        let ultimoHashProyectos = '';
+        let fuenteEventosSSE = null;
 
         let filtroComisionActual = 'TODOS';
         let proyectoSeleccionadoId = null;
@@ -1043,6 +1039,87 @@
         let intervencionActivaId = null;
         let audioCtx = null;
         const CIRCUNFERENCIA_ANILLO = 2 * Math.PI * 114;
+
+        // =====================================================================
+        // SINCRONIZACIÓN EN TIEMPO REAL PARA TODOS LOS CONECTADOS (SIN F5)
+        // =====================================================================
+        function actualizarIndicadorConexion(conectado) {
+            const dot = document.getElementById('indicador-en-vivo-dot');
+            const texto = document.getElementById('estado-conexion-vivo');
+            if (!dot || !texto) return;
+
+            if (conectado) {
+                dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+                texto.className = 'hidden md:inline text-emerald-400 font-bold';
+                texto.innerText = 'EN VIVO SINCRONIZADO';
+            } else {
+                dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-ping';
+                texto.className = 'hidden md:inline text-amber-300 font-bold';
+                texto.innerText = 'RECONECTANDO...';
+            }
+        }
+
+        async function sincronizarTodoSilencioso(tipoEvento = 'todos') {
+            if (document.hidden) return;
+            try {
+                if (tipoEvento === 'sesiones' || tipoEvento === 'todos') {
+                    await cargarSesiones(true);
+                }
+                if (tipoEvento === 'integrantes' || tipoEvento === 'todos') {
+                    await cargarIntegrantes();
+                }
+                if (sesionActual && (tipoEvento === 'asistencias' || tipoEvento === 'integrantes' || tipoEvento === 'todos')) {
+                    await cargarAsistencias();
+                }
+                if (sesionActual && (tipoEvento === 'intervenciones' || tipoEvento === 'todos')) {
+                    await cargarIntervenciones();
+                }
+                if (tipoEvento === 'proyectos' || tipoEvento === 'todos') {
+                    await cargarProyectos(true);
+                }
+                if (tipoEvento === 'votaciones' || tipoEvento === 'votos' || tipoEvento === 'todos') {
+                    await cargarVotaciones();
+                }
+            } catch (e) {}
+        }
+
+        function iniciarCanalTiempoReal() {
+            if (fuenteEventosSSE) {
+                try { fuenteEventosSSE.close(); } catch (e) {}
+            }
+
+            try {
+                fuenteEventosSSE = new EventSource('/api/eventos');
+                fuenteEventosSSE.onopen = () => {
+                    actualizarIndicadorConexion(true);
+                };
+                fuenteEventosSSE.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        if (data && data.tipo && data.tipo !== 'conectado') {
+                            sincronizarTodoSilencioso(data.tipo);
+                        }
+                    } catch (e) {}
+                };
+                fuenteEventosSSE.onerror = () => {
+                    actualizarIndicadorConexion(false);
+                };
+            } catch (e) {
+                actualizarIndicadorConexion(false);
+            }
+
+            // Respaldo automático cada 3 segundos para cualquier cambio de red
+            if (intervaloSyncGlobal) clearInterval(intervaloSyncGlobal);
+            intervaloSyncGlobal = setInterval(() => {
+                sincronizarTodoSilencioso('todos');
+            }, 3000);
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                sincronizarTodoSilencioso('todos');
+            }
+        });
 
         // =====================================================================
         // GESTIÓN DE MARCA DE AGUA PURA Y CAJÓN LATERAL OCULTO
@@ -1254,13 +1331,7 @@
             await cargarSesiones();
             await cargarVotaciones();
             actualizarDisplayCrono();
-
-            intervaloVotacion = setInterval(() => {
-                const tabVot = document.getElementById('tab-votacion');
-                if (tabVot && !tabVot.classList.contains('hidden') && votacionSeleccionadaId) {
-                    cargarDetalleVotacion();
-                }
-            }, 3000);
+            iniciarCanalTiempoReal();
 
             intervaloCuentaRegresivaUrna = setInterval(() => {
                 const displayUrna = document.getElementById('vot-cronometro-display');
@@ -1284,6 +1355,7 @@
         };
 
         function mostrarTab(tabId) {
+            tabActivaActual = tabId;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1363,11 +1435,13 @@
                 filtrarSelectOradores();
 
                 const selectAutor = document.getElementById('proy-autor');
+                const autorPrevio = selectAutor.value;
                 selectAutor.innerHTML = '<option value="" class="bg-slate-900">-- Mesa Directiva / Bancada --</option>';
 
                 integrantesGlobal.forEach(i => {
                     selectAutor.innerHTML += `<option value="${i.id_integrante}" class="bg-slate-900">H.C. ${i.nombre_completo} (${i.bancada})</option>`;
                 });
+                if (autorPrevio) selectAutor.value = autorPrevio;
 
                 renderizarGestionIntegrantes();
                 renderizarTableroComisiones();
@@ -1634,7 +1708,7 @@
         }
 
         // =====================================================================
-        // 2. SESIONES (CON ELIMINACIÓN)
+        // 2. SESIONES (CON ELIMINACIÓN Y SINCRONIZACIÓN SILENCIOSA)
         // =====================================================================
         function abrirModalSesion() {
             const modal = document.getElementById('modal-sesion');
@@ -1649,7 +1723,7 @@
             modal.classList.remove('flex');
         }
 
-        async function cargarSesiones() {
+        async function cargarSesiones(silencioso = false) {
             const select = document.getElementById('select-sesion');
             const alerta = document.getElementById('alerta-sin-sesion');
             const btnEliminar = document.getElementById('btn-eliminar-sesion');
@@ -1657,6 +1731,8 @@
                 const res = await fetch('/api/sesiones');
                 if (!res.ok) throw new Error('Error al consultar sesiones en PostgreSQL');
                 const sesiones = await res.json();
+                const sesionPrevia = sesionActual;
+
                 select.innerHTML = '';
 
                 if (sesiones.length === 0) {
@@ -1676,12 +1752,21 @@
                     select.innerHTML += `<option value="${s.id_sesion}" class="bg-slate-900">${s.titulo} (${s.tipo_sesion})</option>`;
                 });
 
-                sesionActual = sesiones[0].id_sesion;
-                await cambiarSesion();
+                if (sesionPrevia && sesiones.some(s => String(s.id_sesion) === String(sesionPrevia))) {
+                    sesionActual = sesionPrevia;
+                    select.value = sesionActual;
+                    if (!silencioso) await cambiarSesion();
+                } else {
+                    sesionActual = sesiones[0].id_sesion;
+                    select.value = sesionActual;
+                    await cambiarSesion();
+                }
             } catch (err) {
-                select.innerHTML = '<option value="" class="bg-slate-900">-- Error de conexión BD --</option>';
-                alerta.classList.remove('hidden');
-                if (btnEliminar) btnEliminar.classList.add('hidden');
+                if (!silencioso) {
+                    select.innerHTML = '<option value="" class="bg-slate-900">-- Error de conexión BD --</option>';
+                    alerta.classList.remove('hidden');
+                    if (btnEliminar) btnEliminar.classList.add('hidden');
+                }
             }
         }
 
@@ -1704,6 +1789,7 @@
                 }
                 cerrarModalSesion();
                 document.getElementById('nueva-sesion-titulo').value = '';
+                sesionActual = data.id_sesion;
                 notificar('✅ Sesión del Concejo instalada');
                 await cargarSesiones();
             } catch (err) {
@@ -1726,6 +1812,7 @@
                 if (!res.ok) {
                     return alert('Error al eliminar la sesión: ' + (data.error || 'Desconocido'));
                 }
+                sesionActual = null;
                 notificar('🗑️ Sesión eliminada');
                 await cargarSesiones();
             } catch (err) {
@@ -2550,7 +2637,6 @@
                     return alert(data.error || 'No se pudo registrar el voto.');
                 }
                 const nombreVotante = concejalAutenticado.nombre_completo;
-                // Cerrar sesión de curul automáticamente tras votar para impedir reingreso
                 cerrarSesionConcejal();
                 notificar(`🗳️ Voto definitivo (${opcion}) registrado para H.C. ${nombreVotante}`);
                 await cargarDetalleVotacion();
@@ -2653,11 +2739,18 @@
             await cargarProyectos();
         }
 
-        async function cargarProyectos() {
+        async function cargarProyectos(silencioso = false) {
             const res = await fetch('/api/proyectos');
-            proyectosGlobal = await res.json();
+            const nuevosProyectos = await res.json();
+            const nuevoHash = JSON.stringify(nuevosProyectos.map(p => ({ id: p.id_proyecto, est: p.estado, tit: p.titulo })));
+
+            proyectosGlobal = nuevosProyectos;
             actualizarSelectProyectosVotacion();
-            renderizarProyectos();
+
+            if (!silencioso || nuevoHash !== ultimoHashProyectos) {
+                ultimoHashProyectos = nuevoHash;
+                renderizarProyectos();
+            }
         }
 
         function filtrarProyectos(comision) {

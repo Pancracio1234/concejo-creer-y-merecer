@@ -27,6 +27,47 @@ const pool = new Pool(
           }
 );
 
+// =========================================================================
+// CANAL EN TIEMPO REAL (SERVER-SENT EVENTS) PARA TODOS LOS CONECTADOS
+// =========================================================================
+const clientesSSE = new Set();
+
+app.get('/api/eventos', (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
+
+    res.write(`data: ${JSON.stringify({ tipo: 'conectado', ts: Date.now() })}\n\n`);
+    clientesSSE.add(res);
+
+    const ping = setInterval(() => {
+        try {
+            res.write(': ping\n\n');
+        } catch (e) {
+            clearInterval(ping);
+            clientesSSE.delete(res);
+        }
+    }, 20000);
+
+    req.on('close', () => {
+        clearInterval(ping);
+        clientesSSE.delete(res);
+    });
+});
+
+function emitirActualizacionGlobal(tipo, extra = {}) {
+    const payload = `data: ${JSON.stringify({ tipo, ts: Date.now(), ...extra })}\n\n`;
+    for (const cliente of clientesSSE) {
+        try {
+            cliente.write(payload);
+        } catch (e) {
+            clientesSSE.delete(cliente);
+        }
+    }
+}
+
 let tablasVotacionListas = false;
 
 async function asegurarTablasVotacion() {
@@ -122,6 +163,7 @@ app.post('/api/integrantes', async (req, res) => {
             );
         }
 
+        emitirActualizacionGlobal('integrantes');
         res.json(nuevo);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -147,6 +189,7 @@ app.put('/api/integrantes/:id_integrante', async (req, res) => {
              WHERE id_integrante = $5 RETURNING *`,
             [nombre_completo ? nombre_completo.trim() : null, comisionVal, bancadaVal, directivaVal, idInt]
         );
+        emitirActualizacionGlobal('integrantes');
         res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -156,6 +199,7 @@ app.put('/api/integrantes/:id_integrante', async (req, res) => {
 app.delete('/api/integrantes/:id_integrante', async (req, res) => {
     try {
         await pool.query('DELETE FROM integrantes WHERE id_integrante = $1', [req.params.id_integrante]);
+        emitirActualizacionGlobal('integrantes');
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -210,6 +254,7 @@ app.post('/api/sesiones', async (req, res) => {
             );
         }
 
+        emitirActualizacionGlobal('sesiones');
         res.json(nuevaSesion);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -223,6 +268,7 @@ app.delete('/api/sesiones/:id_sesion', async (req, res) => {
         await pool.query('DELETE FROM asistencias WHERE id_sesion = $1', [idSesion]);
         await pool.query('DELETE FROM intervenciones WHERE id_sesion = $1', [idSesion]);
         await pool.query('DELETE FROM sesiones WHERE id_sesion = $1', [idSesion]);
+        emitirActualizacionGlobal('sesiones');
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -258,6 +304,7 @@ app.put('/api/asistencias/:id_asistencia', async (req, res) => {
              WHERE id_asistencia = $2 RETURNING *`,
             [estado, req.params.id_asistencia]
         );
+        emitirActualizacionGlobal('asistencias');
         res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -270,6 +317,7 @@ app.put('/api/asistencias/sesion/:id_sesion/todos-presentes', async (req, res) =
             `UPDATE asistencias SET estado = 'Presente', hora_registro = CURRENT_TIME WHERE id_sesion = $1`,
             [req.params.id_sesion]
         );
+        emitirActualizacionGlobal('asistencias');
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -330,6 +378,7 @@ app.post('/api/proyectos', async (req, res) => {
                 archivo_contenido || null
             ]
         );
+        emitirActualizacionGlobal('proyectos');
         res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -343,6 +392,7 @@ app.put('/api/proyectos/:id_proyecto/estado', async (req, res) => {
             `UPDATE proyectos SET estado = $1 WHERE id_proyecto = $2 RETURNING *`,
             [estado, req.params.id_proyecto]
         );
+        emitirActualizacionGlobal('proyectos');
         res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -352,6 +402,7 @@ app.put('/api/proyectos/:id_proyecto/estado', async (req, res) => {
 app.delete('/api/proyectos/:id_proyecto', async (req, res) => {
     try {
         await pool.query('DELETE FROM proyectos WHERE id_proyecto = $1', [req.params.id_proyecto]);
+        emitirActualizacionGlobal('proyectos');
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -392,6 +443,7 @@ app.post('/api/intervenciones', async (req, res) => {
              VALUES ($1, $2, $3, $4, $5) RETURNING *`,
             [id_sesion, id_integrante, tipo_intervencion, parseInt(tiempo_asignado_seg, 10), ordenRes.rows[0].siguiente]
         );
+        emitirActualizacionGlobal('intervenciones');
         res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -405,6 +457,7 @@ app.put('/api/intervenciones/:id_intervencion', async (req, res) => {
             `UPDATE intervenciones SET tiempo_usado_seg = $1, estado = $2 WHERE id_intervencion = $3 RETURNING *`,
             [tiempo_usado_seg, estado, req.params.id_intervencion]
         );
+        emitirActualizacionGlobal('intervenciones');
         res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -414,6 +467,7 @@ app.put('/api/intervenciones/:id_intervencion', async (req, res) => {
 app.delete('/api/intervenciones/:id_intervencion', async (req, res) => {
     try {
         await pool.query('DELETE FROM intervenciones WHERE id_intervencion = $1', [req.params.id_intervencion]);
+        emitirActualizacionGlobal('intervenciones');
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -434,13 +488,17 @@ function limpiarTextoComparacion(txt) {
 
 async function cerrarVotacionesExpiradas() {
     await asegurarTablasVotacion();
-    await pool.query(`
+    const res = await pool.query(`
         UPDATE votaciones
         SET estado = 'Cerrada'
         WHERE estado = 'Abierta'
           AND fecha_cierre IS NOT NULL
           AND fecha_cierre <= NOW()
+        RETURNING id_votacion
     `);
+    if (res.rowCount > 0) {
+        emitirActualizacionGlobal('votaciones');
+    }
 }
 
 app.post('/api/votacion/login', async (req, res) => {
@@ -554,6 +612,7 @@ app.post('/api/votaciones', async (req, res) => {
              RETURNING *, GREATEST(0, EXTRACT(EPOCH FROM (fecha_cierre - NOW())))::INTEGER AS segundos_restantes`,
             [sesionVal, proyectoVal, titulo.trim(), descripcion || '', ambito || 'Plenaria', duracionVal]
         );
+        emitirActualizacionGlobal('votaciones', { id_votacion: result.rows[0].id_votacion });
         res.status(201).json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -580,6 +639,7 @@ app.put('/api/votaciones/:id_votacion/estado', async (req, res) => {
                 [idVot]
             );
         }
+        emitirActualizacionGlobal('votaciones', { id_votacion: idVot });
         res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -593,6 +653,7 @@ app.delete('/api/votaciones/:id_votacion', async (req, res) => {
         await pool.query('DELETE FROM votos WHERE id_votacion = $1', [idVot]);
         await pool.query('DELETE FROM votacion_registros WHERE id_votacion = $1', [idVot]);
         await pool.query('DELETE FROM votaciones WHERE id_votacion = $1', [idVot]);
+        emitirActualizacionGlobal('votaciones');
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -677,6 +738,7 @@ app.post('/api/votaciones/:id_votacion/votar', async (req, res) => {
              RETURNING *`,
             [idVotacion, idInt, opcion]
         );
+        emitirActualizacionGlobal('votos', { id_votacion: idVotacion });
         res.json({ ok: true, voto: result.rows[0] });
     } catch (err) {
         res.status(500).json({ error: err.message });
