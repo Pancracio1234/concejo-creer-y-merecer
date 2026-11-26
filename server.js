@@ -34,8 +34,8 @@ async function asegurarTablasVotacion() {
     await pool.query(`
         CREATE TABLE IF NOT EXISTS votaciones (
             id_votacion SERIAL PRIMARY KEY,
-            id_sesion INTEGER REFERENCES sesiones(id_sesion) ON DELETE CASCADE,
-            id_proyecto INTEGER REFERENCES proyectos(id_proyecto) ON DELETE SET NULL,
+            id_sesion INTEGER,
+            id_proyecto INTEGER,
             titulo VARCHAR(255) NOT NULL,
             descripcion TEXT,
             ambito VARCHAR(50) DEFAULT 'Plenaria',
@@ -43,16 +43,15 @@ async function asegurarTablasVotacion() {
             fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     `);
-    // Asegurar columna id_proyecto si la tabla votaciones ya existía de antes
     await pool.query(`
         ALTER TABLE votaciones 
-        ADD COLUMN IF NOT EXISTS id_proyecto INTEGER REFERENCES proyectos(id_proyecto) ON DELETE SET NULL;
+        ADD COLUMN IF NOT EXISTS id_proyecto INTEGER;
     `);
     await pool.query(`
         CREATE TABLE IF NOT EXISTS votos (
             id_voto SERIAL PRIMARY KEY,
-            id_votacion INTEGER REFERENCES votaciones(id_votacion) ON DELETE CASCADE,
-            id_integrante INTEGER REFERENCES integrantes(id_integrante) ON DELETE CASCADE,
+            id_votacion INTEGER NOT NULL,
+            id_integrante INTEGER NOT NULL,
             opcion VARCHAR(20) NOT NULL,
             fecha_voto TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             UNIQUE (id_votacion, id_integrante)
@@ -513,9 +512,11 @@ app.put('/api/votaciones/:id_votacion/estado', async (req, res) => {
 });
 
 app.delete('/api/votaciones/:id_votacion', async (req, res) => {
+    const idVot = parseInt(req.params.id_votacion, 10);
     try {
         await asegurarTablasVotacion();
-        await pool.query('DELETE FROM votaciones WHERE id_votacion = $1', [req.params.id_votacion]);
+        await pool.query('DELETE FROM votos WHERE id_votacion = $1', [idVot]);
+        await pool.query('DELETE FROM votaciones WHERE id_votacion = $1', [idVot]);
         res.json({ ok: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
