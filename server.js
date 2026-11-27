@@ -3,23 +3,49 @@ const { Pool } = require('pg');
 const cors = require('cors');
 const crypto = require('crypto');
 const path = require('path');
+const zlib = require('zlib');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Compresión Gzip nativa para respuestas JSON/HTML (reduce hasta 80% el tamaño de red)
+app.use((req, res, next) => {
+    if (req.path === '/api/eventos') return next();
+    const acceptEncoding = req.headers['accept-encoding'] || '';
+    if (!acceptEncoding.includes('gzip')) return next();
+
+    const oldJson = res.json.bind(res);
+    res.json = (body) => {
+        const jsonStr = JSON.stringify(body);
+        if (Buffer.byteLength(jsonStr) < 1024) {
+            return oldJson(body);
+        }
+        zlib.gzip(jsonStr, (err, compressed) => {
+            if (err) return oldJson(body);
+            res.setHeader('Content-Encoding', 'gzip');
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.send(compressed);
+        });
+    };
+    next();
+});
+
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: '1h' }));
 
 // =====================================================================
-// CONEXIÓN A POSTGRESQL (NEON / RENDER)
+// CONEXIÓN A POSTGRESQL (NEON / RENDER) OPTIMIZADA
 // =====================================================================
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('localhost')
         ? { rejectUnauthorized: false }
-        : false
+        : false,
+    max: 15,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 10000
 });
 
 // Claves institucionales
@@ -31,6 +57,9 @@ const sesionesActivas = new Map();
 
 // Bloqueo instantáneo en memoria para evitar peticiones simultáneas duplicadas
 const solicitudesEnProceso = new Set();
+
+// Caché en memoria para configuración visual (logo Base64)
+let cacheConfigVisual = null;
 
 // Clientes conectados en tiempo real (SSE)
 const clientesSSE = new Set();
@@ -120,6 +149,7 @@ async function inicializarBaseDatos() {
                 motivo_detalle TEXT,
                 tiempo_asignado_seg INT DEFAULT 180,
                 tiempo_usado_seg INT DEFAULT 0,
+                inicio_crono_en TIMESTAMP,
                 estado VARCHAR(50) DEFAULT 'Pendiente',
                 creado_en TIMESTAMP DEFAULT NOW()
             );
@@ -177,14 +207,9 @@ async function inicializarBaseDatos() {
             INSERT INTO configuracion_visual (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
         `);
 
-        // =================================================================
-        // LIMPIEZA PROFUNDA DE DUPLICADOS EN TODAS LAS TABLAS DE POSTGRESQL
-        // =================================================================
         await client.query(`
-            -- 1. Limpiar espacios extras en nombres de integrantes
             UPDATE integrantes SET nombre_completo = TRIM(REGEXP_REPLACE(nombre_completo, '\\s+', ' ', 'g'));
 
-            -- 2. Reasignar asistencias, intervenciones, votos y proyectos al id_integrante más antiguo de cada concejal
             WITH canonicos AS (
                 SELECT MIN(id_integrante) AS id_principal,
                        LOWER(TRIM(nombre_completo)) AS clave_nombre
@@ -202,25 +227,22 @@ async function inicializarBaseDatos() {
             FROM duplicados d
             WHERE p.id_autor = d.id_dup;
 
-            -- 3. Eliminar integrantes duplicados (por cascada limpia asistencias, intervenciones y votos repetidos)
             DELETE FROM integrantes a
             USING integrantes b
             WHERE a.id_integrante > b.id_integrante
               AND LOWER(TRIM(a.nombre_completo)) = LOWER(TRIM(b.nombre_completo));
 
-            -- 4. Crear índice único por nombre normalizado de integrante para evitar futuras duplicaciones
             CREATE UNIQUE INDEX IF NOT EXISTS idx_unico_nombre_integrante
             ON integrantes (LOWER(TRIM(nombre_completo)));
 
-            -- 5. Eliminar asistencias duplicadas si existieran
             DELETE FROM asistencias a
             USING asistencias b
             WHERE a.id_asistencia > b.id_asistencia
               AND a.id_sesion = b.id_sesion
               AND a.id_integrante = b.id_integrante;
 
-            -- 6. Ajustar restricciones de intervenciones y eliminar turnos duplicados
             ALTER TABLE intervenciones ADD COLUMN IF NOT EXISTS motivo_detalle TEXT;
+            ALTER TABLE intervenciones ADD COLUMN IF NOT EXISTS inicio_crono_en TIMESTAMP;
             ALTER TABLE intervenciones ALTER COLUMN tipo_intervencion TYPE VARCHAR(120);
             ALTER TABLE intervenciones DROP CONSTRAINT IF EXISTS intervenciones_estado_check;
             ALTER TABLE intervenciones ADD CONSTRAINT intervenciones_estado_check
@@ -239,14 +261,12 @@ async function inicializarBaseDatos() {
             ON intervenciones (id_sesion, id_integrante)
             WHERE estado IN ('Pendiente', 'En Espera', 'En Curso');
 
-            -- 7. Eliminar proyectos duplicados por código y título
             DELETE FROM proyectos a
             USING proyectos b
             WHERE a.id_proyecto > b.id_proyecto
               AND LOWER(TRIM(a.codigo_radicado)) = LOWER(TRIM(b.codigo_radicado))
               AND LOWER(TRIM(a.titulo)) = LOWER(TRIM(b.titulo));
 
-            -- 8. Eliminar votos duplicados
             DELETE FROM votos a
             USING votos b
             WHERE a.id_voto > b.id_voto
@@ -264,9 +284,13 @@ async function inicializarBaseDatos() {
             ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS mensaje_veredicto TEXT;
             ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS duracion_seg INT DEFAULT 120;
             ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS fecha_apertura TIMESTAMP DEFAULT NOW();
+
+            CREATE INDEX IF NOT EXISTS idx_asistencias_sesion ON asistencias(id_sesion);
+            CREATE INDEX IF NOT EXISTS idx_intervenciones_sesion ON intervenciones(id_sesion);
+            CREATE INDEX IF NOT EXISTS idx_votos_votacion ON votos(id_votacion);
         `);
 
-        console.log('✅ Base de datos limpia: todos los concejales, asistencias, turnos y listas quedaron únicos.');
+        console.log('✅ Base de datos inicializada, indexada y sin duplicados.');
     } catch (err) {
         console.error('❌ Error al inicializar PostgreSQL:', err);
     } finally {
@@ -402,6 +426,7 @@ app.get('/api/eventos', (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
     res.flushHeaders();
 
     res.write(`data: ${JSON.stringify({ tipo: 'conectado' })}\n\n`);
@@ -424,8 +449,12 @@ app.get('/api/eventos', (req, res) => {
 
 app.get('/api/configuracion-visual', async (req, res) => {
     try {
+        if (cacheConfigVisual) {
+            return res.json(cacheConfigVisual);
+        }
         const result = await pool.query('SELECT * FROM configuracion_visual WHERE id = 1');
-        res.json(result.rows[0] || {});
+        cacheConfigVisual = result.rows[0] || {};
+        res.json(cacheConfigVisual);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -461,15 +490,16 @@ app.put('/api/configuracion-visual', verificarAdmin, async (req, res) => {
             RETURNING *
         `, [nuevoLogo, nuevaVis, nuevoEstilo, nuevaOpac, nuevoTam]);
 
+        cacheConfigVisual = updated.rows[0];
         emitirEventoTiempoReal('config_visual');
-        res.json(updated.rows[0]);
+        res.json(cacheConfigVisual);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
 // =====================================================================
-// 3. INTEGRANTES / CURULES (DEDUPLICADO EN TODAS LAS ZONAS)
+// 3. INTEGRANTES / CURULES
 // =====================================================================
 app.get('/api/integrantes', async (req, res) => {
     try {
@@ -577,7 +607,7 @@ app.delete('/api/integrantes/:id', verificarAdmin, async (req, res) => {
 });
 
 // =====================================================================
-// 4. SESIONES Y LLAMADO A LISTA / QUÓRUM (DEDUPLICADO)
+// 4. SESIONES Y LLAMADO A LISTA / QUÓRUM
 // =====================================================================
 app.get('/api/sesiones', async (req, res) => {
     try {
@@ -603,16 +633,23 @@ app.post('/api/sesiones', verificarAdmin, async (req, res) => {
 
         const nuevaSesion = sesRes.rows[0];
 
-        const intQuery = comId
-            ? await client.query('SELECT DISTINCT id_integrante FROM integrantes WHERE activo = TRUE AND id_comision = $1', [comId])
-            : await client.query('SELECT DISTINCT id_integrante FROM integrantes WHERE activo = TRUE');
-
-        for (const row of intQuery.rows) {
+        // Inserción única en lote (sin N+1 queries)
+        if (comId) {
             await client.query(`
                 INSERT INTO asistencias (id_sesion, id_integrante, estado)
-                VALUES ($1, $2, 'Ausente')
+                SELECT $1, id_integrante, 'Ausente'
+                FROM integrantes
+                WHERE activo = TRUE AND id_comision = $2
                 ON CONFLICT (id_sesion, id_integrante) DO NOTHING
-            `, [nuevaSesion.id_sesion, row.id_integrante]);
+            `, [nuevaSesion.id_sesion, comId]);
+        } else {
+            await client.query(`
+                INSERT INTO asistencias (id_sesion, id_integrante, estado)
+                SELECT $1, id_integrante, 'Ausente'
+                FROM integrantes
+                WHERE activo = TRUE
+                ON CONFLICT (id_sesion, id_integrante) DO NOTHING
+            `, [nuevaSesion.id_sesion]);
         }
 
         await client.query('COMMIT');
@@ -691,7 +728,7 @@ app.put('/api/asistencias/sesion/:id_sesion/todos-presentes', verificarAdmin, as
 });
 
 // =====================================================================
-// 5. USO DE LA PALABRA (ORDEN DE LLEGADA SIN DUPLICADOS)
+// 5. USO DE LA PALABRA (ORDEN DE LLEGADA + SINCRONIZACIÓN DE CRONÓMETRO)
 // =====================================================================
 app.get('/api/intervenciones/:id_sesion', async (req, res) => {
     try {
@@ -699,7 +736,7 @@ app.get('/api/intervenciones/:id_sesion', async (req, res) => {
             SELECT DISTINCT ON (iv.id_intervencion)
                    iv.id_intervencion, iv.id_sesion, iv.id_integrante, iv.orden_turno,
                    iv.tipo_intervencion, iv.motivo_detalle, iv.tiempo_asignado_seg,
-                   iv.tiempo_usado_seg, iv.estado,
+                   iv.tiempo_usado_seg, iv.inicio_crono_en, iv.estado,
                    i.nombre_completo,
                    COALESCE(b.nombre, 'Independientes') AS bancada,
                    COALESCE(c.nombre, 'Sin Comisión') AS comision
@@ -711,12 +748,27 @@ app.get('/api/intervenciones/:id_sesion', async (req, res) => {
             ORDER BY iv.id_intervencion ASC
         `, [req.params.id_sesion]);
 
+        const ahora = Date.now();
         const ordenados = result.rows
             .sort((a, b) => a.orden_turno - b.orden_turno || a.id_intervencion - b.id_intervencion)
-            .map((fila, idx) => ({
-                ...fila,
-                orden_turno: idx + 1
-            }));
+            .map((fila, idx) => {
+                let usadoEfectivo = parseInt(fila.tiempo_usado_seg, 10) || 0;
+                const asignado = parseInt(fila.tiempo_asignado_seg, 10) || 180;
+                const corriendo = fila.estado === 'En Curso' && Boolean(fila.inicio_crono_en);
+
+                if (corriendo) {
+                    const deltaSeg = Math.max(0, Math.floor((ahora - new Date(fila.inicio_crono_en).getTime()) / 1000));
+                    usadoEfectivo = Math.min(asignado, usadoEfectivo + deltaSeg);
+                }
+
+                return {
+                    ...fila,
+                    orden_turno: idx + 1,
+                    tiempo_usado_seg: usadoEfectivo,
+                    segundos_restantes: Math.max(0, asignado - usadoEfectivo),
+                    cronometro_corriendo: corriendo
+                };
+            });
 
         res.json(ordenados);
     } catch (err) {
@@ -850,11 +902,21 @@ app.post('/api/intervenciones', verificarAdmin, async (req, res) => {
 
 app.put('/api/intervenciones/:id', verificarAdmin, async (req, res) => {
     try {
-        const { tiempo_usado_seg, estado } = req.body;
-        await pool.query(
-            'UPDATE intervenciones SET tiempo_usado_seg = $1, estado = $2 WHERE id_intervencion = $3',
-            [tiempo_usado_seg || 0, estado || 'En Curso', req.params.id]
-        );
+        const { tiempo_usado_seg, tiempo_asignado_seg, estado, corriendo } = req.body;
+        const inicioCrono = (estado === 'En Curso' && corriendo !== false) ? new Date() : null;
+
+        if (tiempo_asignado_seg !== undefined) {
+            await pool.query(
+                'UPDATE intervenciones SET tiempo_usado_seg = $1, tiempo_asignado_seg = $2, estado = $3, inicio_crono_en = $4 WHERE id_intervencion = $5',
+                [tiempo_usado_seg || 0, parseInt(tiempo_asignado_seg, 10), estado || 'En Curso', inicioCrono, req.params.id]
+            );
+        } else {
+            await pool.query(
+                'UPDATE intervenciones SET tiempo_usado_seg = $1, estado = $2, inicio_crono_en = $3 WHERE id_intervencion = $4',
+                [tiempo_usado_seg || 0, estado || 'En Curso', inicioCrono, req.params.id]
+            );
+        }
+
         emitirEventoTiempoReal('intervenciones');
         res.json({ ok: true });
     } catch (err) {
@@ -873,13 +935,14 @@ app.delete('/api/intervenciones/:id', verificarAdmin, async (req, res) => {
 });
 
 // =====================================================================
-// 6. PROYECTOS Y PROPOSICIONES (PÚBLICOS Y PRIVADOS)
+// 6. PROYECTOS Y PROPOSICIONES (LISTADO LIGERO + DESCARGA BAJO DEMANDA)
 // =====================================================================
 app.get('/api/proyectos', async (req, res) => {
     try {
         const sesion = obtenerUsuarioOpcional(req);
         const puedeVerPrivados = sesion && (sesion.rol === 'admin' || sesion.rol === 'concejal');
 
+        // NO devuelve archivo_contenido aquí para evitar transferir megabytes en cada sincronización
         const query = `
             SELECT DISTINCT ON (p.id_proyecto)
                    p.id_proyecto, p.codigo_radicado, p.titulo, p.descripcion,
@@ -887,7 +950,9 @@ app.get('/api/proyectos', async (req, res) => {
                    p.id_autor, p.id_comision_asignada,
                    COALESCE(c.nombre, 'Plenaria') AS comision,
                    p.tipo_documento, p.estado, p.visible_publico,
-                   p.archivo_nombre, p.archivo_contenido, p.fecha_radicacion
+                   p.archivo_nombre,
+                   (p.archivo_contenido IS NOT NULL AND p.archivo_contenido <> '') AS tiene_archivo,
+                   p.fecha_radicacion
             FROM proyectos p
             LEFT JOIN integrantes i ON p.id_autor = i.id_integrante
             LEFT JOIN comisiones c ON p.id_comision_asignada = c.id_comision
@@ -896,6 +961,35 @@ app.get('/api/proyectos', async (req, res) => {
         `;
         const result = await pool.query(query);
         res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Endpoint bajo demanda: obtiene el archivo Base64 solo cuando el usuario abre ese documento
+app.get('/api/proyectos/:id/archivo', async (req, res) => {
+    try {
+        const sesion = obtenerUsuarioOpcional(req);
+        const puedeVerPrivados = sesion && (sesion.rol === 'admin' || sesion.rol === 'concejal');
+
+        const result = await pool.query(
+            'SELECT id_proyecto, visible_publico, archivo_nombre, archivo_contenido FROM proyectos WHERE id_proyecto = $1',
+            [req.params.id]
+        );
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Documento no encontrado.' });
+        }
+
+        const doc = result.rows[0];
+        if (!doc.visible_publico && !puedeVerPrivados) {
+            return res.status(403).json({ error: 'Documento privado.' });
+        }
+
+        res.json({
+            id_proyecto: doc.id_proyecto,
+            archivo_nombre: doc.archivo_nombre,
+            archivo_contenido: doc.archivo_contenido
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -929,7 +1023,9 @@ app.post('/api/proyectos/concejal', verificarConcejal, async (req, res) => {
                 archivo_nombre, archivo_contenido
             )
             VALUES ($1, $2, $3, $4, $5, $6, 'Proposición', 'Radicado', $7, $8, $9)
-            RETURNING *
+            RETURNING id_proyecto, codigo_radicado, titulo, descripcion, autor, id_autor,
+                      id_comision_asignada, tipo_documento, estado, visible_publico,
+                      archivo_nombre, fecha_radicacion
         `, [
             codigo_radicado,
             titulo.trim(),
@@ -943,7 +1039,10 @@ app.post('/api/proyectos/concejal', verificarConcejal, async (req, res) => {
         ]);
 
         emitirEventoTiempoReal('proyectos');
-        res.status(201).json({ codigo_radicado, proyecto: inserted.rows[0] });
+        res.status(201).json({
+            codigo_radicado,
+            proyecto: { ...inserted.rows[0], tiene_archivo: Boolean(archivo_contenido) }
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -980,7 +1079,9 @@ app.post('/api/proyectos', verificarAdmin, async (req, res) => {
                 archivo_nombre, archivo_contenido
             )
             VALUES ($1, $2, $3, $4, $5, $6, $7, 'Radicado', $8, $9, $10)
-            RETURNING *
+            RETURNING id_proyecto, codigo_radicado, titulo, descripcion, autor, id_autor,
+                      id_comision_asignada, tipo_documento, estado, visible_publico,
+                      archivo_nombre, fecha_radicacion
         `, [
             codigo_radicado.trim(),
             titulo.trim(),
@@ -995,7 +1096,7 @@ app.post('/api/proyectos', verificarAdmin, async (req, res) => {
         ]);
 
         emitirEventoTiempoReal('proyectos');
-        res.status(201).json(inserted.rows[0]);
+        res.status(201).json({ ...inserted.rows[0], tiene_archivo: Boolean(archivo_contenido) });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -1113,10 +1214,7 @@ app.get('/api/votaciones', async (req, res) => {
             ? await pool.query('SELECT * FROM votaciones WHERE id_sesion = $1 OR id_sesion IS NULL ORDER BY id_votacion DESC', [id_sesion])
             : await pool.query('SELECT * FROM votaciones ORDER BY id_votacion DESC');
 
-        const procesadas = [];
-        for (const v of result.rows) {
-            procesadas.push(await evaluarYCerrarSiExpiro(v));
-        }
+        const procesadas = await Promise.all(result.rows.map(v => evaluarYCerrarSiExpiro(v)));
         res.json(procesadas);
     } catch (err) {
         res.status(500).json({ error: err.message });

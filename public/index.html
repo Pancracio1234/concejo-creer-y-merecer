@@ -12,8 +12,8 @@
         :root {
             --azul-abismo: #050b18;
             --azul-hemiciclo: #0c1933;
-            --azul-cristal: rgba(14, 27, 54, 0.88);
-            --azul-curul: rgba(19, 36, 70, 0.92);
+            --azul-cristal: rgba(14, 27, 54, 0.94);
+            --azul-curul: rgba(19, 36, 70, 0.96);
             --oro-palido: #fff3c4;
             --oro-brillante: #f3cf7a;
             --oro-institucional: #cfa349;
@@ -45,15 +45,18 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--azul-abismo);
             background-image:
-                radial-gradient(ellipse 85% 42% at 50% -5%, rgba(243, 207, 122, 0.28) 0%, rgba(207, 163, 73, 0.08) 45%, transparent 75%),
-                radial-gradient(circle at 10% 30%, rgba(37, 99, 235, 0.24) 0%, transparent 48%),
-                radial-gradient(circle at 90% 75%, rgba(29, 78, 216, 0.22) 0%, transparent 52%),
-                repeating-linear-gradient(0deg, rgba(243, 207, 122, 0.025) 0px, rgba(243, 207, 122, 0.025) 1px, transparent 1px, transparent 48px),
-                repeating-linear-gradient(90deg, rgba(243, 207, 122, 0.025) 0px, rgba(243, 207, 122, 0.025) 1px, transparent 1px, transparent 48px),
+                radial-gradient(ellipse 85% 42% at 50% -5%, rgba(243, 207, 122, 0.24) 0%, rgba(207, 163, 73, 0.06) 45%, transparent 75%),
+                radial-gradient(circle at 10% 30%, rgba(37, 99, 235, 0.20) 0%, transparent 48%),
+                radial-gradient(circle at 90% 75%, rgba(29, 78, 216, 0.18) 0%, transparent 52%),
                 linear-gradient(180deg, #071126 0%, #0d1d3d 48%, #050b18 100%);
-            background-attachment: fixed;
             color: #f8fafc;
             overflow-x: hidden;
+        }
+
+        @media (min-width: 1024px) {
+            body {
+                background-attachment: fixed;
+            }
         }
 
         .font-solemne {
@@ -72,18 +75,15 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 3px 14px rgba(243, 207, 122, 0.35));
         }
 
         .cinta-republica {
             background: linear-gradient(90deg, #FCD116 0%, #FCD116 50%, #003893 50%, #003893 75%, #CE1126 75%, #CE1126 100%);
             height: 5px;
-            box-shadow: 0 3px 16px rgba(252, 209, 22, 0.4);
         }
         .filete-oro {
             height: 2px;
             background: linear-gradient(90deg, transparent 0%, rgba(207, 163, 73, 0.35) 15%, #f3cf7a 50%, rgba(207, 163, 73, 0.35) 85%, transparent 100%);
-            box-shadow: 0 0 12px rgba(243, 207, 122, 0.45);
         }
         .emblema-ring {
             position: relative;
@@ -91,17 +91,11 @@
             box-shadow:
                 0 0 0 4px rgba(12, 25, 51, 0.95),
                 0 0 0 6px rgba(243, 207, 122, 0.45),
-                0 14px 35px rgba(0, 0, 0, 0.9),
-                0 0 38px rgba(243, 207, 122, 0.45);
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+                0 10px 25px rgba(0, 0, 0, 0.85);
+            transition: transform 0.25s ease;
         }
         .emblema-ring:hover {
-            transform: scale(1.04);
-            box-shadow:
-                0 0 0 4px rgba(12, 25, 51, 0.95),
-                0 0 0 7px rgba(255, 243, 196, 0.7),
-                0 18px 40px rgba(0, 0, 0, 0.95),
-                0 0 50px rgba(243, 207, 122, 0.65);
+            transform: scale(1.03);
         }
 
         #marca-agua-fondo {
@@ -113,6 +107,7 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            contain: strict;
         }
         #img-marca-agua {
             width: 560px;
@@ -121,25 +116,20 @@
             max-height: 82vh;
             object-fit: contain;
             opacity: 0.13;
-            mix-blend-mode: screen;
             filter: grayscale(100%) contrast(135%) brightness(1.1) sepia(55%) hue-rotate(8deg);
             -webkit-mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 46%, rgba(0, 0, 0, 0) 74%);
             mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 46%, rgba(0, 0, 0, 0) 74%);
-            transition: opacity 0.25s ease, width 0.25s ease, height 0.25s ease, filter 0.25s ease;
             user-select: none;
+            transform: translateZ(0);
         }
 
         .panel-institucional {
             position: relative;
-            background: linear-gradient(160deg, rgba(18, 34, 66, 0.92) 0%, rgba(10, 20, 42, 0.95) 55%, rgba(6, 13, 28, 0.98) 100%);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: linear-gradient(160deg, rgba(18, 34, 66, 0.96) 0%, rgba(10, 20, 42, 0.98) 55%, rgba(6, 13, 28, 0.99) 100%);
             border: 1.5px solid var(--borde-dorado);
             box-shadow:
-                0 25px 60px -15px rgba(0, 0, 0, 0.88),
-                0 0 28px rgba(14, 42, 95, 0.45),
-                inset 0 1px 0 rgba(255, 248, 220, 0.22),
-                inset 0 0 35px rgba(243, 207, 122, 0.05);
+                0 18px 40px -15px rgba(0, 0, 0, 0.85),
+                inset 0 1px 0 rgba(255, 248, 220, 0.18);
         }
         .panel-institucional::before {
             content: "";
@@ -154,36 +144,25 @@
 
         .curul-institucional {
             position: relative;
-            background: linear-gradient(145deg, rgba(24, 44, 82, 0.9) 0%, rgba(12, 23, 46, 0.96) 100%);
+            background: linear-gradient(145deg, rgba(24, 44, 82, 0.94) 0%, rgba(12, 23, 46, 0.98) 100%);
             border: 1px solid rgba(243, 207, 122, 0.24);
             border-left: 3px solid #cfa349;
-            box-shadow: 0 8px 22px -6px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-            transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.18s ease, border-color 0.18s ease;
         }
         .curul-institucional:hover {
             border-color: #f3cf7a;
-            background: linear-gradient(145deg, rgba(31, 56, 104, 0.96) 0%, rgba(16, 31, 61, 0.98) 100%);
-            box-shadow: 0 14px 30px -8px rgba(0, 0, 0, 0.9), 0 0 22px rgba(243, 207, 122, 0.22);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
         .kpi-card {
             position: relative;
             overflow: hidden;
-            background: linear-gradient(180deg, rgba(15, 29, 58, 0.95) 0%, rgba(7, 14, 30, 0.98) 100%);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 12px 28px -10px rgba(0, 0, 0, 0.85);
-            transition: transform 0.22s ease, box-shadow 0.22s ease;
+            background: linear-gradient(180deg, rgba(15, 29, 58, 0.97) 0%, rgba(7, 14, 30, 0.99) 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), 0 8px 20px -8px rgba(0, 0, 0, 0.8);
+            transition: transform 0.18s ease;
         }
         .kpi-card:hover {
-            transform: translateY(-3px);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 16px 34px -8px rgba(0, 0, 0, 0.95);
-        }
-        .kpi-card::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.08), transparent 60%);
-            pointer-events: none;
+            transform: translateY(-2px);
         }
 
         .btn-oro {
@@ -191,17 +170,12 @@
             color: #050a14;
             font-weight: 800;
             border: 1px solid #fff3c4;
-            box-shadow:
-                0 6px 22px -3px rgba(220, 168, 66, 0.55),
-                inset 0 1px 0 rgba(255, 255, 255, 0.75);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 14px -3px rgba(220, 168, 66, 0.5);
+            transition: transform 0.15s ease, filter 0.15s ease;
         }
         .btn-oro:hover {
-            background: linear-gradient(180deg, #fff0ba 0%, #ecc05c 48%, #c7922e 100%);
-            box-shadow:
-                0 10px 28px -3px rgba(243, 207, 122, 0.78),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9);
-            transform: translateY(-1.5px);
+            filter: brightness(1.07);
+            transform: translateY(-1px);
         }
         .btn-oro:active {
             transform: translateY(0) scale(0.98);
@@ -212,37 +186,31 @@
         textarea {
             background-color: #071022 !important;
             border-color: rgba(243, 207, 122, 0.28) !important;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
         }
         input:not([type="checkbox"]):not([type="range"]):not([type="file"]):focus,
         select:focus,
         textarea:focus {
             border-color: #f3cf7a !important;
             background-color: #0b1730 !important;
-            box-shadow: 0 0 0 3px rgba(243, 207, 122, 0.25);
+            box-shadow: 0 0 0 2px rgba(243, 207, 122, 0.25);
             outline: none;
         }
 
         .tab-btn {
             position: relative;
-            transition: all 0.22s ease;
+            transition: background-color 0.15s ease, color 0.15s ease;
         }
         .tab-btn:hover {
             background: rgba(243, 207, 122, 0.1);
             color: #fff3c4;
         }
         .tab-content:not(.hidden) {
-            animation: fadeInRecinto 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeInRecinto 0.2s ease-out;
         }
         @keyframes fadeInRecinto {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         #drawer-marca-agua {
@@ -250,21 +218,21 @@
             right: 0;
             top: 50%;
             transform: translateY(-50%) translateX(100%);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 60;
         }
         #drawer-marca-agua.abierto {
             transform: translateY(-50%) translateX(0);
         }
         .anillo-progreso {
-            transition: stroke-dashoffset 0.45s ease, stroke 0.35s ease;
+            transition: stroke-dashoffset 0.35s linear, stroke 0.25s ease;
             transform: rotate(-90deg);
             transform-origin: 50% 50%;
         }
-        .led-glow-green { box-shadow: 0 0 14px rgba(16, 185, 129, 0.85); }
-        .led-glow-amber { box-shadow: 0 0 14px rgba(245, 158, 11, 0.85); }
-        .led-glow-red { box-shadow: 0 0 14px rgba(244, 63, 94, 0.85); }
-        .led-glow-purple { box-shadow: 0 0 14px rgba(168, 85, 247, 0.85); }
+        .led-glow-green { box-shadow: 0 0 10px rgba(16, 185, 129, 0.8); }
+        .led-glow-amber { box-shadow: 0 0 10px rgba(245, 158, 11, 0.8); }
+        .led-glow-red { box-shadow: 0 0 10px rgba(244, 63, 94, 0.8); }
+        .led-glow-purple { box-shadow: 0 0 10px rgba(168, 85, 247, 0.8); }
 
         .doc-render p { margin-bottom: 0.9rem; }
         .doc-render h1, .doc-render h2, .doc-render h3 { font-weight: 800; margin-top: 1.2rem; margin-bottom: 0.5rem; color: #0f172a; }
@@ -334,10 +302,10 @@
     <!-- ===================================================================== -->
     <!-- PORTAL DE ACCESO ÚNICO AL INGRESAR A LA APLICACIÓN                    -->
     <!-- ===================================================================== -->
-    <div id="portal-login-unico" class="fixed inset-0 z-50 bg-[#050b18]/95 backdrop-blur-xl flex items-center justify-center p-4 overflow-y-auto">
-        <div class="panel-institucional rounded-3xl max-w-lg w-full p-6 md:p-8 border-2 border-[#f3cf7a] shadow-[0_30px_90px_rgba(0,0,0,0.95)] my-auto">
+    <div id="portal-login-unico" class="fixed inset-0 z-50 bg-[#050b18]/95 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="panel-institucional rounded-3xl max-w-lg w-full p-6 md:p-8 border-2 border-[#f3cf7a] shadow-2xl my-auto">
             <div class="text-center mb-6">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#071126] border-2 border-[#f3cf7a] shadow-[0_0_25px_rgba(243,207,122,0.4)] mb-3">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#071126] border-2 border-[#f3cf7a] mb-3">
                     <i class="fa-solid fa-landmark text-[#f3cf7a] text-2xl"></i>
                 </div>
                 <span class="block text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#f3cf7a]">
@@ -381,7 +349,7 @@
                     <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Contraseña</label>
                     <input type="password" id="login-unico-pass-concejal" placeholder="••••••••" onkeydown="if(event.key==='Enter') ejecutarLoginUnico()" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm">
                 </div>
-                <button type="button" onclick="ejecutarLoginUnico()" class="w-full btn-oro font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider">
+                <button type="button" id="btn-submit-login-concejal" onclick="ejecutarLoginUnico()" class="w-full btn-oro font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider">
                     <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Ingresar como Honorable Concejal
                 </button>
             </div>
@@ -409,7 +377,7 @@
                     <label class="block text-xs font-bold uppercase text-[#fff3c4] mb-1">Clave Institucional Administrativa</label>
                     <input type="password" id="login-unico-admin-pass" placeholder="Ingrese la clave administrativa" onkeydown="if(event.key==='Enter') ejecutarLoginUnico()" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm">
                 </div>
-                <button type="button" onclick="ejecutarLoginUnico()" class="w-full btn-oro font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider">
+                <button type="button" id="btn-submit-login-admin" onclick="ejecutarLoginUnico()" class="w-full btn-oro font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider">
                     <i class="fa-solid fa-key mr-1.5"></i> Ingresar como Administrador
                 </button>
             </div>
@@ -424,12 +392,12 @@
 
     <!-- PANEL LATERAL DE PERSONALIZACIÓN DE LOGO/MARCA DE AGUA (SOLO ADMINISTRADORES) -->
     <div id="drawer-marca-agua" class="solo-admin">
-        <button type="button" onclick="toggleDrawerMarcaAgua()" title="Configurar marca de agua y logo institucional" class="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 bg-[#0c1933]/95 hover:bg-[#f3cf7a] text-[#f3cf7a] hover:text-slate-950 border border-r-0 border-[#f3cf7a]/60 py-3.5 px-2.5 rounded-l-xl shadow-2xl transition flex flex-col items-center gap-1.5 backdrop-blur-md">
+        <button type="button" onclick="toggleDrawerMarcaAgua()" title="Configurar marca de agua y logo institucional" class="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 bg-[#0c1933] hover:bg-[#f3cf7a] text-[#f3cf7a] hover:text-slate-950 border border-r-0 border-[#f3cf7a]/60 py-3.5 px-2.5 rounded-l-xl shadow-2xl transition flex flex-col items-center gap-1.5">
             <i class="fa-solid fa-stamp text-xs"></i>
             <span class="text-[9px] font-extrabold uppercase tracking-widest [writing-mode:vertical-rl] rotate-180">Fondo</span>
         </button>
 
-        <div class="w-72 bg-[#0c1933]/95 backdrop-blur-xl border-l border-y border-[#f3cf7a]/60 rounded-l-2xl p-5 shadow-2xl">
+        <div class="w-72 bg-[#0c1933] border-l border-y border-[#f3cf7a]/60 rounded-l-2xl p-5 shadow-2xl">
             <div class="flex justify-between items-center pb-3 mb-4 border-b border-white/15">
                 <div>
                     <span class="text-[9px] font-bold uppercase tracking-[0.2em] text-[#f3cf7a] block">Solo Administrador</span>
@@ -480,14 +448,14 @@
     <!-- ===================================================================== -->
     <!-- ENCABEZADO SOLEMNE • CONCEJO MUNICIPAL DE IBAGUÉ                      -->
     <!-- ===================================================================== -->
-    <header class="bg-gradient-to-b from-[#0a162e]/95 via-[#081226]/95 to-[#060d1c]/95 backdrop-blur-xl md:sticky md:top-0 z-40 shadow-[0_14px_45px_rgba(0,0,0,0.9)]">
+    <header class="bg-gradient-to-b from-[#0a162e] via-[#081226] to-[#060d1c] md:sticky md:top-0 z-40 shadow-xl">
         <div class="cinta-republica w-full"></div>
 
-        <div class="bg-[#050b18]/90 border-b border-[#f3cf7a]/20 py-1.5 px-3 md:px-4">
+        <div class="bg-[#050b18] border-b border-[#f3cf7a]/20 py-1.5 px-3 md:px-4">
             <div class="max-w-[1440px] mx-auto flex flex-wrap justify-between items-center text-[10px] md:text-[11px] tracking-[0.14em] md:tracking-[0.16em] uppercase font-semibold gap-2">
                 <div class="flex items-center gap-2 md:gap-3 text-[#f3cf7a]">
                     <span class="flex items-center gap-1.5 md:gap-2">
-                        <span id="indicador-en-vivo-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]"></span>
+                        <span id="indicador-en-vivo-dot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
                         <span class="hidden sm:inline">REPÚBLICA DE COLOMBIA •</span> TOLIMA
                     </span>
                     <span class="hidden md:inline text-slate-600">|</span>
@@ -495,9 +463,8 @@
                 </div>
 
                 <div class="flex items-center gap-2 md:gap-3 ml-auto sm:ml-0">
-                    <!-- Barra de Sesión Activa (Admin o Concejal) -->
                     <div id="barra-sesion-status" class="flex items-center gap-2">
-                        <button type="button" id="btn-abrir-portal-login" onclick="abrirPortalLogin()" class="bg-[#f3cf7a]/15 hover:bg-[#f3cf7a] text-[#f3cf7a] hover:text-slate-950 border border-[#f3cf7a]/60 px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition flex items-center gap-1.5 shadow-[0_0_15px_rgba(243,207,122,0.2)]">
+                        <button type="button" id="btn-abrir-portal-login" onclick="abrirPortalLogin()" class="bg-[#f3cf7a]/15 hover:bg-[#f3cf7a] text-[#f3cf7a] hover:text-slate-950 border border-[#f3cf7a]/60 px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition flex items-center gap-1.5">
                             <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
                         </button>
 
@@ -532,7 +499,7 @@
 
                     <div class="min-w-0">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="bg-gradient-to-r from-[#f3cf7a]/25 to-[#cfa349]/10 text-[#fff3c4] border border-[#f3cf7a]/55 text-[9px] md:text-[10px] font-bold uppercase px-3 py-0.5 rounded-full tracking-[0.16em] shadow-sm">
+                            <span class="bg-gradient-to-r from-[#f3cf7a]/25 to-[#cfa349]/10 text-[#fff3c4] border border-[#f3cf7a]/55 text-[9px] md:text-[10px] font-bold uppercase px-3 py-0.5 rounded-full tracking-[0.16em]">
                                 Fundación Creer y Merecer • Modelo Concejo
                             </span>
                             <span class="hidden sm:inline-block font-editorial italic text-base text-[#f3cf7a]/90">
@@ -549,7 +516,7 @@
                 </div>
 
                 <!-- Control de Sesión Plenaria -->
-                <div class="flex flex-wrap items-center gap-2 bg-gradient-to-r from-[#0e1e3d] to-[#081226] p-2.5 md:p-3 rounded-2xl border-2 border-[#f3cf7a]/45 shadow-[0_12px_30px_rgba(0,0,0,0.75)] w-full lg:w-auto">
+                <div class="flex flex-wrap items-center gap-2 bg-gradient-to-r from-[#0e1e3d] to-[#081226] p-2.5 md:p-3 rounded-2xl border-2 border-[#f3cf7a]/45 shadow-lg w-full lg:w-auto">
                     <div class="flex flex-col px-2 flex-1 min-w-[160px]">
                         <span class="text-[9px] uppercase font-extrabold tracking-[0.22em] text-[#f3cf7a]">Sesión Convocada</span>
                         <select id="select-sesion" onchange="cambiarSesion()" class="!bg-transparent !border-0 text-xs md:text-sm font-bold text-white w-full sm:min-w-[210px] focus:outline-none cursor-pointer mt-0.5">
@@ -570,7 +537,7 @@
     </header>
 
     <!-- Barra de Navegación Parlamentaria -->
-    <nav class="bg-[#071126]/95 backdrop-blur-xl sticky top-0 z-30 md:static border-b border-[#f3cf7a]/25 shadow-2xl">
+    <nav class="bg-[#071126] sticky top-0 z-30 md:static border-b border-[#f3cf7a]/25 shadow-xl">
         <div class="max-w-[1440px] mx-auto px-2 md:px-4 flex space-x-1 md:space-x-2 overflow-x-auto no-scrollbar">
             <button onclick="mostrarTab('asistencia')" class="oculto-concejal tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-[#f3cf7a] text-[#fff3c4] font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="asistencia">
                 <i class="fa-solid fa-landmark text-[#f3cf7a]"></i> Quórum y Bancadas
@@ -593,14 +560,14 @@
         </div>
     </nav>
 
-    <div id="toast" class="fixed bottom-4 left-4 right-4 md:left-auto md:right-5 md:max-w-md bg-[#0c1933]/95 backdrop-blur-xl text-white px-4 md:px-5 py-3 md:py-3.5 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.95)] text-xs md:text-sm hidden z-50 border-2 border-[#f3cf7a]/80 border-l-8 border-l-[#f3cf7a] font-semibold"></div>
+    <div id="toast" class="fixed bottom-4 left-4 right-4 md:left-auto md:right-5 md:max-w-md bg-[#0c1933] text-white px-4 md:px-5 py-3 md:py-3.5 rounded-xl shadow-2xl text-xs md:text-sm hidden z-50 border-2 border-[#f3cf7a]/80 border-l-8 border-l-[#f3cf7a] font-semibold"></div>
 
     <main class="max-w-[1440px] mx-auto px-3 md:px-4 py-5 md:py-7 flex-1 w-full relative z-10">
 
         <!-- BANNER DE RECINTO EN RECESO -->
         <div id="alerta-sin-sesion" class="hidden panel-institucional border-l-4 border-l-[#f3cf7a] p-4 md:p-6 rounded-2xl mb-6 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3 md:gap-4">
-                <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-[#f3cf7a]/30 to-[#cfa349]/10 border border-[#f3cf7a]/60 flex items-center justify-center text-[#fff3c4] text-xl md:text-2xl shrink-0 shadow-lg">
+                <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-[#f3cf7a]/30 to-[#cfa349]/10 border border-[#f3cf7a]/60 flex items-center justify-center text-[#fff3c4] text-xl md:text-2xl shrink-0">
                     <i class="fa-solid fa-landmark"></i>
                 </div>
                 <div>
@@ -631,7 +598,7 @@
                         <button onclick="mostrarTab('integrantes')" class="flex-1 sm:flex-initial bg-white/10 hover:bg-white/15 text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl border border-[#f3cf7a]/35 transition">
                             <i class="fa-solid fa-users-gear mr-1.5 text-[#f3cf7a]"></i> Curules
                         </button>
-                        <button onclick="marcarTodosPresentes()" class="flex-1 sm:flex-initial bg-gradient-to-b from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded-xl border border-emerald-300/50 shadow-lg shadow-emerald-950/60 transition">
+                        <button onclick="marcarTodosPresentes()" class="flex-1 sm:flex-initial bg-gradient-to-b from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded-xl border border-emerald-300/50 transition">
                             <i class="fa-solid fa-check-double mr-1.5"></i> Quórum Pleno
                         </button>
                     </div>
@@ -647,7 +614,7 @@
                             <p class="text-[11px] text-emerald-300 uppercase font-extrabold tracking-widest">Presentes</p>
                             <p class="text-[11px] text-slate-300 mt-0.5">En curul</p>
                         </div>
-                        <p id="stat-presentes" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-emerald-400 drop-shadow-[0_0_16px_rgba(52,211,153,0.45)]">0</p>
+                        <p id="stat-presentes" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-emerald-400">0</p>
                     </div>
 
                     <div class="kpi-card p-4 rounded-2xl border-2 border-amber-400/50 flex justify-between items-center gap-2">
@@ -655,7 +622,7 @@
                             <p class="text-[11px] text-amber-300 uppercase font-extrabold tracking-widest">Retardo</p>
                             <p class="text-[11px] text-slate-300 mt-0.5">Posterior</p>
                         </div>
-                        <p id="stat-retardos" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-amber-300 drop-shadow-[0_0_16px_rgba(251,191,36,0.45)]">0</p>
+                        <p id="stat-retardos" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-amber-300">0</p>
                     </div>
 
                     <div class="kpi-card p-4 rounded-2xl border-2 border-rose-400/50 flex justify-between items-center gap-2">
@@ -663,7 +630,7 @@
                             <p class="text-[11px] text-rose-300 uppercase font-extrabold tracking-widest">Ausentes</p>
                             <p class="text-[11px] text-slate-300 mt-0.5">Sin registro</p>
                         </div>
-                        <p id="stat-ausentes" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-rose-400 drop-shadow-[0_0_16px_rgba(251,113,133,0.45)]">0</p>
+                        <p id="stat-ausentes" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-rose-400">0</p>
                     </div>
 
                     <div class="kpi-card p-4 rounded-2xl border-2 border-purple-400/50 flex justify-between items-center gap-2">
@@ -671,7 +638,7 @@
                             <p class="text-[11px] text-purple-300 uppercase font-extrabold tracking-widest">Excusa</p>
                             <p class="text-[11px] text-slate-300 mt-0.5">Radicada</p>
                         </div>
-                        <p id="stat-excusas" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-purple-300 drop-shadow-[0_0_16px_rgba(192,132,252,0.45)]">0</p>
+                        <p id="stat-excusas" class="font-mono-digital text-3xl md:text-5xl font-extrabold text-purple-300">0</p>
                     </div>
                 </div>
             </div>
@@ -701,7 +668,7 @@
                     <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
                         <div class="relative flex-1 sm:flex-initial">
                             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-[#f3cf7a] text-xs"></i>
-                            <input type="text" id="buscar-en-comisiones" onkeyup="renderizarTableroComisiones()" placeholder="Buscar Honorable Concejal..." class="border text-white text-xs rounded-xl pl-9 pr-3.5 py-2.5 w-full sm:w-60">
+                            <input type="text" id="buscar-en-comisiones" oninput="renderizarTableroComisiones()" placeholder="Buscar Honorable Concejal..." class="border text-white text-xs rounded-xl pl-9 pr-3.5 py-2.5 w-full sm:w-60">
                         </div>
                         <button onclick="mostrarTab('integrantes')" class="solo-admin w-full sm:w-auto btn-oro text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded-xl">
                             <i class="fa-solid fa-user-plus mr-1.5"></i> Gestionar Curules
@@ -757,10 +724,8 @@
                 
                 <div id="panel-cronometro" class="lg:col-span-7 panel-institucional p-5 md:p-9 rounded-3xl flex flex-col items-center justify-between text-center border-2 border-[#f3cf7a]/55 relative overflow-hidden">
                     
-                    <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-48 bg-[#f3cf7a]/20 blur-3xl pointer-events-none"></div>
-
                     <div class="w-full flex flex-wrap justify-between items-center gap-2 z-10">
-                        <div class="flex items-center gap-2 bg-[#060d1c]/80 border border-[#f3cf7a]/50 px-3.5 py-1.5 rounded-full shadow-inner">
+                        <div class="flex items-center gap-2 bg-[#060d1c]/80 border border-[#f3cf7a]/50 px-3.5 py-1.5 rounded-full">
                             <span id="indicador-estado-reloj" class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
                             <span class="text-[10px] md:text-[11px] uppercase tracking-[0.15em] font-bold text-[#fff3c4]">
                                 Consola de Curul
@@ -780,7 +745,7 @@
                         <span id="crono-tipo-badge" class="hidden inline-block text-[10px] font-bold uppercase tracking-[0.2em] px-3.5 py-1 rounded-full bg-[#f3cf7a]/20 text-[#fff3c4] border border-[#f3cf7a]/60 mb-2">
                             Intervención
                         </span>
-                        <h3 id="crono-nombre" class="font-solemne text-xl sm:text-3xl md:text-4xl uppercase font-bold text-white drop-shadow">
+                        <h3 id="crono-nombre" class="font-solemne text-xl sm:text-3xl md:text-4xl uppercase font-bold text-white">
                             En Espera de Orador
                         </h3>
                         <p id="crono-bancada" class="text-xs md:text-sm text-slate-300 font-medium mt-1.5">
@@ -791,7 +756,7 @@
                     <div id="crono-alerta-visual" class="hidden w-full max-w-md py-1.5 px-4 rounded-xl font-extrabold text-xs uppercase tracking-widest my-1 z-10"></div>
 
                     <div class="relative w-64 h-64 md:w-72 md:h-72 my-3 flex items-center justify-center z-10">
-                        <svg class="w-full h-full drop-shadow-[0_0_35px_rgba(243,207,122,0.35)]" viewBox="0 0 260 260">
+                        <svg class="w-full h-full" viewBox="0 0 260 260">
                             <circle cx="130" cy="130" r="114" fill="rgba(5,11,24,0.75)" stroke="rgba(255,255,255,0.12)" stroke-width="9"/>
                             <circle cx="130" cy="130" r="102" fill="none" stroke="rgba(243,207,122,0.4)" stroke-width="1.5" stroke-dasharray="2,6"/>
                             <circle id="anillo-tiempo" class="anillo-progreso" cx="130" cy="130" r="114" fill="none" stroke="#f3cf7a" stroke-width="9" stroke-linecap="round" stroke-dasharray="716.28" stroke-dashoffset="0"/>
@@ -799,7 +764,7 @@
 
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
                             <span class="text-[9px] md:text-[10px] uppercase tracking-[0.22em] text-slate-300 font-bold mb-1">Tiempo Restante</span>
-                            <div id="crono-display" class="font-mono-digital text-5xl md:text-7xl font-extrabold text-[#fff3c4] tracking-tight select-none leading-none drop-shadow-[0_4px_18px_rgba(243,207,122,0.4)]">
+                            <div id="crono-display" class="font-mono-digital text-5xl md:text-7xl font-extrabold text-[#fff3c4] tracking-tight select-none leading-none">
                                 03:00
                             </div>
                             <span id="crono-subtitulo-tiempo" class="text-[11px] text-slate-300 font-semibold mt-2">
@@ -824,13 +789,13 @@
                     </div>
 
                     <div class="solo-admin grid grid-cols-3 gap-2 md:gap-3 w-full z-10">
-                        <button onclick="iniciarCrono()" class="bg-gradient-to-b from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white py-3 md:py-3.5 px-2 md:px-4 rounded-2xl text-[11px] md:text-sm uppercase font-extrabold tracking-wider border border-emerald-300/45 shadow-lg transition flex items-center justify-center gap-1.5 md:gap-2">
+                        <button onclick="iniciarCrono()" class="bg-gradient-to-b from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white py-3 md:py-3.5 px-2 md:px-4 rounded-2xl text-[11px] md:text-sm uppercase font-extrabold tracking-wider border border-emerald-300/45 transition flex items-center justify-center gap-1.5 md:gap-2">
                             <i class="fa-solid fa-play"></i> Conceder
                         </button>
                         <button onclick="pausarCrono()" class="btn-oro py-3 md:py-3.5 px-2 md:px-4 rounded-2xl text-[11px] md:text-sm uppercase font-extrabold tracking-wider flex items-center justify-center gap-1.5 md:gap-2">
                             <i class="fa-solid fa-pause"></i> Suspender
                         </button>
-                        <button onclick="finalizarTurnoActual()" class="bg-gradient-to-b from-rose-600 to-rose-800 hover:from-rose-500 hover:to-rose-700 text-white py-3 md:py-3.5 px-2 md:px-4 rounded-2xl text-[11px] md:text-sm uppercase font-extrabold tracking-wider border border-rose-300/45 shadow-lg transition flex items-center justify-center gap-1.5 md:gap-2">
+                        <button onclick="finalizarTurnoActual()" class="bg-gradient-to-b from-rose-600 to-rose-800 hover:from-rose-500 hover:to-rose-700 text-white py-3 md:py-3.5 px-2 md:px-4 rounded-2xl text-[11px] md:text-sm uppercase font-extrabold tracking-wider border border-rose-300/45 transition flex items-center justify-center gap-1.5 md:gap-2">
                             <i class="fa-solid fa-microphone-slash"></i> Cerrar
                         </button>
                     </div>
@@ -1001,7 +966,7 @@
                         </div>
                         <div class="md:col-span-4 flex justify-end gap-2">
                             <button onclick="toggleFormNuevaVotacion()" class="px-4 py-2.5 text-xs font-bold uppercase text-slate-300 hover:text-white">Cancelar</button>
-                            <button onclick="crearVotacion()" class="flex-1 sm:flex-initial bg-gradient-to-b from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-extrabold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-lg">
+                            <button onclick="crearVotacion()" class="flex-1 sm:flex-initial bg-gradient-to-b from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-extrabold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl">
                                 <i class="fa-solid fa-box-open mr-1.5"></i> Iniciar Urna
                             </button>
                         </div>
@@ -1036,7 +1001,7 @@
 
                     <!-- SI YA TIENE SESIÓN DE CONCEJAL INICIADA -->
                     <div id="cabina-concejal-autenticado" class="hidden space-y-5">
-                        <div class="bg-[#060d1c] p-4 rounded-2xl border-2 border-[#f3cf7a]/60 shadow-inner">
+                        <div class="bg-[#060d1c] p-4 rounded-2xl border-2 border-[#f3cf7a]/60">
                             <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
                                 <i class="fa-solid fa-circle-check mr-1"></i> Sesión Única Activa
                             </span>
@@ -1051,13 +1016,13 @@
 
                         <div id="botones-emitir-voto" class="space-y-3">
                             <p class="text-xs font-bold uppercase tracking-wider text-slate-300 text-center">Seleccione su sentido de votación (Definitivo):</p>
-                            <button type="button" onclick="emitirVoto('SI')" class="w-full bg-gradient-to-b from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 active:scale-[0.99] text-white font-extrabold py-4 px-5 rounded-2xl text-sm md:text-base uppercase tracking-wider border border-emerald-300/50 shadow-lg shadow-emerald-950/60 transition flex items-center justify-center gap-3">
+                            <button type="button" onclick="emitirVoto('SI')" class="w-full bg-gradient-to-b from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 active:scale-[0.99] text-white font-extrabold py-4 px-5 rounded-2xl text-sm md:text-base uppercase tracking-wider border border-emerald-300/50 transition flex items-center justify-center gap-3">
                                 <i class="fa-solid fa-thumbs-up text-lg"></i> VOTAR SÍ (POSITIVO)
                             </button>
-                            <button type="button" onclick="emitirVoto('NO')" class="w-full bg-gradient-to-b from-rose-600 to-rose-800 hover:from-rose-500 hover:to-rose-700 active:scale-[0.99] text-white font-extrabold py-4 px-5 rounded-2xl text-sm md:text-base uppercase tracking-wider border border-rose-300/50 shadow-lg shadow-rose-950/60 transition flex items-center justify-center gap-3">
+                            <button type="button" onclick="emitirVoto('NO')" class="w-full bg-gradient-to-b from-rose-600 to-rose-800 hover:from-rose-500 hover:to-rose-700 active:scale-[0.99] text-white font-extrabold py-4 px-5 rounded-2xl text-sm md:text-base uppercase tracking-wider border border-rose-300/50 transition flex items-center justify-center gap-3">
                                 <i class="fa-solid fa-thumbs-down text-lg"></i> VOTAR NO (NEGATIVO)
                             </button>
-                            <button type="button" onclick="emitirVoto('ABSTENCION')" class="w-full bg-gradient-to-b from-slate-700 to-slate-900 hover:from-slate-600 hover:to-slate-800 active:scale-[0.99] text-amber-200 font-extrabold py-3.5 px-5 rounded-2xl text-xs uppercase tracking-wider border border-amber-400/45 shadow transition flex items-center justify-center gap-2">
+                            <button type="button" onclick="emitirVoto('ABSTENCION')" class="w-full bg-gradient-to-b from-slate-700 to-slate-900 hover:from-slate-600 hover:to-slate-800 active:scale-[0.99] text-amber-200 font-extrabold py-3.5 px-5 rounded-2xl text-xs uppercase tracking-wider border border-amber-400/45 transition flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-hand"></i> ABSTENCIÓN / IMPEDIMENTO
                             </button>
                         </div>
@@ -1078,13 +1043,13 @@
                             <p id="vot-visor-desc" class="text-xs text-slate-300 mt-1">--</p>
                         </div>
 
-                        <div class="bg-[#060d1c] border-2 border-[#f3cf7a]/65 px-4 py-2.5 rounded-2xl text-center shrink-0 shadow-[0_0_24px_rgba(243,207,122,0.2)]">
+                        <div class="bg-[#060d1c] border-2 border-[#f3cf7a]/65 px-4 py-2.5 rounded-2xl text-center shrink-0">
                             <span class="block text-[9px] font-bold uppercase tracking-[0.2em] text-slate-300">Tiempo Urna</span>
                             <span id="vot-cronometro-display" class="font-mono-digital text-xl md:text-3xl font-extrabold text-[#fff3c4]">--:--</span>
                         </div>
                     </div>
 
-                    <div id="banner-veredicto-votacion" class="hidden mb-5 p-4 rounded-2xl border-2 shadow-xl"></div>
+                    <div id="banner-veredicto-votacion" class="hidden mb-5 p-4 rounded-2xl border-2"></div>
 
                     <div id="vot-controles-mesa" class="flex items-center justify-end gap-2 flex-wrap mb-5"></div>
 
@@ -1114,7 +1079,7 @@
                                 Registro Nominal (<span id="total-votos-emitidos">0</span> votos)
                             </h4>
                             <span class="text-[11px] font-bold text-emerald-400 flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> En vivo
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> En vivo
                             </span>
                         </div>
                         <div id="lista-votos-nominales" class="space-y-2 max-h-[340px] overflow-y-auto pr-1"></div>
@@ -1140,13 +1105,13 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                    <button type="button" onclick="abrirModalResumenIniciativas()" class="flex-1 sm:flex-initial bg-gradient-to-b from-emerald-600 to-emerald-900 hover:from-emerald-500 hover:to-emerald-800 text-white font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-emerald-300/50 transition shadow-lg">
+                    <button type="button" onclick="abrirModalResumenIniciativas()" class="flex-1 sm:flex-initial bg-gradient-to-b from-emerald-600 to-emerald-900 hover:from-emerald-500 hover:to-emerald-800 text-white font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-emerald-300/50 transition">
                         <i class="fa-solid fa-award mr-1.5 text-[#f3cf7a]"></i> Acta de Iniciativas
                     </button>
                     <button type="button" onclick="toggleFormularioProposicionConcejal()" class="solo-concejal flex-1 sm:flex-initial btn-oro font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl">
                         <i class="fa-solid fa-feather-pointed mr-1.5"></i> Radicar Proposición
                     </button>
-                    <button type="button" onclick="toggleFormularioProyecto()" class="solo-admin flex-1 sm:flex-initial bg-gradient-to-b from-blue-600 to-blue-900 hover:from-blue-500 hover:to-blue-800 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-blue-300/45 transition shadow-lg">
+                    <button type="button" onclick="toggleFormularioProyecto()" class="solo-admin flex-1 sm:flex-initial bg-gradient-to-b from-blue-600 to-blue-900 hover:from-blue-500 hover:to-blue-800 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-blue-300/45 transition">
                         <i class="fa-solid fa-file-signature mr-1.5"></i> Radicar Acto (Admin)
                     </button>
                 </div>
@@ -1277,7 +1242,7 @@
                     <div id="lista-lateral-proyectos" class="space-y-3 max-h-[82vh] overflow-y-auto pr-1"></div>
                 </div>
 
-                <div id="visor-directo-container" class="lg:col-span-8 bg-white rounded-2xl shadow-[0_25px_65px_rgba(0,0,0,0.95)] border-2 border-[#f3cf7a] overflow-hidden flex flex-col min-h-[75vh]">
+                <div id="visor-directo-container" class="lg:col-span-8 bg-white rounded-2xl shadow-2xl border-2 border-[#f3cf7a] overflow-hidden flex flex-col min-h-[75vh]">
                     <div class="bg-gradient-to-r from-[#071126] via-[#102247] to-[#071126] text-white p-3.5 md:p-4 border-b-2 border-[#f3cf7a] flex flex-wrap justify-between items-center gap-3">
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-2 mb-1 flex-wrap">
@@ -1350,7 +1315,7 @@
                         <h3 class="font-solemne text-base md:text-lg uppercase text-white font-bold">Libro Oficial de Curules, Bancadas y Comisiones</h3>
                         <p class="text-xs text-slate-300">Directorio oficial de los Honorables Concejales acreditados.</p>
                     </div>
-                    <input type="text" id="buscar-integrante" onkeyup="renderizarGestionIntegrantes()" placeholder="Filtrar por nombre..." class="border text-white text-xs rounded-xl px-3.5 py-2.5 w-full sm:w-64">
+                    <input type="text" id="buscar-integrante" oninput="renderizarGestionIntegrantes()" placeholder="Filtrar por nombre..." class="border text-white text-xs rounded-xl px-3.5 py-2.5 w-full sm:w-64">
                 </div>
 
                 <div class="overflow-x-auto">
@@ -1373,7 +1338,7 @@
     </main>
 
     <!-- PIE DE PÁGINA INSTITUCIONAL -->
-    <footer class="bg-[#050b18]/95 text-slate-300 text-xs py-4 px-3 md:px-4 border-t-2 border-[#f3cf7a]/40 mt-10 relative z-10">
+    <footer class="bg-[#050b18] text-slate-300 text-xs py-4 px-3 md:px-4 border-t-2 border-[#f3cf7a]/40 mt-10 relative z-10">
         <div class="max-w-[1440px] mx-auto flex flex-wrap justify-between items-center gap-3">
             <div class="flex items-center gap-3">
                 <img id="img-logo-footer" src="/logo-creer-y-merecer.png" alt="Emblema" class="w-9 h-9 rounded-full border-2 border-[#f3cf7a] object-cover hidden">
@@ -1387,7 +1352,7 @@
     </footer>
 
     <!-- MODAL ABRIR SESIÓN -->
-    <div id="modal-sesion" class="fixed inset-0 bg-black/85 hidden items-center justify-center p-4 z-50 backdrop-blur-md">
+    <div id="modal-sesion" class="fixed inset-0 bg-black/85 hidden items-center justify-center p-4 z-50">
         <div class="panel-institucional rounded-2xl max-w-md w-full p-5 md:p-6 border-2 border-[#f3cf7a]">
             <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#f3cf7a]">Secretaría General</span>
             <h3 class="font-solemne text-xl md:text-2xl uppercase font-bold text-white mt-0.5 mb-4">Convocar Nueva Sesión</h3>
@@ -1424,8 +1389,8 @@
     </div>
 
     <!-- MODAL ACTA OFICIAL Y RESUMEN DE INICIATIVAS APROBADAS -->
-    <div id="modal-resumen-iniciativas" class="fixed inset-0 bg-black/90 hidden items-center justify-center p-2 sm:p-4 z-50 backdrop-blur-md">
-        <div class="panel-institucional rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col border-2 border-[#f3cf7a] overflow-hidden shadow-[0_25px_70px_rgba(0,0,0,0.95)]">
+    <div id="modal-resumen-iniciativas" class="fixed inset-0 bg-black/90 hidden items-center justify-center p-2 sm:p-4 z-50">
+        <div class="panel-institucional rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col border-2 border-[#f3cf7a] overflow-hidden shadow-2xl">
             <div class="bg-[#071126] p-4 border-b border-[#f3cf7a]/40 flex flex-wrap justify-between items-center gap-3">
                 <div>
                     <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#f3cf7a] block">Balance Legislativo y Mérito Parlamentario</span>
@@ -1452,7 +1417,20 @@
 
     <script>
         // =====================================================================
-        // ESTADO DE SESIÓN ÚNICA (ADMIN O CONCEJAL)
+        // UTILIDAD DE SEGURIDAD CONTRA INYECCIÓN HTML / COMILLAS ROTAS
+        // =====================================================================
+        function escapeHTML(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // =====================================================================
+        // ESTADO DE SESIÓN ÚNICA (ADMIN O CONCEJAL) Y CONTROL ANTI-LAG
         // =====================================================================
         let adminToken = localStorage.getItem('concejo_admin_token') || null;
         let concejalToken = localStorage.getItem('concejo_concejal_token') || null;
@@ -1470,12 +1448,17 @@
         let intervencionesGlobal = [];
         let votacionesGlobal = [];
         let votacionSeleccionadaId = null;
+
         let intervaloSyncGlobal = null;
         let intervaloCuentaRegresivaUrna = null;
         let segundosRestantesUrna = 0;
         let tabActivaActual = 'asistencia';
         let ultimoHashProyectos = '';
+        let ultimoHashIntervenciones = '';
         let fuenteEventosSSE = null;
+        let sseConectado = false;
+        let syncEnCurso = false;
+        let debounceSyncTimer = null;
 
         let configVisualActual = {
             logo_base64: null,
@@ -1561,7 +1544,6 @@
                     return alert(data.error || 'No se pudo iniciar sesión.');
                 }
 
-                // Limpiar tokens previos
                 localStorage.removeItem('concejo_admin_token');
                 localStorage.removeItem('concejo_concejal_token');
                 adminToken = null;
@@ -1678,26 +1660,24 @@
                 infoConectado.classList.add('hidden');
             }
 
-            // Actualizar cabina de votación según sesión única
             actualizarCabinaConcejal();
 
-            // Si entró un Concejal, asegurarse de que esté en una de las 3 pestañas permitidas
             if (esModoConcejal && ['asistencia', 'comisiones', 'integrantes'].includes(tabActivaActual)) {
                 mostrarTab('intervenciones');
             }
 
+            const tareas = [cargarProyectos(false), cargarDetalleVotacion()];
             if (esModoAdmin) {
-                await cargarAsistencias();
+                tareas.push(cargarAsistencias());
             } else {
                 asistenciasGlobal = [];
                 renderizarBancadasAsistencia([]);
             }
 
+            await Promise.all(tareas);
             renderizarTableroComisiones();
             renderizarListaIntervenciones();
-            await cargarProyectos(false);
             renderizarGestionIntegrantes();
-            await cargarDetalleVotacion();
         }
 
         function fetchAdmin(url, options = {}) {
@@ -1743,49 +1723,74 @@
         }
 
         // =====================================================================
-        // SINCRONIZACIÓN EN TIEMPO REAL (SSE + POLLING RESPALDO)
+        // SINCRONIZACIÓN INTELIGENTE EN TIEMPO REAL (SIN LAG DE RED)
         // =====================================================================
         function actualizarIndicadorConexion(conectado) {
+            sseConectado = conectado;
             const dot = document.getElementById('indicador-en-vivo-dot');
             const texto = document.getElementById('estado-conexion-vivo');
             if (!dot || !texto) return;
 
             if (conectado) {
-                dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]';
+                dot.className = 'w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]';
                 texto.className = 'hidden md:inline text-emerald-400 font-bold';
                 texto.innerText = 'EN VIVO SINCRONIZADO';
             } else {
-                dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-ping';
+                dot.className = 'w-2 h-2 rounded-full bg-amber-400';
                 texto.className = 'hidden md:inline text-amber-300 font-bold';
                 texto.innerText = 'RECONECTANDO...';
             }
         }
 
-        async function sincronizarTodoSilencioso(tipoEvento = 'todos') {
-            if (document.hidden) return;
+        function programarSyncSilencioso(tipoEvento = 'activo') {
+            clearTimeout(debounceSyncTimer);
+            debounceSyncTimer = setTimeout(() => {
+                sincronizarTodoSilencioso(tipoEvento);
+            }, 350);
+        }
+
+        async function sincronizarTodoSilencioso(tipoEvento = 'activo') {
+            if (document.hidden || syncEnCurso) return;
+            syncEnCurso = true;
+
             try {
-                if (tipoEvento === 'config_visual' || tipoEvento === 'todos') {
-                    await cargarConfiguracionVisualGlobal();
+                const tareas = [];
+
+                if (tipoEvento === 'config_visual') {
+                    tareas.push(cargarConfiguracionVisualGlobal());
+                } else if (tipoEvento === 'sesiones') {
+                    tareas.push(cargarSesiones(true));
+                } else if (tipoEvento === 'integrantes') {
+                    tareas.push(cargarIntegrantes());
+                    if (esModoAdmin && sesionActual) tareas.push(cargarAsistencias());
+                } else if (tipoEvento === 'asistencias') {
+                    if (esModoAdmin && sesionActual) tareas.push(cargarAsistencias());
+                } else if (tipoEvento === 'intervenciones') {
+                    if (sesionActual) tareas.push(cargarIntervenciones());
+                } else if (tipoEvento === 'proyectos') {
+                    tareas.push(cargarProyectos(true));
+                } else if (tipoEvento === 'votaciones' || tipoEvento === 'votos') {
+                    tareas.push(cargarVotaciones());
+                } else {
+                    // Sincronización periódica ligera: SOLO consulta la pestaña activa
+                    if (tabActivaActual === 'asistencia' && esModoAdmin && sesionActual) {
+                        tareas.push(cargarAsistencias());
+                    } else if (tabActivaActual === 'comisiones' || tabActivaActual === 'integrantes') {
+                        tareas.push(cargarIntegrantes());
+                    } else if (tabActivaActual === 'intervenciones' && sesionActual) {
+                        tareas.push(cargarIntervenciones());
+                    } else if (tabActivaActual === 'votacion') {
+                        tareas.push(cargarVotaciones());
+                    } else if (tabActivaActual === 'proyectos') {
+                        tareas.push(cargarProyectos(true));
+                    }
                 }
-                if (tipoEvento === 'sesiones' || tipoEvento === 'todos') {
-                    await cargarSesiones(true);
-                }
-                if (tipoEvento === 'integrantes' || tipoEvento === 'todos') {
-                    await cargarIntegrantes();
-                }
-                if (esModoAdmin && sesionActual && (tipoEvento === 'asistencias' || tipoEvento === 'integrantes' || tipoEvento === 'todos')) {
-                    await cargarAsistencias();
-                }
-                if (sesionActual && (tipoEvento === 'intervenciones' || tipoEvento === 'todos')) {
-                    await cargarIntervenciones();
-                }
-                if (tipoEvento === 'proyectos' || tipoEvento === 'todos') {
-                    await cargarProyectos(true);
-                }
-                if (tipoEvento === 'votaciones' || tipoEvento === 'votos' || tipoEvento === 'todos') {
-                    await cargarVotaciones();
-                }
-            } catch (e) {}
+
+                await Promise.all(tareas);
+            } catch (e) {
+            } finally {
+                syncEnCurso = false;
+            }
         }
 
         function iniciarCanalTiempoReal() {
@@ -1800,7 +1805,7 @@
                     try {
                         const data = JSON.parse(event.data);
                         if (data && data.tipo && data.tipo !== 'conectado') {
-                            sincronizarTodoSilencioso(data.tipo);
+                            programarSyncSilencioso(data.tipo);
                         }
                     } catch (e) {}
                 };
@@ -1810,13 +1815,22 @@
             }
 
             if (intervaloSyncGlobal) clearInterval(intervaloSyncGlobal);
+            // Respaldo inteligente: cada 20s si SSE está vivo, cada 4s si SSE está desconectado
             intervaloSyncGlobal = setInterval(() => {
-                sincronizarTodoSilencioso('todos');
-            }, 3000);
+                if (!sseConectado) {
+                    sincronizarTodoSilencioso('activo');
+                }
+            }, 4000);
+
+            setInterval(() => {
+                if (sseConectado) {
+                    sincronizarTodoSilencioso('activo');
+                }
+            }, 20000);
         }
 
         document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) sincronizarTodoSilencioso('todos');
+            if (!document.hidden) sincronizarTodoSilencioso('activo');
         });
 
         // =====================================================================
@@ -1930,16 +1944,23 @@
             guardarConfiguracionVisualServidor({ marca_agua_estilo: estilo });
         }
 
+        let debounceConfigTimer = null;
         function ajustarOpacidadMarcaAgua(valorPorcentaje) {
             const val = parseInt(valorPorcentaje, 10);
             aplicarEstilosVisualesEnDOM({ marca_agua_opacidad: val });
-            guardarConfiguracionVisualServidor({ marca_agua_opacidad: val });
+            clearTimeout(debounceConfigTimer);
+            debounceConfigTimer = setTimeout(() => {
+                guardarConfiguracionVisualServidor({ marca_agua_opacidad: val });
+            }, 300);
         }
 
         function ajustarTamanoMarcaAgua(valorPx) {
             const val = parseInt(valorPx, 10);
             aplicarEstilosVisualesEnDOM({ marca_agua_tamano: val });
-            guardarConfiguracionVisualServidor({ marca_agua_tamano: val });
+            clearTimeout(debounceConfigTimer);
+            debounceConfigTimer = setTimeout(() => {
+                guardarConfiguracionVisualServidor({ marca_agua_tamano: val });
+            }, 300);
         }
 
         async function quitarMarcaAgua() {
@@ -2036,11 +2057,13 @@
             setTimeout(() => sonarTiempoFinalizado(), 900);
         }
 
+        let toastTimer = null;
         function notificar(msg) {
             const toast = document.getElementById('toast');
             toast.innerText = msg;
             toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3800);
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.add('hidden'), 3500);
         }
 
         document.addEventListener('keydown', (e) => {
@@ -2053,11 +2076,14 @@
         });
 
         window.onload = async () => {
-            await cargarConfiguracionVisualGlobal();
-            await verificarSesionGuardada();
-            await cargarIntegrantes();
-            await cargarSesiones();
-            await cargarVotaciones();
+            await Promise.all([
+                cargarConfiguracionVisualGlobal(),
+                verificarSesionGuardada()
+            ]);
+            await Promise.all([
+                cargarIntegrantes(),
+                cargarSesiones()
+            ]);
             actualizarDisplayCrono();
             iniciarCanalTiempoReal();
 
@@ -2069,7 +2095,7 @@
                     segundosRestantesUrna--;
                     displayUrna.innerText = formatearMMSS(segundosRestantesUrna);
                     if (segundosRestantesUrna <= 10) {
-                        displayUrna.className = 'font-mono-digital text-xl md:text-3xl font-extrabold text-rose-400 animate-pulse';
+                        displayUrna.className = 'font-mono-digital text-xl md:text-3xl font-extrabold text-rose-400';
                     } else {
                         displayUrna.className = 'font-mono-digital text-xl md:text-3xl font-extrabold text-[#fff3c4]';
                     }
@@ -2106,6 +2132,10 @@
                 cargarVotaciones();
             } else if (tabId === 'proyectos') {
                 cargarProyectos(false);
+            } else if (tabId === 'intervenciones' && sesionActual) {
+                cargarIntervenciones();
+            } else if (tabId === 'asistencia' && esModoAdmin && sesionActual) {
+                cargarAsistencias();
             }
         }
 
@@ -2129,13 +2159,12 @@
             const valorPrevio = selectOrador.value;
             const filtrados = integrantesGlobal.filter(i => normalizarTexto(i.nombre_completo).includes(termino));
 
-            selectOrador.innerHTML = '';
             if (filtrados.length === 0) {
                 selectOrador.innerHTML = '<option value="" class="bg-slate-900">-- Sin coincidencias para ese nombre --</option>';
             } else {
-                filtrados.forEach(i => {
-                    selectOrador.innerHTML += `<option value="${i.id_integrante}" class="bg-slate-900">H.C. ${i.nombre_completo} — ${i.bancada} (${i.comision})</option>`;
-                });
+                selectOrador.innerHTML = filtrados.map(i =>
+                    `<option value="${i.id_integrante}" class="bg-slate-900">H.C. ${escapeHTML(i.nombre_completo)} — ${escapeHTML(i.bancada)} (${escapeHTML(i.comision)})</option>`
+                ).join('');
                 if (filtrados.some(i => String(i.id_integrante) === String(valorPrevio))) {
                     selectOrador.value = valorPrevio;
                 }
@@ -2169,10 +2198,10 @@
                 const selectAutor = document.getElementById('proy-autor');
                 if (selectAutor) {
                     const autorPrevio = selectAutor.value;
-                    selectAutor.innerHTML = '<option value="" class="bg-slate-900">-- Mesa Directiva / Bancada --</option>';
-                    integrantesGlobal.forEach(i => {
-                        selectAutor.innerHTML += `<option value="${i.id_integrante}" class="bg-slate-900">H.C. ${i.nombre_completo} (${i.bancada})</option>`;
-                    });
+                    selectAutor.innerHTML = '<option value="" class="bg-slate-900">-- Mesa Directiva / Bancada --</option>' +
+                        integrantesGlobal.map(i =>
+                            `<option value="${i.id_integrante}" class="bg-slate-900">H.C. ${escapeHTML(i.nombre_completo)} (${escapeHTML(i.bancada)})</option>`
+                        ).join('');
                     if (autorPrevio) selectAutor.value = autorPrevio;
                 }
 
@@ -2212,7 +2241,7 @@
                         estadoAsis === 'Retardo' ? 'bg-amber-500/20 text-amber-200 border-amber-400/50' :
                         estadoAsis === 'Excusa' ? 'bg-purple-500/20 text-purple-200 border-purple-400/50' :
                         'bg-rose-500/20 text-rose-300 border-rose-400/50'
-                    }">${estadoAsis}</span>
+                    }">${escapeHTML(estadoAsis)}</span>
                 ` : '';
 
                 const controlesAdminComision = esModoAdmin ? `
@@ -2231,17 +2260,17 @@
                 return `
                     <div class="curul-institucional p-3.5 md:p-4 rounded-xl flex flex-wrap justify-between items-center gap-2 md:gap-3">
                         <div class="flex items-center gap-3 min-w-0 flex-1">
-                            <span class="w-8 h-8 rounded-lg bg-[#050b18] border border-[#f3cf7a]/55 flex items-center justify-center font-mono-digital text-xs font-bold text-[#fff3c4] shrink-0 shadow-inner">
+                            <span class="w-8 h-8 rounded-lg bg-[#050b18] border border-[#f3cf7a]/55 flex items-center justify-center font-mono-digital text-xs font-bold text-[#fff3c4] shrink-0">
                                 ${String(idx + 1).padStart(2, '0')}
                             </span>
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="font-bold text-sm md:text-[15px] text-white">H.C. ${i.nombre_completo}</span>
+                                    <span class="font-bold text-sm md:text-[15px] text-white">H.C. ${escapeHTML(i.nombre_completo)}</span>
                                     ${i.es_directiva ? '<span class="bg-[#f3cf7a] text-slate-950 text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded">Mesa Directiva (P)</span>' : ''}
                                 </div>
                                 <div class="flex items-center gap-2 flex-wrap mt-1.5">
                                     <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded border ${badgeBancada}">
-                                        Bancada ${i.bancada}
+                                        Bancada ${escapeHTML(i.bancada)}
                                     </span>
                                     ${badgeAsistenciaHtml}
                                 </div>
@@ -2335,16 +2364,14 @@
             const tbody = document.getElementById('tabla-gestion-integrantes');
             if (!tbody) return;
             const filtro = normalizarTexto(document.getElementById('buscar-integrante')?.value || '');
-            tbody.innerHTML = '';
-
             const filtrados = integrantesGlobal.filter(i => normalizarTexto(i.nombre_completo).includes(filtro));
 
-            filtrados.forEach(i => {
+            tbody.innerHTML = filtrados.map(i => {
                 if (esModoAdmin) {
-                    tbody.innerHTML += `
+                    return `
                         <tr class="hover:bg-white/[0.05] transition">
                             <td class="p-3 md:p-4 whitespace-nowrap">
-                                <span class="font-bold text-white">H.C. ${i.nombre_completo}</span>
+                                <span class="font-bold text-white">H.C. ${escapeHTML(i.nombre_completo)}</span>
                                 ${i.es_directiva ? '<span class="ml-2 bg-[#f3cf7a] text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded">MESA (P)</span>' : ''}
                             </td>
                             <td class="p-3 md:p-4 whitespace-nowrap">
@@ -2369,33 +2396,33 @@
                                 <input type="checkbox" ${i.es_directiva ? 'checked' : ''} onchange="recolocarIntegrante(${i.id_integrante}, 'directiva', this.checked)" class="w-4 h-4 accent-[#f3cf7a] cursor-pointer">
                             </td>
                             <td class="p-3 md:p-4 text-right whitespace-nowrap">
-                                <button onclick="eliminarIntegrante(${i.id_integrante}, '${i.nombre_completo}')" class="bg-rose-500/15 hover:bg-rose-700 text-rose-300 hover:text-white border border-rose-400/40 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                                <button data-id="${i.id_integrante}" data-nombre="${escapeHTML(i.nombre_completo)}" onclick="eliminarIntegrante(this.dataset.id, this.dataset.nombre)" class="bg-rose-500/15 hover:bg-rose-700 text-rose-300 hover:text-white border border-rose-400/40 px-3 py-1.5 rounded-xl text-xs font-bold transition">
                                     <i class="fa-solid fa-user-minus mr-1"></i> Retirar
                                 </button>
                             </td>
                         </tr>
                     `;
                 } else {
-                    tbody.innerHTML += `
+                    return `
                         <tr class="hover:bg-white/[0.05] transition">
                             <td class="p-3 md:p-4 whitespace-nowrap">
-                                <span class="font-bold text-white">H.C. ${i.nombre_completo}</span>
+                                <span class="font-bold text-white">H.C. ${escapeHTML(i.nombre_completo)}</span>
                             </td>
                             <td class="p-3 md:p-4 whitespace-nowrap">
                                 <span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${
                                     i.id_bancada === 1 ? 'bg-emerald-950/80 text-emerald-300 border-emerald-400/50' :
                                     i.id_bancada === 2 ? 'bg-rose-950/80 text-rose-300 border-rose-400/50' :
                                     'bg-purple-950/80 text-purple-300 border-purple-400/50'
-                                }">${i.bancada}</span>
+                                }">${escapeHTML(i.bancada)}</span>
                             </td>
-                            <td class="p-3 md:p-4 text-slate-200 font-semibold text-xs whitespace-nowrap">${i.comision}</td>
+                            <td class="p-3 md:p-4 text-slate-200 font-semibold text-xs whitespace-nowrap">${escapeHTML(i.comision)}</td>
                             <td class="p-3 md:p-4 text-center whitespace-nowrap">
                                 ${i.es_directiva ? '<span class="bg-[#f3cf7a] text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded">MESA (P)</span>' : '<span class="text-slate-500 text-xs">—</span>'}
                             </td>
                         </tr>
                     `;
                 }
-            });
+            }).join('');
         }
 
         async function agregarIntegrante() {
@@ -2487,11 +2514,9 @@
             const btnEliminar = document.getElementById('btn-eliminar-sesion');
             try {
                 const res = await fetch('/api/sesiones');
-                if (!res.ok) throw new Error('Error al consultar sesiones en PostgreSQL');
+                if (!res.ok) throw new Error('Error al consultar sesiones');
                 const sesiones = await res.json();
                 const sesionPrevia = sesionActual;
-
-                select.innerHTML = '';
 
                 if (sesiones.length === 0) {
                     select.innerHTML = '<option value="" class="bg-slate-900">-- Sin sesiones convocadas --</option>';
@@ -2506,9 +2531,9 @@
 
                 alerta.classList.add('hidden');
                 if (btnEliminar) btnEliminar.classList.remove('hidden');
-                sesiones.forEach(s => {
-                    select.innerHTML += `<option value="${s.id_sesion}" class="bg-slate-900">${s.titulo} (${s.tipo_sesion})</option>`;
-                });
+                select.innerHTML = sesiones.map(s =>
+                    `<option value="${s.id_sesion}" class="bg-slate-900">${escapeHTML(s.titulo)} (${escapeHTML(s.tipo_sesion)})</option>`
+                ).join('');
 
                 if (sesionPrevia && sesiones.some(s => String(s.id_sesion) === String(sesionPrevia))) {
                     sesionActual = sesionPrevia;
@@ -2584,9 +2609,10 @@
                 return;
             }
             if (btnEliminar) btnEliminar.classList.remove('hidden');
-            if (esModoAdmin) await cargarAsistencias();
-            await cargarIntervenciones();
-            await cargarVotaciones();
+
+            const tareas = [cargarIntervenciones(), cargarVotaciones()];
+            if (esModoAdmin) tareas.push(cargarAsistencias());
+            await Promise.all(tareas);
         }
 
         // =====================================================================
@@ -2629,9 +2655,7 @@
                 { nombre: 'Independientes', headerGrad: 'from-purple-900 via-[#22153b] to-[#0c1933] border-purple-400', badgeText: 'text-purple-300' }
             ];
 
-            contenedor.innerHTML = '';
-
-            bancadasConfig.forEach(b => {
+            contenedor.innerHTML = bancadasConfig.map(b => {
                 const miembros = lista.filter(item => item.bancada === b.nombre);
                 const presentesBancada = miembros.filter(m => m.estado === 'Presente' || m.estado === 'Retardo').length;
 
@@ -2660,11 +2684,11 @@
                                     <span class="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0 ${ledClass}"></span>
                                     <div>
                                         <p class="font-bold text-sm text-white leading-snug">
-                                            H.C. ${m.nombre_completo}
+                                            H.C. ${escapeHTML(m.nombre_completo)}
                                             ${m.es_directiva ? '<span class="ml-1.5 bg-[#f3cf7a] text-slate-950 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded">Mesa (P)</span>' : ''}
                                         </p>
                                         <span class="inline-block mt-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-white/10 text-slate-300 border border-white/15">
-                                            Comisión ${m.comision}
+                                            Comisión ${escapeHTML(m.comision)}
                                         </span>
                                     </div>
                                 </div>
@@ -2673,14 +2697,14 @@
                                     m.estado === 'Retardo' ? 'bg-amber-500/20 text-amber-200 border-amber-400/50' :
                                     m.estado === 'Excusa' ? 'bg-purple-500/20 text-purple-200 border-purple-400/50' : 
                                     'bg-rose-500/20 text-rose-300 border-rose-400/50'
-                                }">${m.estado}</span>
+                                }">${escapeHTML(m.estado)}</span>
                             </div>
                             ${botonesAsistenciaHtml}
                         </div>
                     `}).join('');
                 }
 
-                contenedor.innerHTML += `
+                return `
                     <div class="panel-institucional rounded-2xl overflow-hidden flex flex-col">
                         <div class="bg-gradient-to-r ${b.headerGrad} p-4 border-b-2 flex justify-between items-center">
                             <div>
@@ -2696,7 +2720,7 @@
                         </div>
                     </div>
                 `;
-            });
+            }).join('');
         }
 
         async function marcarAsistencia(id_asistencia, estado) {
@@ -2718,7 +2742,7 @@
         }
 
         // =====================================================================
-        // 4. ORDEN DE USO DE LA PALABRA (CONCEJAL PIDE CON MOTIVO + ADMIN CONTROLA)
+        // 4. ORDEN DE USO DE LA PALABRA (SINCRONIZADO EN VIVO)
         // =====================================================================
         function autocompletarSegundos() {
             const sel = document.getElementById('select-tipo-intervencion');
@@ -2726,7 +2750,6 @@
             document.getElementById('input-segundos').value = seg;
         }
 
-        // Solicitud directa del Concejal con su sesión única
         async function solicitarPalabraConcejal() {
             if (!sesionActual) return alert('No hay ninguna sesión convocada actualmente.');
             const tipo_intervencion = document.getElementById('conc-motivo-tipo').value;
@@ -2795,7 +2818,31 @@
         async function cargarIntervenciones() {
             if (!sesionActual) return;
             const res = await fetch(`/api/intervenciones/${sesionActual}`);
-            intervencionesGlobal = await res.json();
+            if (!res.ok) return;
+            const nuevas = await res.json();
+
+            // Sincronizar visor de reloj para espectadores/concejales si hay una intervención En Curso
+            if (!esModoAdmin) {
+                const enCurso = nuevas.find(i => i.estado === 'En Curso');
+                if (enCurso) {
+                    document.getElementById('crono-nombre').innerText = `H.C. ${enCurso.nombre_completo}`;
+                    document.getElementById('crono-bancada').innerText = `${enCurso.bancada} — Comisión ${enCurso.comision}`;
+                    const badge = document.getElementById('crono-tipo-badge');
+                    badge.innerText = enCurso.tipo_intervencion;
+                    badge.classList.remove('hidden');
+                    segundosBase = parseInt(enCurso.tiempo_asignado_seg, 10) || 180;
+                    const usado = parseInt(enCurso.tiempo_usado_seg, 10) || 0;
+                    segundosRestantes = Math.max(0, segundosBase - usado);
+                    actualizarEstadoVisualIndicador('corriendo');
+                    actualizarDisplayCrono();
+                }
+            }
+
+            const hashActual = JSON.stringify(nuevas.map(i => `${i.id_intervencion}:${i.estado}:${i.tiempo_usado_seg}:${i.orden_turno}`));
+            if (hashActual === ultimoHashIntervenciones) return;
+            ultimoHashIntervenciones = hashActual;
+
+            intervencionesGlobal = nuevas;
             document.getElementById('contador-turnos').innerText = intervencionesGlobal.length;
             renderizarListaIntervenciones();
         }
@@ -2818,8 +2865,6 @@
             const termino = normalizarTexto(inputCola ? inputCola.value.trim() : '');
             if (btnLimpiar) btnLimpiar.classList.toggle('hidden', termino.length === 0);
 
-            div.innerHTML = '';
-
             if (intervencionesGlobal.length === 0) {
                 div.innerHTML = '<div class="text-center py-10 bg-[#060d1c] rounded-2xl border border-dashed border-[#f3cf7a]/25"><i class="fa-solid fa-microphone-slash text-2xl text-slate-500 mb-2"></i><p class="text-xs font-semibold text-slate-400">Sin turnos inscritos ante Presidencia.</p></div>';
                 return;
@@ -2835,7 +2880,7 @@
                 return;
             }
 
-            filtradas.forEach(item => {
+            div.innerHTML = filtradas.map(item => {
                 const esActivo = item.id_intervencion === intervencionActivaId;
                 const esMio = esModoConcejal && usuarioActual && item.id_integrante === usuarioActual.id_integrante;
                 const badgeEstado = item.estado === 'Finalizada' 
@@ -2845,17 +2890,17 @@
                         : 'bg-[#f3cf7a]/20 text-[#fff3c4] border border-[#f3cf7a]/50';
 
                 const motivoHtml = item.motivo_detalle
-                    ? `<p class="text-[11px] text-[#fff3c4]/90 mt-1 italic"><i class="fa-solid fa-quote-left mr-1 text-[#f3cf7a]"></i>${item.motivo_detalle}</p>`
+                    ? `<p class="text-[11px] text-[#fff3c4]/90 mt-1 italic"><i class="fa-solid fa-quote-left mr-1 text-[#f3cf7a]"></i>${escapeHTML(item.motivo_detalle)}</p>`
                     : '';
 
                 let accionesTurnoHtml = '';
                 if (esModoAdmin) {
                     accionesTurnoHtml = `
                         <div class="flex items-center gap-1.5 shrink-0">
-                            <button onclick="seleccionarOrador(${item.id_intervencion}, 'H.C. ${item.nombre_completo}', '${item.bancada} — Comisión ${item.comision}', '${item.tipo_intervencion}', ${item.tiempo_asignado_seg})" class="btn-oro text-xs font-extrabold uppercase px-3 py-2 rounded-xl" title="Conceder uso de la palabra">
+                            <button onclick="seleccionarOradorPorId(${item.id_intervencion})" class="btn-oro text-xs font-extrabold uppercase px-3 py-2 rounded-xl" title="Conceder uso de la palabra">
                                 <i class="fa-solid fa-microphone-lines mr-1"></i> ${Math.floor(item.tiempo_asignado_seg/60)}m ${item.tiempo_asignado_seg%60}s
                             </button>
-                            <button onclick="retirarIntervencion(${item.id_intervencion}, 'H.C. ${item.nombre_completo}')" class="bg-rose-500/20 hover:bg-rose-700 text-rose-300 hover:text-white border border-rose-400/40 px-2.5 py-2 rounded-xl text-xs font-bold transition" title="Retirar turno">
+                            <button onclick="retirarIntervencionPorId(${item.id_intervencion})" class="bg-rose-500/20 hover:bg-rose-700 text-rose-300 hover:text-white border border-rose-400/40 px-2.5 py-2 rounded-xl text-xs font-bold transition" title="Retirar turno">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -2874,30 +2919,44 @@
                     `;
                 }
 
-                div.innerHTML += `
+                return `
                     <div class="p-3.5 rounded-2xl border transition flex flex-wrap justify-between items-center gap-2 ${
-                        esActivo ? 'bg-[#f3cf7a]/20 border-[#f3cf7a] shadow-lg' : 'bg-[#071022]/95 border-white/15 hover:border-[#f3cf7a]/50'
+                        esActivo ? 'bg-[#f3cf7a]/20 border-[#f3cf7a]' : 'bg-[#071022]/95 border-white/15 hover:border-[#f3cf7a]/50'
                     }">
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <span class="font-mono-digital font-extrabold text-xs text-slate-950 bg-[#f3cf7a] px-2 py-0.5 rounded">#${item.orden_turno}</span>
-                                <span class="font-bold text-sm text-white truncate">H.C. ${item.nombre_completo}</span>
+                                <span class="font-bold text-sm text-white truncate">H.C. ${escapeHTML(item.nombre_completo)}</span>
                                 ${esMio ? '<span class="bg-emerald-500/25 text-emerald-200 border border-emerald-400/50 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded">Tu turno</span>' : ''}
-                                <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${badgeEstado}">${item.estado || 'Pendiente'}</span>
+                                <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${badgeEstado}">${escapeHTML(item.estado || 'Pendiente')}</span>
                             </div>
                             <p class="text-xs text-slate-300 mt-1">
-                                ${item.bancada} • <strong class="text-white">${item.tipo_intervencion}</strong>
+                                ${escapeHTML(item.bancada)} • <strong class="text-white">${escapeHTML(item.tipo_intervencion)}</strong>
                             </p>
                             ${motivoHtml}
                         </div>
                         ${accionesTurnoHtml}
                     </div>
                 `;
-            });
+            }).join('');
         }
 
-        async function retirarIntervencion(id_intervencion, nombre) {
-            if (!confirm(`¿Retirar del orden de oradores a ${nombre}?`)) return;
+        function seleccionarOradorPorId(id_intervencion) {
+            const item = intervencionesGlobal.find(i => i.id_intervencion === id_intervencion);
+            if (!item) return;
+            seleccionarOrador(
+                item.id_intervencion,
+                `H.C. ${item.nombre_completo}`,
+                `${item.bancada} — Comisión ${item.comision}`,
+                item.tipo_intervencion,
+                item.tiempo_asignado_seg
+            );
+        }
+
+        async function retirarIntervencionPorId(id_intervencion) {
+            const item = intervencionesGlobal.find(i => i.id_intervencion === id_intervencion);
+            if (!item) return;
+            if (!confirm(`¿Retirar del orden de oradores a H.C. ${item.nombre_completo}?`)) return;
             const res = await fetchAdmin(`/api/intervenciones/${id_intervencion}`, { method: 'DELETE' });
             if (res.ok) {
                 if (intervencionActivaId === id_intervencion) {
@@ -2934,7 +2993,7 @@
 
         function actualizarEstadoVisualIndicador(estado) {
             const dot = document.getElementById('indicador-estado-reloj');
-            if (estado === 'corriendo') dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping';
+            if (estado === 'corriendo') dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400';
             else if (estado === 'pausado') dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
             else dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-500';
         }
@@ -2955,7 +3014,7 @@
             segundosRestantes = segundos;
             sincronizarInputsTiempo();
             actualizarDisplayCrono();
-            cargarIntervenciones();
+            renderizarListaIntervenciones();
         }
 
         function sincronizarInputsTiempo() {
@@ -3006,15 +3065,15 @@
                 display.className = 'font-mono-digital text-5xl md:text-7xl font-extrabold text-rose-500 tracking-tight select-none leading-none';
                 anillo.setAttribute('stroke', '#f43f5e');
             } else if (segundosRestantes <= 10) {
-                display.className = 'font-mono-digital text-5xl md:text-7xl font-extrabold text-amber-300 tracking-tight select-none leading-none animate-pulse';
+                display.className = 'font-mono-digital text-5xl md:text-7xl font-extrabold text-amber-300 tracking-tight select-none leading-none';
                 anillo.setAttribute('stroke', '#fbbf24');
             } else {
-                display.className = 'font-mono-digital text-5xl md:text-7xl font-extrabold text-[#fff3c4] tracking-tight select-none leading-none drop-shadow-[0_4px_18px_rgba(243,207,122,0.4)]';
+                display.className = 'font-mono-digital text-5xl md:text-7xl font-extrabold text-[#fff3c4] tracking-tight select-none leading-none';
                 anillo.setAttribute('stroke', '#f3cf7a');
             }
         }
 
-        function iniciarCrono() {
+        async function iniciarCrono() {
             if (!esModoAdmin) return abrirPortalLogin();
             if (timerInterval) return;
             if (segundosRestantes <= 0) return alert('Fije un tiempo mayor a 0 segundos antes de conceder el uso de la palabra.');
@@ -3022,6 +3081,16 @@
             obtenerAudioContext();
             actualizarEstadoVisualIndicador('corriendo');
             if (segundosRestantes > 10) ocultarAlertaVisualCrono();
+
+            // Notificar al servidor que la intervención inició
+            if (intervencionActivaId) {
+                const usado = Math.max(0, segundosBase - segundosRestantes);
+                fetchAdmin(`/api/intervenciones/${intervencionActivaId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tiempo_usado_seg: usado, estado: 'En Curso' })
+                }).catch(() => {});
+            }
 
             timerInterval = setInterval(() => {
                 if (segundosRestantes > 0) {
@@ -3036,7 +3105,7 @@
 
                     if (segundosRestantes === 0) {
                         sonarTiempoFinalizado();
-                        mostrarAlertaVisualCrono('🔔 Tiempo reglamentario concluido', 'bg-rose-700 text-white shadow-lg');
+                        mostrarAlertaVisualCrono('🔔 Tiempo reglamentario concluido', 'bg-rose-700 text-white');
                         notificar('🔔 Tiempo reglamentario concluido');
                         finalizarTurnoActual(true);
                     }
@@ -3097,12 +3166,11 @@
             if (!selectProy) return;
 
             const valorActual = selectProy.value;
-            selectProy.innerHTML = '<option value="">-- Seleccionar proyecto o proposición radicada --</option>';
-
-            proyectosGlobal.forEach(p => {
-                const tipo = p.tipo_documento || 'Proyecto de Acuerdo';
-                selectProy.innerHTML += `<option value="${p.id_proyecto}" class="bg-slate-900">${tipo} • ${p.codigo_radicado} — ${p.titulo} (${p.comision})</option>`;
-            });
+            selectProy.innerHTML = '<option value="">-- Seleccionar proyecto o proposición radicada --</option>' +
+                proyectosGlobal.map(p => {
+                    const tipo = p.tipo_documento || 'Proyecto de Acuerdo';
+                    return `<option value="${p.id_proyecto}" class="bg-slate-900">${escapeHTML(tipo)} • ${escapeHTML(p.codigo_radicado)} — ${escapeHTML(p.titulo)} (${escapeHTML(p.comision)})</option>`;
+                }).join('');
 
             if (valorActual && proyectosGlobal.some(p => String(p.id_proyecto) === String(valorActual))) {
                 selectProy.value = valorActual;
@@ -3239,7 +3307,6 @@
                 if (!res.ok) return;
                 votacionesGlobal = await res.json();
 
-                select.innerHTML = '';
                 if (votacionesGlobal.length === 0) {
                     select.innerHTML = '<option value="">-- Sin votaciones abiertas --</option>';
                     votacionSeleccionadaId = null;
@@ -3247,10 +3314,10 @@
                     return;
                 }
 
-                votacionesGlobal.forEach(v => {
+                select.innerHTML = votacionesGlobal.map(v => {
                     const rondaTxt = (parseInt(v.ronda_numero, 10) || 1) > 1 ? ` • Ronda ${v.ronda_numero}` : '';
-                    select.innerHTML += `<option value="${v.id_votacion}" class="bg-slate-900">${v.titulo} [${v.estado}${rondaTxt}]</option>`;
-                });
+                    return `<option value="${v.id_votacion}" class="bg-slate-900">${escapeHTML(v.titulo)} [${escapeHTML(v.estado)}${rondaTxt}]</option>`;
+                }).join('');
 
                 if (!votacionSeleccionadaId || !votacionesGlobal.some(v => String(v.id_votacion) === String(votacionSeleccionadaId))) {
                     votacionSeleccionadaId = votacionesGlobal[0].id_votacion;
@@ -3310,7 +3377,7 @@
                     <i class="fa-solid fa-scale-balanced text-[#fff3c4] text-lg shrink-0"></i>
                     <div class="text-xs text-slate-100">
                         <span class="font-extrabold uppercase tracking-wider text-[#fff3c4] block">Escrutinio Parcial en Curso (Ronda ${ronda})</span>
-                        <span>${tendenciaTexto}</span>
+                        <span>${escapeHTML(tendenciaTexto)}</span>
                     </div>
                 `;
                 banner.classList.remove('hidden');
@@ -3348,7 +3415,7 @@
                 tituloDictamen = 'DICTAMEN OFICIAL: SEGUNDO EMPATE — ARCHIVADA';
             }
 
-            banner.className = `mb-5 p-4 rounded-2xl border-2 shadow-xl ${estilos}`;
+            banner.className = `mb-5 p-4 rounded-2xl border-2 ${estilos}`;
             banner.innerHTML = `
                 <div class="flex items-start gap-3.5">
                     <i class="fa-solid ${icono} text-2xl mt-0.5 shrink-0"></i>
@@ -3357,7 +3424,7 @@
                             ${tituloDictamen}
                         </span>
                         <p class="text-xs md:text-sm font-medium mt-1 leading-relaxed">
-                            ${mensaje}
+                            ${escapeHTML(mensaje)}
                         </p>
                         ${botonRepetirHtml}
                     </div>
@@ -3500,8 +3567,8 @@
                 return `
                     <div class="bg-[#071022]/95 p-3 rounded-xl border border-white/15 flex justify-between items-center gap-2">
                         <div class="min-w-0">
-                            <p class="font-bold text-sm text-white truncate">H.C. ${v.nombre_completo}</p>
-                            <p class="text-[11px] text-slate-300 truncate">Bancada ${v.bancada} • ${v.comision}</p>
+                            <p class="font-bold text-sm text-white truncate">H.C. ${escapeHTML(v.nombre_completo)}</p>
+                            <p class="text-[11px] text-slate-300 truncate">Bancada ${escapeHTML(v.bancada)} • ${escapeHTML(v.comision)}</p>
                         </div>
                         <span class="px-3 py-1 rounded-lg border text-xs font-extrabold uppercase shrink-0 ${badgeVoto}">
                             ${textoVoto}
@@ -3511,7 +3578,6 @@
             }).join('');
         }
 
-        // Voto directo del concejal sin volver a iniciar sesión
         async function emitirVoto(opcion) {
             if (!esModoConcejal || !usuarioActual) {
                 return abrirPortalLogin();
@@ -3739,7 +3805,6 @@
 
         function renderizarProyectos() {
             const listaLateral = document.getElementById('lista-lateral-proyectos');
-            listaLateral.innerHTML = '';
 
             const etiquetaVista = document.getElementById('etiqueta-vista-docs');
             if (etiquetaVista) {
@@ -3767,7 +3832,7 @@
                 proyectoSeleccionadoId = filtrados[0].id_proyecto;
             }
 
-            filtrados.forEach((p, idx) => {
+            listaLateral.innerHTML = filtrados.map((p, idx) => {
                 const esProposicion = p.tipo_documento === 'Proposición';
                 const esSeleccionado = p.id_proyecto === proyectoSeleccionadoId;
                 const esPrivado = p.visible_publico === false;
@@ -3779,17 +3844,16 @@
                         ? 'bg-rose-500/20 text-rose-300 border-rose-400/50'
                         : 'bg-amber-500/20 text-amber-200 border-amber-400/50';
 
-                // Insignia clara de Público vs Privado visible para Admin y Concejales
                 const badgePrivacidad = (esModoAdmin || esModoConcejal)
                     ? (esPrivado
                         ? '<span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-rose-500/25 text-rose-200 border border-rose-400/50"><i class="fa-solid fa-lock mr-1"></i>Privado</span>'
                         : '<span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-500/25 text-emerald-200 border border-emerald-400/50"><i class="fa-solid fa-globe mr-1"></i>Público</span>')
                     : '';
 
-                listaLateral.innerHTML += `
+                return `
                     <div onclick="seleccionarDocumentoVisor(${p.id_proyecto})" class="cursor-pointer p-3.5 md:p-4 rounded-2xl transition border-2 ${
                         esSeleccionado 
-                            ? 'bg-[#f3cf7a]/20 border-[#f3cf7a] shadow-lg' 
+                            ? 'bg-[#f3cf7a]/20 border-[#f3cf7a]' 
                             : 'panel-institucional border-white/15 hover:border-[#f3cf7a]/65'
                     }">
                         <div class="flex justify-between items-center gap-1 mb-1.5 flex-wrap">
@@ -3799,20 +3863,20 @@
                                 </span>
                                 <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${
                                     esProposicion ? 'bg-amber-500/25 text-amber-200 border border-amber-400/45' : 'bg-blue-500/25 text-blue-200 border border-blue-400/45'
-                                }">${p.tipo_documento || 'Proyecto'}</span>
+                                }">${escapeHTML(p.tipo_documento || 'Proyecto')}</span>
                                 ${badgePrivacidad}
                             </div>
-                            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded border ${estadoColor}">${p.estado}</span>
+                            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded border ${estadoColor}">${escapeHTML(p.estado)}</span>
                         </div>
-                        <p class="text-[11px] font-mono-digital font-bold text-[#fff3c4] mb-0.5">${p.codigo_radicado} • Com. ${p.comision}</p>
-                        <h4 class="font-bold text-sm text-white leading-snug line-clamp-2">${p.titulo}</h4>
+                        <p class="text-[11px] font-mono-digital font-bold text-[#fff3c4] mb-0.5">${escapeHTML(p.codigo_radicado)} • Com. ${escapeHTML(p.comision)}</p>
+                        <h4 class="font-bold text-sm text-white leading-snug line-clamp-2">${escapeHTML(p.titulo)}</h4>
                         <div class="flex justify-between items-center mt-2 pt-2 border-t border-white/15 text-[11px] text-slate-300">
-                            <span class="truncate"><i class="fa-solid fa-user-tie mr-1 text-[#f3cf7a]"></i>${p.autor}</span>
+                            <span class="truncate"><i class="fa-solid fa-user-tie mr-1 text-[#f3cf7a]"></i>${escapeHTML(p.autor)}</span>
                             ${p.archivo_nombre ? '<span class="text-[#fff3c4] font-bold"><i class="fa-solid fa-paperclip"></i></span>' : ''}
                         </div>
                     </div>
                 `;
-            });
+            }).join('');
 
             mostrarEnVisorDirecto(proyectoSeleccionadoId);
         }
@@ -3878,7 +3942,7 @@
             const accionesDiv = document.getElementById('visor-acciones');
 
             const controlesAdminVisor = esModoAdmin ? `
-                <button onclick="alternarVisibilidadProyecto(${p.id_proyecto}, ${esPrivado ? 'true' : 'false'})" class="${esPrivado ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-700 hover:bg-slate-600 text-amber-200'} font-extrabold text-xs uppercase px-3 py-1.5 rounded-xl transition shadow">
+                <button onclick="alternarVisibilidadProyecto(${p.id_proyecto}, ${esPrivado ? 'true' : 'false'})" class="${esPrivado ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-700 hover:bg-slate-600 text-amber-200'} font-extrabold text-xs uppercase px-3 py-1.5 rounded-xl transition">
                     <i class="fa-solid ${esPrivado ? 'fa-globe' : 'fa-lock'} mr-1"></i> ${esPrivado ? 'Hacer Público' : 'Hacer Privado'}
                 </button>
                 <button onclick="someterProyectoAVotacion(${p.id_proyecto})" class="btn-oro font-extrabold text-xs uppercase px-3 py-1.5 rounded-xl">
@@ -3890,7 +3954,7 @@
                     <option value="Aprobado" ${p.estado==='Aprobado'?'selected':''}>Aprobado</option>
                     <option value="Archivado" ${p.estado==='Archivado'?'selected':''}>Archivado</option>
                 </select>
-                <button onclick="eliminarProyecto(${p.id_proyecto}, '${p.codigo_radicado}')" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold" title="Eliminar documento">
+                <button data-id="${p.id_proyecto}" data-codigo="${escapeHTML(p.codigo_radicado)}" onclick="eliminarProyecto(this.dataset.id, this.dataset.codigo)" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold" title="Eliminar documento">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
             ` : '';
@@ -3932,7 +3996,7 @@
                         `;
                         return;
                     } catch (err) {
-                        contenedor.innerHTML = `<p class="text-red-600 font-bold">Error al procesar el archivo Word: ${err.message}</p>`;
+                        contenedor.innerHTML = `<p class="text-red-600 font-bold">Error al procesar el archivo Word: ${escapeHTML(err.message)}</p>`;
                         return;
                     }
                 }
@@ -3942,7 +4006,7 @@
                     const texto = decodeURIComponent(escape(window.atob(base64Data)));
                     contenedor.innerHTML = `
                         <div id="hoja-documento" style="font-size: ${zoomTexto}px;" class="bg-white max-w-4xl w-full p-8 md:p-12 rounded-xl shadow-lg border border-slate-300 text-slate-900 whitespace-pre-wrap leading-relaxed font-serif">
-                            ${texto}
+                            ${escapeHTML(texto)}
                         </div>
                     `;
                     return;
@@ -3953,10 +4017,10 @@
                 <div id="hoja-documento" style="font-size: ${zoomTexto}px;" class="bg-white max-w-4xl w-full p-8 md:p-12 rounded-xl shadow-lg border border-slate-300 text-slate-900 leading-relaxed">
                     <div class="border-b-2 border-slate-900 pb-4 mb-6 text-center">
                         <p class="text-xs font-extrabold uppercase tracking-widest text-slate-500">República de Colombia • Concejo Municipal de Ibagué</p>
-                        <h2 class="text-xl md:text-2xl font-black uppercase text-slate-900 mt-1">${p.tipo_documento || 'Proyecto de Acuerdo'} N.° ${p.codigo_radicado}</h2>
-                        <p class="text-sm font-bold text-slate-700 mt-2">“${p.titulo}”</p>
+                        <h2 class="text-xl md:text-2xl font-black uppercase text-slate-900 mt-1">${escapeHTML(p.tipo_documento || 'Proyecto de Acuerdo')} N.° ${escapeHTML(p.codigo_radicado)}</h2>
+                        <p class="text-sm font-bold text-slate-700 mt-2">“${escapeHTML(p.titulo)}”</p>
                     </div>
-                    <div class="whitespace-pre-wrap font-serif text-slate-800">${p.descripcion || 'Este documento no contiene texto transcrito.'}</div>
+                    <div class="whitespace-pre-wrap font-serif text-slate-800">${escapeHTML(p.descripcion || 'Este documento no contiene texto transcrito.')}</div>
                 </div>
             `;
         }
@@ -4073,15 +4137,15 @@
                             ★ Reconocimiento al Mérito Legislativo e Iniciativa Parlamentaria
                         </p>
                         <h3 style="margin:6px 0 4px 0; font-size:20px; font-weight:900; color:#0f172a; text-transform:uppercase;">
-                            H.C. ${g.nombre}
+                            H.C. ${escapeHTML(g.nombre)}
                         </h3>
                         <p style="margin:0; font-size:13px; color:#334155;">
-                            Bancada <strong>${g.bancada}</strong> • Comisión <strong>${g.comision}</strong> — Obtuvo el mayor número de iniciativas aprobadas en el recinto con un total de <strong>${g.aprobadas.length} ${g.aprobadas.length === 1 ? 'iniciativa aprobada' : 'iniciativas aprobadas'}</strong>.
+                            Bancada <strong>${escapeHTML(g.bancada)}</strong> • Comisión <strong>${escapeHTML(g.comision)}</strong> — Obtuvo el mayor número de iniciativas aprobadas en el recinto con un total de <strong>${g.aprobadas.length} ${g.aprobadas.length === 1 ? 'iniciativa aprobada' : 'iniciativas aprobadas'}</strong>.
                         </p>
                     </div>
                 `;
             } else if (ganadores.length > 1) {
-                const nombresEmpate = ganadores.map(g => `H.C. ${g.nombre} (${g.bancada})`).join(' y ');
+                const nombresEmpate = ganadores.map(g => `H.C. ${escapeHTML(g.nombre)} (${escapeHTML(g.bancada)})`).join(' y ');
                 bloqueDestacadoHtml = `
                     <div style="background:#fefce8; border:2px solid #ca8a04; border-radius:10px; padding:16px; margin-bottom:24px;">
                         <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:1.5px; color:#854d0e;">
@@ -4112,91 +4176,101 @@
                     return `
                         <tr style="background:${esTop ? '#fefce8' : (idx % 2 === 0 ? '#ffffff' : '#f8fafc')};">
                             <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:bold;">${idx + 1}</td>
-                            <td style="border:1px solid #cbd5e1; padding:8px; font-weight:bold; color:#0f172a;">
-                                H.C. ${a.nombre} ${esTop ? '★' : ''}
+                            <td style="border:1px solid #cbd5e1; padding:8px; font-weight:bold;">
+                                H.C. ${escapeHTML(a.nombre)} ${esTop ? '<span style="color:#b45309; font-size:11px;">(★ Mayor Aprobación)</span>' : ''}
                             </td>
-                            <td style="border:1px solid #cbd5e1; padding:8px;">${a.bancada}</td>
-                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:bold; color:#047857;">${a.aprobadas.length}</td>
+                            <td style="border:1px solid #cbd5e1; padding:8px;">${escapeHTML(a.bancada)}</td>
+                            <td style="border:1px solid #cbd5e1; padding:8px;">${escapeHTML(a.comision)}</td>
+                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:900; color:#15803d; font-size:15px;">${a.aprobadas.length}</td>
                             <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#b91c1c;">${a.archivadas.length}</td>
-                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#b45309;">${a.enTramite.length}</td>
+                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#334155;">${a.enTramite.length}</td>
                             <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:bold;">${totalAutor}</td>
                         </tr>
                     `;
                 }).join('')
-                : `<tr><td colspan="7" style="border:1px solid #cbd5e1; padding:12px; text-align:center; color:#64748b;">No hay iniciativas radicadas todavía.</td></tr>`;
+                : `<tr><td colspan="8" style="border:1px solid #cbd5e1; padding:14px; text-align:center; color:#64748b;">No hay iniciativas radicadas en el sistema.</td></tr>`;
 
-            const listaAprobadasHtml = aprobados.length > 0
+            const detalleAprobadasHtml = aprobados.length > 0
                 ? aprobados.map((p, idx) => `
-                    <div style="border-left:4px solid #059669; background:#f0fdf4; padding:12px 14px; margin-bottom:12px; border-radius:6px;">
-                        <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; color:#065f46;">
-                            ${idx + 1}. ${p.tipo_documento || 'Iniciativa'} • Radicado ${p.codigo_radicado} • Comisión ${p.comision}
+                    <div style="border-left:4px solid #15803d; background:#f0fdf4; padding:12px 14px; margin-bottom:12px; border-radius:4px;">
+                        <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; color:#166534;">
+                            ${idx + 1}. ${escapeHTML(p.tipo_documento || 'Iniciativa')} • Radicado N.° ${escapeHTML(p.codigo_radicado)} • Comisión ${escapeHTML(p.comision)}
                         </p>
-                        <h4 style="margin:4px 0; font-size:15px; font-weight:800; color:#0f172a;">
-                            ${p.titulo}
+                        <h4 style="margin:4px 0; font-size:15px; font-weight:bold; color:#0f172a;">
+                            “${escapeHTML(p.titulo)}”
                         </h4>
-                        <p style="margin:0 0 6px 0; font-size:12px; color:#334155;">
-                            <strong>Autor / Ponente:</strong> H.C. ${p.autor}
+                        <p style="margin:2px 0 6px 0; font-size:12px; color:#334155;">
+                            <strong>Autor / Ponente:</strong> H.C. ${escapeHTML(p.autor)}
                         </p>
-                        ${p.descripcion ? `<p style="margin:0; font-size:12px; color:#1e293b; white-space:pre-wrap;">${p.descripcion}</p>` : ''}
+                        ${p.descripcion ? `<p style="margin:0; font-size:12px; color:#1e293b; white-space:pre-wrap;">${escapeHTML(p.descripcion)}</p>` : ''}
                     </div>
                 `).join('')
                 : `<p style="font-size:13px; color:#64748b; font-style:italic;">No se registran proposiciones o proyectos aprobados hasta el momento.</p>`;
 
-            const listaOtrasHtml = [...enTramite, ...archivados].length > 0
+            const detalleOtrasHtml = [...enTramite, ...archivados].length > 0
                 ? [...enTramite, ...archivados].map((p, idx) => `
-                    <li style="margin-bottom:6px; font-size:13px;">
-                        <strong>[${p.estado.toUpperCase()}]</strong> ${p.tipo_documento || 'Documento'} <strong>${p.codigo_radicado}</strong>: “${p.titulo}” — <em>Autor: H.C. ${p.autor}</em> (${p.comision})
-                    </li>
+                    <tr style="background:${idx % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+                        <td style="border:1px solid #cbd5e1; padding:7px; font-family:monospace; font-size:12px;">${escapeHTML(p.codigo_radicado)}</td>
+                        <td style="border:1px solid #cbd5e1; padding:7px; font-size:12px;">${escapeHTML(p.tipo_documento || 'Proyecto')}</td>
+                        <td style="border:1px solid #cbd5e1; padding:7px; font-size:12px; font-weight:bold;">${escapeHTML(p.titulo)}</td>
+                        <td style="border:1px solid #cbd5e1; padding:7px; font-size:12px;">H.C. ${escapeHTML(p.autor)}</td>
+                        <td style="border:1px solid #cbd5e1; padding:7px; font-size:12px; text-align:center; font-weight:bold; color:${p.estado === 'Archivado' ? '#b91c1c' : '#b45309'};">${escapeHTML(p.estado)}</td>
+                    </tr>
                 `).join('')
-                : `<li style="font-size:13px; color:#64748b;">Sin otras iniciativas en trámite o archivadas.</li>`;
+                : `<tr><td colspan="5" style="border:1px solid #cbd5e1; padding:10px; text-align:center; color:#64748b; font-size:12px;">Sin otras iniciativas registradas.</td></tr>`;
 
             contenedor.innerHTML = `
-                <div style="border-bottom:3px solid #0f172a; padding-bottom:16px; margin-bottom:20px; text-align:center;">
+                <div style="text-align:center; border-bottom:3px double #0f172a; padding-bottom:16px; margin-bottom:22px;">
                     <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:2px; color:#475569;">
                         República de Colombia • Departamento del Tolima
                     </p>
-                    <h1 style="margin:4px 0; font-size:24px; font-weight:900; text-transform:uppercase; color:#0f172a;">
+                    <h1 style="margin:4px 0; font-size:24px; font-weight:900; text-transform:uppercase; color:#0f172a; letter-spacing:1px;">
                         CONCEJO MUNICIPAL DE IBAGUÉ
                     </h1>
-                    <p style="margin:0; font-size:12px; font-weight:bold; text-transform:uppercase; letter-spacing:1.2px; color:#92400e;">
-                        Fundación Creer y Merecer • Secretaría General
+                    <p style="margin:2px 0; font-size:13px; font-weight:bold; color:#854d0e; text-transform:uppercase;">
+                        Fundación Creer y Merecer • Modelo Concejo Municipal
                     </p>
-                    <p style="margin:8px 0 0 0; font-size:12px; color:#334155;">
-                        <strong>Acta Resumen de Proposiciones, Proyectos e Iniciativas Legislativas</strong><br>
-                        ${nombreSesion} • Fecha de expedición: ${fechaHoy}
+                    <h2 style="margin:12px 0 4px 0; font-size:17px; font-weight:800; text-transform:uppercase; color:#1e293b;">
+                        ACTA OFICIAL DE BALANCE LEGISLATIVO E INICIATIVAS APROBADAS
+                    </h2>
+                    <p style="margin:0; font-size:12px; color:#475569;">
+                        <strong>Sesión de referencia:</strong> ${escapeHTML(nombreSesion)} &nbsp;|&nbsp; <strong>Fecha de expedición:</strong> ${escapeHTML(fechaHoy)}
                     </p>
                 </div>
 
-                <div style="display:flex; justify-content:space-between; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
-                    <div style="flex:1; min-width:120px; border:1px solid #cbd5e1; border-radius:8px; padding:10px; text-align:center; background:#f8fafc;">
-                        <span style="font-size:10px; font-weight:bold; text-transform:uppercase; color:#475569; display:block;">Total Radicadas</span>
-                        <strong style="font-size:22px; color:#0f172a;">${totalRadicados}</strong>
-                    </div>
-                    <div style="flex:1; min-width:120px; border:1px solid #10b981; border-radius:8px; padding:10px; text-align:center; background:#ecfdf5;">
-                        <span style="font-size:10px; font-weight:bold; text-transform:uppercase; color:#065f46; display:block;">Aprobadas</span>
-                        <strong style="font-size:22px; color:#047857;">${aprobados.length}</strong>
-                    </div>
-                    <div style="flex:1; min-width:120px; border:1px solid #f59e0b; border-radius:8px; padding:10px; text-align:center; background:#fffbeb;">
-                        <span style="font-size:10px; font-weight:bold; text-transform:uppercase; color:#92400e; display:block;">En Debate / Radicadas</span>
-                        <strong style="font-size:22px; color:#b45309;">${enTramite.length}</strong>
-                    </div>
-                    <div style="flex:1; min-width:120px; border:1px solid #f43f5e; border-radius:8px; padding:10px; text-align:center; background:#fff1f2;">
-                        <span style="font-size:10px; font-weight:bold; text-transform:uppercase; color:#9f1239; display:block;">Archivadas</span>
-                        <strong style="font-size:22px; color:#be123c;">${archivados.length}</strong>
-                    </div>
-                </div>
+                <table style="width:100%; border-collapse:collapse; margin-bottom:22px; text-align:center;">
+                    <tr>
+                        <td style="border:1px solid #cbd5e1; background:#f8fafc; padding:10px; width:25%;">
+                            <span style="font-size:10px; text-transform:uppercase; color:#475569; font-weight:bold; display:block;">Total Radicadas</span>
+                            <strong style="font-size:22px; color:#0f172a;">${totalRadicados}</strong>
+                        </td>
+                        <td style="border:1px solid #86efac; background:#f0fdf4; padding:10px; width:25%;">
+                            <span style="font-size:10px; text-transform:uppercase; color:#166534; font-weight:bold; display:block;">Aprobadas</span>
+                            <strong style="font-size:22px; color:#15803d;">${aprobados.length}</strong>
+                        </td>
+                        <td style="border:1px solid #fde047; background:#fefce8; padding:10px; width:25%;">
+                            <span style="font-size:10px; text-transform:uppercase; color:#854d0e; font-weight:bold; display:block;">En Trámite / Debate</span>
+                            <strong style="font-size:22px; color:#b45309;">${enTramite.length}</strong>
+                        </td>
+                        <td style="border:1px solid #fda4af; background:#fff1f2; padding:10px; width:25%;">
+                            <span style="font-size:10px; text-transform:uppercase; color:#9f1239; font-weight:bold; display:block;">Archivadas</span>
+                            <strong style="font-size:22px; color:#be123c;">${archivados.length}</strong>
+                        </td>
+                    </tr>
+                </table>
 
                 ${bloqueDestacadoHtml}
 
                 <h3 style="font-size:15px; font-weight:900; text-transform:uppercase; color:#0f172a; border-bottom:1.5px solid #0f172a; padding-bottom:4px; margin-bottom:10px;">
-                    I. Balance y Clasificación por Honorable Concejal Proponente
+                    I. Cuadro Comparativo de Iniciativas por Honorable Concejal
                 </h3>
-                <table style="width:100%; border-collapse:collapse; margin-bottom:24px; font-size:12px;">
+                <table style="width:100%; border-collapse:collapse; margin-bottom:26px; font-size:12px;">
                     <thead>
-                        <tr style="background:#0f172a; color:#ffffff;">
-                            <th style="border:1px solid #0f172a; padding:8px; text-align:center;">Puesto</th>
+                        <tr style="background:#0f172a; color:#ffffff; text-transform:uppercase; font-size:11px;">
+                            <th style="border:1px solid #0f172a; padding:8px; width:40px;">Pos.</th>
                             <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Honorable Concejal</th>
                             <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Bancada</th>
+                            <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Comisión</th>
                             <th style="border:1px solid #0f172a; padding:8px; text-align:center;">Aprobadas</th>
                             <th style="border:1px solid #0f172a; padding:8px; text-align:center;">Archivadas</th>
                             <th style="border:1px solid #0f172a; padding:8px; text-align:center;">En Trámite</th>
@@ -4208,30 +4282,41 @@
                     </tbody>
                 </table>
 
-                <h3 style="font-size:15px; font-weight:900; text-transform:uppercase; color:#065f46; border-bottom:1.5px solid #065f46; padding-bottom:4px; margin-bottom:12px;">
-                    II. Relación Oficial de Proposiciones e Iniciativas Aprobadas (${aprobados.length})
+                <h3 style="font-size:15px; font-weight:900; text-transform:uppercase; color:#15803d; border-bottom:1.5px solid #15803d; padding-bottom:4px; margin-bottom:12px;">
+                    II. Relación Detallada de Proposiciones y Proyectos Aprobados (${aprobados.length})
                 </h3>
-                <div style="margin-bottom:24px;">
-                    ${listaAprobadasHtml}
+                <div style="margin-bottom:26px;">
+                    ${detalleAprobadasHtml}
                 </div>
 
-                <h3 style="font-size:14px; font-weight:900; text-transform:uppercase; color:#334155; border-bottom:1px solid #94a3b8; padding-bottom:4px; margin-bottom:10px;">
-                    III. Otras Iniciativas en Trámite o Archivadas (${enTramite.length + archivados.length})
+                <h3 style="font-size:15px; font-weight:900; text-transform:uppercase; color:#334155; border-bottom:1.5px solid #64748b; padding-bottom:4px; margin-bottom:10px;">
+                    III. Otras Iniciativas Radicadas (En Trámite o Archivadas)
                 </h3>
-                <ul style="padding-left:20px; margin-bottom:32px; color:#1e293b;">
-                    ${listaOtrasHtml}
-                </ul>
+                <table style="width:100%; border-collapse:collapse; margin-bottom:36px;">
+                    <thead>
+                        <tr style="background:#e2e8f0; color:#0f172a; text-transform:uppercase; font-size:11px;">
+                            <th style="border:1px solid #cbd5e1; padding:7px; text-align:left;">Radicado</th>
+                            <th style="border:1px solid #cbd5e1; padding:7px; text-align:left;">Tipo</th>
+                            <th style="border:1px solid #cbd5e1; padding:7px; text-align:left;">Título / Asunto</th>
+                            <th style="border:1px solid #cbd5e1; padding:7px; text-align:left;">Autor</th>
+                            <th style="border:1px solid #cbd5e1; padding:7px; text-align:center;">Estado Final</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${detalleOtrasHtml}
+                    </tbody>
+                </table>
 
-                <div style="margin-top:40px; padding-top:20px; border-top:1px solid #cbd5e1; display:flex; justify-content:space-around; text-align:center; font-size:12px;">
-                    <div>
-                        <p style="margin:0;">_________________________________________</p>
-                        <p style="margin:4px 0 0 0; font-weight:bold; text-transform:uppercase;">Presidencia del Concejo Municipal</p>
-                        <p style="margin:0; color:#64748b; font-size:11px;">Concejo Municipal de Ibagué</p>
+                <div style="margin-top:40px; padding-top:18px; border-top:1px solid #94a3b8; display:flex; justify-content:space-between; gap:30px; text-align:center; font-size:12px;">
+                    <div style="flex:1;">
+                        <div style="border-bottom:1px solid #0f172a; height:36px; margin-bottom:6px;"></div>
+                        <strong style="text-transform:uppercase; color:#0f172a;">Presidencia del Concejo Municipal</strong><br>
+                        <span style="color:#475569; font-size:11px;">Concejo Municipal de Ibagué • Fundación Creer y Merecer</span>
                     </div>
-                    <div>
-                        <p style="margin:0;">_________________________________________</p>
-                        <p style="margin:4px 0 0 0; font-weight:bold; text-transform:uppercase;">Secretaría General</p>
-                        <p style="margin:0; color:#64748b; font-size:11px;">Fundación Creer y Merecer</p>
+                    <div style="flex:1;">
+                        <div style="border-bottom:1px solid #0f172a; height:36px; margin-bottom:6px;"></div>
+                        <strong style="text-transform:uppercase; color:#0f172a;">Secretaría General</strong><br>
+                        <span style="color:#475569; font-size:11px;">Certificación Oficial de Actas y Votaciones</span>
                     </div>
                 </div>
             `;
@@ -4241,50 +4326,73 @@
             const contenido = document.getElementById('contenido-documento-iniciativas');
             if (!contenido) return;
 
-            const htmlCompleto = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                <head><meta charset='utf-8'><title>Acta Resumen de Iniciativas - Concejo Municipal de Ibagué</title></head>
-                <body style="font-family: 'Times New Roman', serif; color:#0f172a;">
-                    ${contenido.innerHTML}
-                </body>
-                </html>
+            const preHtml = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office'
+                      xmlns:w='urn:schemas-microsoft-com:office:word'
+                      xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset='utf-8'>
+                    <title>Acta Oficial de Iniciativas Aprobadas - Concejo Municipal de Ibague</title>
+                    <style>
+                        body { font-family: 'Times New Roman', Times, serif; color: #0f172a; }
+                        table { border-collapse: collapse; width: 100%; }
+                    </style>
+                </head>
+                <body>
             `;
+            const postHtml = `</body></html>`;
+            const htmlCompleto = preHtml + contenido.innerHTML + postHtml;
 
-            const blob = new Blob(['\ufeff', htmlCompleto], { type: 'application/msword' });
+            const blob = new Blob(['\ufeff', htmlCompleto], {
+                type: 'application/msword'
+            });
+
             const url = URL.createObjectURL(blob);
             const enlace = document.createElement('a');
-            enlace.href = url;
             const fechaArchivo = new Date().toISOString().slice(0, 10);
+            enlace.href = url;
             enlace.download = `Acta_Iniciativas_Concejo_Ibague_${fechaArchivo}.doc`;
             document.body.appendChild(enlace);
             enlace.click();
             document.body.removeChild(enlace);
             URL.revokeObjectURL(url);
-            notificar('📥 Documento Word (.doc) descargado correctamente');
+
+            notificar('📄 Documento Word (.doc) descargado correctamente');
         }
 
         function imprimirActaIniciativas() {
             const contenido = document.getElementById('contenido-documento-iniciativas');
             if (!contenido) return;
 
-            const ventanaImpresion = window.open('', '_blank', 'width=900,height=700');
-            if (!ventanaImpresion) return alert('Permita las ventanas emergentes para imprimir o guardar como PDF.');
+            const ventanaImpresion = window.open('', '_blank', 'width=950,height=800');
+            if (!ventanaImpresion) {
+                return alert('Permita las ventanas emergentes en su navegador para imprimir o guardar en PDF.');
+            }
 
             ventanaImpresion.document.write(`
                 <!DOCTYPE html>
                 <html lang="es">
                 <head>
                     <meta charset="UTF-8">
-                    <title>Acta Resumen de Iniciativas - Concejo Municipal de Ibagué</title>
+                    <title>Acta Oficial de Iniciativas - Concejo Municipal de Ibagué</title>
                     <style>
-                        body { font-family: Georgia, 'Times New Roman', serif; color: #0f172a; padding: 24px; }
-                        @media print { body { padding: 0; } }
+                        body {
+                            font-family: 'Times New Roman', Times, serif;
+                            color: #0f172a;
+                            margin: 24px;
+                            line-height: 1.45;
+                        }
+                        @media print {
+                            body { margin: 0; }
+                        }
                     </style>
                 </head>
                 <body>
                     ${contenido.innerHTML}
                     <script>
-                        window.onload = function() { window.print(); };
+                        window.onload = function() {
+                            window.print();
+                        };
                     <\/script>
                 </body>
                 </html>
