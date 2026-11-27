@@ -296,7 +296,7 @@
 
     <!-- MARCA DE AGUA DE FONDO -->
     <div id="marca-agua-fondo" aria-hidden="true">
-        <img id="img-marca-agua" src="/logo-creer-y-merecer.png" alt="" class="hidden" onload="mostrarMarcaAgua()" onerror="ocultarMarcaAgua()">
+        <img id="img-marca-agua" src="" alt="" class="hidden" onload="mostrarMarcaAgua()" onerror="ocultarMarcaAgua()">
     </div>
 
     <!-- ===================================================================== -->
@@ -491,7 +491,7 @@
                 
                 <div class="flex items-center gap-3.5 md:gap-5">
                     <div class="emblema-ring w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-[#050b18] overflow-hidden flex items-center justify-center shrink-0">
-                        <img id="img-logo-header" src="/logo-creer-y-merecer.png" alt="Emblema" class="w-full h-full object-cover hidden" onload="mostrarImagenLogo()" onerror="ocultarImagenLogo()">
+                        <img id="img-logo-header" src="" alt="Emblema" class="w-full h-full object-cover hidden" onload="mostrarImagenLogo()" onerror="ocultarImagenLogo()">
                         <div id="placeholder-logo-header" class="flex flex-col items-center justify-center text-center p-1">
                             <i class="fa-solid fa-landmark text-[#f3cf7a] text-lg md:text-2xl"></i>
                         </div>
@@ -1341,7 +1341,7 @@
     <footer class="bg-[#050b18] text-slate-300 text-xs py-4 px-3 md:px-4 border-t-2 border-[#f3cf7a]/40 mt-10 relative z-10">
         <div class="max-w-[1440px] mx-auto flex flex-wrap justify-between items-center gap-3">
             <div class="flex items-center gap-3">
-                <img id="img-logo-footer" src="/logo-creer-y-merecer.png" alt="Emblema" class="w-9 h-9 rounded-full border-2 border-[#f3cf7a] object-cover hidden">
+                <img id="img-logo-footer" src="" alt="Emblema" class="w-9 h-9 rounded-full border-2 border-[#f3cf7a] object-cover hidden">
                 <div>
                     <p class="font-solemne font-bold text-white text-xs uppercase tracking-wider">Asamblea Departamental del Tolima • Fundación Creer y Merecer</p>
                     <p class="text-[11px] text-slate-400">Colectivo Juvenil • Formación Democrática y Control Político</p>
@@ -1459,6 +1459,7 @@
         let sseConectado = false;
         let syncEnCurso = false;
         let debounceSyncTimer = null;
+        let ignorarSSEAsistenciasHasta = 0;
 
         let configVisualActual = {
             logo_base64: null,
@@ -1743,6 +1744,9 @@
         }
 
         function programarSyncSilencioso(tipoEvento = 'activo') {
+            if (tipoEvento === 'asistencias' && Date.now() < ignorarSSEAsistenciasHasta) {
+                return;
+            }
             clearTimeout(debounceSyncTimer);
             debounceSyncTimer = setTimeout(() => {
                 sincronizarTodoSilencioso(tipoEvento);
@@ -1764,7 +1768,9 @@
                     tareas.push(cargarIntegrantes());
                     if (esModoAdmin && sesionActual) tareas.push(cargarAsistencias());
                 } else if (tipoEvento === 'asistencias') {
-                    if (esModoAdmin && sesionActual) tareas.push(cargarAsistencias());
+                    if (esModoAdmin && sesionActual && Date.now() >= ignorarSSEAsistenciasHasta) {
+                        tareas.push(cargarAsistencias());
+                    }
                 } else if (tipoEvento === 'intervenciones') {
                     if (sesionActual) tareas.push(cargarIntervenciones());
                 } else if (tipoEvento === 'proyectos') {
@@ -1772,7 +1778,7 @@
                 } else if (tipoEvento === 'votaciones' || tipoEvento === 'votos') {
                     tareas.push(cargarVotaciones());
                 } else {
-                    if (tabActivaActual === 'asistencia' && esModoAdmin && sesionActual) {
+                    if (tabActivaActual === 'asistencia' && esModoAdmin && sesionActual && Date.now() >= ignorarSSEAsistenciasHasta) {
                         tareas.push(cargarAsistencias());
                     } else if (tabActivaActual === 'comisiones' || tabActivaActual === 'integrantes') {
                         tareas.push(cargarIntegrantes());
@@ -1832,7 +1838,7 @@
         });
 
         // =====================================================================
-        // GESTIÓN GLOBAL DE LOGO Y MARCA DE AGUA
+        // GESTIÓN GLOBAL DE LOGO Y MARCA DE AGUA (PERSISTENTE Y COMPRIMIDA)
         // =====================================================================
         function toggleDrawerMarcaAgua() {
             if (!esModoAdmin) return abrirPortalLogin();
@@ -1842,7 +1848,7 @@
 
         function mostrarMarcaAgua() {
             const img = document.getElementById('img-marca-agua');
-            if (img && configVisualActual.marca_agua_visible !== false) {
+            if (img && img.getAttribute('src') && configVisualActual.marca_agua_visible !== false) {
                 img.classList.remove('hidden');
             }
         }
@@ -1853,15 +1859,21 @@
         }
 
         function mostrarImagenLogo() {
-            document.getElementById('img-logo-header').classList.remove('hidden');
-            document.getElementById('placeholder-logo-header').classList.add('hidden');
-            document.getElementById('img-logo-footer').classList.remove('hidden');
+            const h = document.getElementById('img-logo-header');
+            const p = document.getElementById('placeholder-logo-header');
+            const f = document.getElementById('img-logo-footer');
+            if (h) h.classList.remove('hidden');
+            if (p) p.classList.add('hidden');
+            if (f) f.classList.remove('hidden');
         }
 
         function ocultarImagenLogo() {
-            document.getElementById('img-logo-header').classList.add('hidden');
-            document.getElementById('placeholder-logo-header').classList.remove('hidden');
-            document.getElementById('img-logo-footer').classList.add('hidden');
+            const h = document.getElementById('img-logo-header');
+            const p = document.getElementById('placeholder-logo-header');
+            const f = document.getElementById('img-logo-footer');
+            if (h) h.classList.add('hidden');
+            if (p) p.classList.remove('hidden');
+            if (f) f.classList.add('hidden');
         }
 
         function aplicarEstilosVisualesEnDOM(cfg) {
@@ -1902,13 +1914,18 @@
             }
 
             const fuenteImagen = cfg.logo_base64 || '/logo-creer-y-merecer.png';
-            if (imgHeader && imgHeader.getAttribute('src') !== fuenteImagen) imgHeader.src = fuenteImagen;
-            if (imgFooter && imgFooter.getAttribute('src') !== fuenteImagen) imgFooter.src = fuenteImagen;
-            if (imgMarca && imgMarca.getAttribute('src') !== fuenteImagen) imgMarca.src = fuenteImagen;
+            [imgHeader, imgFooter, imgMarca].forEach((el) => {
+                if (!el) return;
+                if (el.getAttribute('src') !== fuenteImagen) {
+                    el.src = fuenteImagen;
+                }
+            });
 
-            if (visible) {
-                if (imgMarca && imgMarca.complete && imgMarca.naturalWidth > 0) imgMarca.classList.remove('hidden');
-            } else {
+            if (cfg.logo_base64) {
+                mostrarImagenLogo();
+                if (visible) mostrarMarcaAgua();
+                else ocultarMarcaAgua();
+            } else if (!visible) {
                 ocultarMarcaAgua();
             }
         }
@@ -1967,22 +1984,57 @@
             notificar('Marca de agua ocultada');
         }
 
-        function cargarLogoDesdePC(event) {
+        function comprimirImagenLogo(file, maxDim = 512) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = reject;
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.onerror = reject;
+                    img.onload = () => {
+                        let { width, height } = img;
+                        if (width > maxDim || height > maxDim) {
+                            if (width > height) {
+                                height = Math.round((height * maxDim) / width);
+                                width = maxDim;
+                            } else {
+                                width = Math.round((width * maxDim) / height);
+                                height = maxDim;
+                            }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.clearRect(0, 0, width, height);
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const webp = canvas.toDataURL('image/webp', 0.88);
+                        resolve(webp.startsWith('data:image/webp') ? webp : canvas.toDataURL('image/png'));
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function cargarLogoDesdePC(event) {
             if (!esModoAdmin) return abrirPortalLogin();
             const file = event.target.files[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64 = e.target.result;
-                await guardarConfiguracionVisualServidor({
-                    logo_base64: base64,
+            try {
+                const base64Optimizado = await comprimirImagenLogo(file, 512);
+                aplicarEstilosVisualesEnDOM({
+                    logo_base64: base64Optimizado,
                     marca_agua_visible: true
                 });
-                mostrarImagenLogo();
-                mostrarMarcaAgua();
+                await guardarConfiguracionVisualServidor({
+                    logo_base64: base64Optimizado,
+                    marca_agua_visible: true
+                });
                 notificar('✅ Logo institucional y marca de agua publicados');
-            };
-            reader.readAsDataURL(file);
+            } catch (e) {
+                alert('No se pudo procesar la imagen seleccionada.');
+            }
         }
 
         function actualizarRelojYFecha() {
@@ -2614,8 +2666,19 @@
         }
 
         // =====================================================================
-        // 3. TABLERO DE QUÓRUM POR BANCADAS (SOLO ADMIN)
+        // 3. TABLERO DE QUÓRUM INSTANTÁNEO (0 MS DELAY - ACTUALIZACIÓN OPTIMISTA)
         // =====================================================================
+        function recalcularKPIsAsistencia() {
+            let stats = { Presente: 0, Retardo: 0, Ausente: 0, Excusa: 0 };
+            asistenciasGlobal.forEach(a => {
+                if (stats[a.estado] !== undefined) stats[a.estado]++;
+            });
+            document.getElementById('stat-presentes').innerText = stats.Presente;
+            document.getElementById('stat-retardos').innerText = stats.Retardo;
+            document.getElementById('stat-ausentes').innerText = stats.Ausente;
+            document.getElementById('stat-excusas').innerText = stats.Excusa;
+        }
+
         async function cargarAsistencias() {
             const avisoRestringido = document.getElementById('aviso-quorum-restringido');
             if (!esModoAdmin || !adminToken) {
@@ -2631,16 +2694,11 @@
             if (!res.ok) return;
             asistenciasGlobal = await res.json();
 
-            let stats = { Presente: 0, Retardo: 0, Ausente: 0, Excusa: 0 };
-            asistenciasGlobal.forEach(a => { if (stats[a.estado] !== undefined) stats[a.estado]++; });
-
-            document.getElementById('stat-presentes').innerText = stats.Presente;
-            document.getElementById('stat-retardos').innerText = stats.Retardo;
-            document.getElementById('stat-ausentes').innerText = stats.Ausente;
-            document.getElementById('stat-excusas').innerText = stats.Excusa;
-
+            recalcularKPIsAsistencia();
             renderizarBancadasAsistencia(asistenciasGlobal);
-            renderizarTableroComisiones();
+            if (tabActivaActual === 'comisiones') {
+                renderizarTableroComisiones();
+            }
         }
 
         function renderizarBancadasAsistencia(lista) {
@@ -2722,20 +2780,55 @@
         }
 
         async function marcarAsistencia(id_asistencia, estado) {
-            const res = await fetchAdmin(`/api/asistencias/${id_asistencia}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ estado })
-            });
-            if (res.ok) await cargarAsistencias();
+            const registro = asistenciasGlobal.find(a => a.id_asistencia === id_asistencia);
+            if (!registro || registro.estado === estado) return;
+
+            const estadoAnterior = registro.estado;
+            registro.estado = estado;
+            ignorarSSEAsistenciasHasta = Date.now() + 2500;
+            recalcularKPIsAsistencia();
+            renderizarBancadasAsistencia(asistenciasGlobal);
+
+            try {
+                const res = await fetchAdmin(`/api/asistencias/${id_asistencia}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ estado })
+                });
+                if (!res.ok) {
+                    registro.estado = estadoAnterior;
+                    recalcularKPIsAsistencia();
+                    renderizarBancadasAsistencia(asistenciasGlobal);
+                    notificar('⚠️ No se pudo guardar el cambio de asistencia');
+                }
+            } catch (e) {
+                registro.estado = estadoAnterior;
+                recalcularKPIsAsistencia();
+                renderizarBancadasAsistencia(asistenciasGlobal);
+            }
         }
 
         async function marcarTodosPresentes() {
             if (!sesionActual) return alert('Primero debe abrir una sesión');
-            const res = await fetchAdmin(`/api/asistencias/sesion/${sesionActual}/todos-presentes`, { method: 'PUT' });
-            if (res.ok) {
-                notificar('✅ Quórum pleno confirmado en el tablero');
-                await cargarAsistencias();
+            const respaldo = asistenciasGlobal.map(a => ({ ...a }));
+
+            asistenciasGlobal.forEach(a => { a.estado = 'Presente'; });
+            ignorarSSEAsistenciasHasta = Date.now() + 3000;
+            recalcularKPIsAsistencia();
+            renderizarBancadasAsistencia(asistenciasGlobal);
+            notificar('✅ Quórum pleno confirmado en el tablero');
+
+            try {
+                const res = await fetchAdmin(`/api/asistencias/sesion/${sesionActual}/todos-presentes`, { method: 'PUT' });
+                if (!res.ok) {
+                    asistenciasGlobal = respaldo;
+                    recalcularKPIsAsistencia();
+                    renderizarBancadasAsistencia(asistenciasGlobal);
+                }
+            } catch (e) {
+                asistenciasGlobal = respaldo;
+                recalcularKPIsAsistencia();
+                renderizarBancadasAsistencia(asistenciasGlobal);
             }
         }
 
@@ -4151,7 +4244,7 @@
                             ${nombresEmpate}
                         </h3>
                         <p style="margin:0; font-size:13px; color:#334155;">
-                            Lideran el balance legislativo con <strong>${maxAprobadas} ${maxAprobadas === 1 ? 'iniciativa aprobada' : 'iniciativas aprobadas'}</strong> cada uno.
+                            Cada uno obtuvo el máximo puntaje del recinto con <strong>${maxAprobadas} ${maxAprobadas === 1 ? 'iniciativa aprobada' : 'iniciativas aprobadas'}</strong>.
                         </p>
                     </div>
                 `;
@@ -4159,230 +4252,195 @@
                 bloqueDestacadoHtml = `
                     <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:14px; margin-bottom:24px;">
                         <p style="margin:0; font-size:13px; color:#475569;">
-                            <em>Aún no se registran proposiciones o proyectos con estado <strong>Aprobado</strong> para asignar el reconocimiento al mayor número de iniciativas aprobadas.</em>
+                            <strong>Nota de Secretaría General:</strong> Aún no se registran proposiciones o proyectos de ordenanza con estado <em>“Aprobado”</em> en el sistema.
                         </p>
                     </div>
                 `;
             }
 
-            const filasTablaAutores = listaAutores.length > 0
-                ? listaAutores.map((a, idx) => {
-                    const totalAutor = a.aprobadas.length + a.archivadas.length + a.enTramite.length;
-                    const esTop = maxAprobadas > 0 && a.aprobadas.length === maxAprobadas;
-                    return `
-                        <tr style="background:${esTop ? '#fefce8' : (idx % 2 === 0 ? '#ffffff' : '#f8fafc')};">
-                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:bold;">${idx + 1}</td>
-                            <td style="border:1px solid #cbd5e1; padding:8px; font-weight:bold;">
-                                H.D. ${escapeHTML(a.nombre)} ${esTop ? '<span style="color:#b45309; font-size:11px;">(★ Mayor Aprobación)</span>' : ''}
-                            </td>
-                            <td style="border:1px solid #cbd5e1; padding:8px;">${escapeHTML(a.bancada)}</td>
-                            <td style="border:1px solid #cbd5e1; padding:8px;">${escapeHTML(a.comision)}</td>
-                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:900; color:#15803d; font-size:15px;">${a.aprobadas.length}</td>
-                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#b91c1c;">${a.archivadas.length}</td>
-                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#334155;">${a.enTramite.length}</td>
-                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:bold;">${totalAutor}</td>
-                        </tr>
-                    `;
-                }).join('')
-                : `<tr><td colspan="8" style="border:1px solid #cbd5e1; padding:14px; text-align:center; color:#64748b;">No hay iniciativas radicadas en el sistema.</td></tr>`;
+            const filasRankingHtml = listaAutores.map((autor, idx) => {
+                const totalAutor = autor.aprobadas.length + autor.archivadas.length + autor.enTramite.length;
+                const esLider = maxAprobadas > 0 && autor.aprobadas.length === maxAprobadas;
+                const titulosAprobados = autor.aprobadas.length > 0
+                    ? autor.aprobadas.map(p => `• [${escapeHTML(p.codigo_radicado)}] ${escapeHTML(p.titulo)}`).join('<br>')
+                    : '<span style="color:#94a3b8;">Ninguna aprobada</span>';
 
-            const detalleAprobadasHtml = aprobados.length > 0
+                return `
+                    <tr style="background:${esLider ? '#fef9c3' : '#ffffff'};">
+                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:bold;">${idx + 1}</td>
+                        <td style="border:1px solid #cbd5e1; padding:8px;">
+                            <strong>H.D. ${escapeHTML(autor.nombre)}</strong>${esLider ? ' ★' : ''}<br>
+                            <span style="font-size:11px; color:#475569;">${escapeHTML(autor.bancada)} • Com. ${escapeHTML(autor.comision)}</span>
+                        </td>
+                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:900; color:#15803d; font-size:15px;">${autor.aprobadas.length}</td>
+                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#b91c1c;">${autor.archivadas.length}</td>
+                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#475569;">${totalAutor}</td>
+                        <td style="border:1px solid #cbd5e1; padding:8px; font-size:11px; line-height:1.4;">${titulosAprobados}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            const filasDetalleAprobadasHtml = aprobados.length > 0
                 ? aprobados.map((p, idx) => `
-                    <div style="border-left:4px solid #15803d; background:#f0fdf4; padding:12px 14px; margin-bottom:12px; border-radius:4px;">
-                        <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; color:#166534;">
-                            ${idx + 1}. ${escapeHTML(p.tipo_documento || 'Proposición')} • Radicado ${escapeHTML(p.codigo_radicado)} • Comisión ${escapeHTML(p.comision)}
-                        </p>
-                        <h4 style="margin:4px 0; font-size:15px; font-weight:bold; color:#0f172a;">
-                            “${escapeHTML(p.titulo)}”
-                        </h4>
-                        <p style="margin:0 0 6px 0; font-size:12px; color:#334155;">
-                            <strong>Autor / Ponente:</strong> H.D. ${escapeHTML(p.autor)}
-                        </p>
-                        ${p.descripcion ? `<p style="margin:0; font-size:12px; color:#1e293b; white-space:pre-wrap;">${escapeHTML(p.descripcion)}</p>` : ''}
-                    </div>
-                `).join('')
-                : `<p style="font-size:13px; color:#64748b; font-style:italic;">No se registran proposiciones o proyectos aprobados hasta el momento.</p>`;
-
-            const detalleOtrasHtml = [...enTramite, ...archivados].length > 0
-                ? [...enTramite, ...archivados].map((p, idx) => `
                     <tr>
-                        <td style="border:1px solid #cbd5e1; padding:7px; font-size:12px; font-weight:bold;">${escapeHTML(p.codigo_radicado)}</td>
-                        <td style="border:1px solid #cbd5e1; padding:7px; font-size:12px;">${escapeHTML(p.tipo_documento || 'Documento')}</td>
-                        <td style="border:1px solid #cbd5e1; padding:7px; font-size:12px;">${escapeHTML(p.titulo)}</td>
-                        <td style="border:1px solid #cbd5e1; padding:7px; font-size:12px;">H.D. ${escapeHTML(p.autor)}</td>
-                        <td style="border:1px solid #cbd5e1; padding:7px; font-size:12px; font-weight:bold; color:${p.estado === 'Archivado' ? '#b91c1c' : '#b45309'};">${escapeHTML(p.estado)}</td>
+                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:bold;">${idx + 1}</td>
+                        <td style="border:1px solid #cbd5e1; padding:8px; font-weight:bold;">${escapeHTML(p.codigo_radicado)}</td>
+                        <td style="border:1px solid #cbd5e1; padding:8px;">${escapeHTML(p.tipo_documento || 'Proyecto de Ordenanza')}</td>
+                        <td style="border:1px solid #cbd5e1; padding:8px;">
+                            <strong>${escapeHTML(p.titulo)}</strong>
+                            ${p.descripcion ? `<div style="font-size:11px; color:#475569; margin-top:4px;">${escapeHTML(p.descripcion)}</div>` : ''}
+                        </td>
+                        <td style="border:1px solid #cbd5e1; padding:8px;"><strong>H.D. ${escapeHTML(p.autor)}</strong></td>
+                        <td style="border:1px solid #cbd5e1; padding:8px;">${escapeHTML(p.comision)}</td>
                     </tr>
                 `).join('')
-                : `<tr><td colspan="5" style="border:1px solid #cbd5e1; padding:10px; text-align:center; font-size:12px; color:#64748b;">Todas las iniciativas radicadas fueron aprobadas.</td></tr>`;
+                : `<tr><td colspan="6" style="border:1px solid #cbd5e1; padding:14px; text-align:center; color:#64748b;">No existen iniciativas aprobadas registradas hasta el momento.</td></tr>`;
 
             contenedor.innerHTML = `
-                <div style="text-align:center; border-bottom:3px double #0f172a; padding-bottom:16px; margin-bottom:22px;">
-                    <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:2px; color:#475569;">
-                        República de Colombia • Departamento del Tolima
+                <div style="text-align:center; border-bottom:3px double #0f172a; padding-bottom:14px; margin-bottom:20px;">
+                    <p style="margin:0; font-size:11px; font-weight:bold; letter-spacing:2px; text-transform:uppercase; color:#475569;">
+                        República de Colombia • Departamento del Tolima • Asamblea Departamental
                     </p>
-                    <h1 style="margin:4px 0; font-size:24px; font-weight:900; text-transform:uppercase; color:#0f172a; letter-spacing:1px;">
-                        ASAMBLEA DEPARTAMENTAL DEL TOLIMA
+                    <p style="margin:3px 0 0 0; font-size:11px; font-weight:bold; letter-spacing:1.5px; text-transform:uppercase; color:#92400e;">
+                        Fundación Creer y Merecer • Modelo Asamblea Departamental del Tolima
+                    </p>
+                    <h1 style="margin:10px 0 4px 0; font-size:21px; font-weight:900; text-transform:uppercase; color:#0f172a;">
+                        Acta Oficial de Balance Legislativo e Iniciativas Aprobadas
                     </h1>
-                    <p style="margin:2px 0 8px 0; font-size:12px; font-weight:bold; text-transform:uppercase; color:#92400e;">
-                        Secretaría General • Fundación Creer y Merecer
-                    </p>
-                    <h2 style="margin:10px 0 4px 0; font-size:17px; font-weight:800; text-transform:uppercase; color:#0f172a;">
-                        ACTA DE BALANCE LEGISLATIVO Y PROPOSICIONES APROBADAS
-                    </h2>
                     <p style="margin:0; font-size:12px; color:#334155;">
-                        <strong>Sesión de Referencia:</strong> ${escapeHTML(nombreSesion)} &nbsp;|&nbsp; <strong>Fecha de Expedición:</strong> ${escapeHTML(fechaHoy)}
+                        <strong>Sesión:</strong> ${escapeHTML(nombreSesion)} &nbsp;|&nbsp; <strong>Fecha de Expedición:</strong> ${escapeHTML(fechaHoy)}
                     </p>
                 </div>
 
-                <table style="width:100%; border-collapse:collapse; margin-bottom:22px; text-align:center;">
+                <table style="width:100%; border-collapse:collapse; margin-bottom:20px; text-align:center;">
                     <tr>
-                        <td style="border:1px solid #cbd5e1; background:#f8fafc; padding:10px; width:25%;">
-                            <span style="display:block; font-size:10px; text-transform:uppercase; font-weight:bold; color:#475569;">Total Radicadas</span>
-                            <strong style="font-size:22px; color:#0f172a;">${totalRadicados}</strong>
+                        <td style="border:1px solid #cbd5e1; background:#f8fafc; padding:10px;">
+                            <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#475569; display:block;">Total Radicadas</span>
+                            <strong style="font-size:20px; color:#0f172a;">${totalRadicados}</strong>
                         </td>
-                        <td style="border:1px solid #86efac; background:#f0fdf4; padding:10px; width:25%;">
-                            <span style="display:block; font-size:10px; text-transform:uppercase; font-weight:bold; color:#166534;">Aprobadas</span>
-                            <strong style="font-size:22px; color:#15803d;">${aprobados.length}</strong>
+                        <td style="border:1px solid #86efac; background:#f0fdf4; padding:10px;">
+                            <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#166534; display:block;">Aprobadas</span>
+                            <strong style="font-size:20px; color:#15803d;">${aprobados.length}</strong>
                         </td>
-                        <td style="border:1px solid #fde047; background:#fefce8; padding:10px; width:25%;">
-                            <span style="display:block; font-size:10px; text-transform:uppercase; font-weight:bold; color:#854d0e;">En Trámite / Debate</span>
-                            <strong style="font-size:22px; color:#a16207;">${enTramite.length}</strong>
+                        <td style="border:1px solid #fca5a5; background:#fef2f2; padding:10px;">
+                            <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#991b1b; display:block;">Archivadas</span>
+                            <strong style="font-size:20px; color:#b91c1c;">${archivados.length}</strong>
                         </td>
-                        <td style="border:1px solid #fca5a5; background:#fef2f2; padding:10px; width:25%;">
-                            <span style="display:block; font-size:10px; text-transform:uppercase; font-weight:bold; color:#991b1b;">Archivadas</span>
-                            <strong style="font-size:22px; color:#b91c1c;">${archivados.length}</strong>
+                        <td style="border:1px solid #fde68a; background:#fffbeb; padding:10px;">
+                            <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#92400e; display:block;">En Debate / Radicadas</span>
+                            <strong style="font-size:20px; color:#b45309;">${enTramite.length}</strong>
                         </td>
                     </tr>
                 </table>
 
                 ${bloqueDestacadoHtml}
 
-                <h3 style="font-size:14px; font-weight:900; text-transform:uppercase; color:#0f172a; border-bottom:1.5px solid #0f172a; padding-bottom:4px; margin:20px 0 10px 0;">
-                    1. Consolidado de Iniciativas por Honorable Diputado (Ordenado por Aprobación)
-                </h3>
-                <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:24px;">
+                <h2 style="font-size:15px; font-weight:800; text-transform:uppercase; color:#0f172a; border-left:4px solid #ca8a04; padding-left:10px; margin:20px 0 10px 0;">
+                    1. Cuadro de Honor y Estadística por Diputado Proponente
+                </h2>
+                <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:26px;">
                     <thead>
                         <tr style="background:#0f172a; color:#ffffff;">
-                            <th style="border:1px solid #0f172a; padding:8px; text-align:center;">Puesto</th>
-                            <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Honorable Diputado</th>
-                            <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Bancada</th>
-                            <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Comisión</th>
-                            <th style="border:1px solid #0f172a; padding:8px; text-align:center;">Aprobadas</th>
-                            <th style="border:1px solid #0f172a; padding:8px; text-align:center;">Archivadas</th>
-                            <th style="border:1px solid #0f172a; padding:8px; text-align:center;">En Trámite</th>
-                            <th style="border:1px solid #0f172a; padding:8px; text-align:center;">Total</th>
+                            <th style="border:1px solid #0f172a; padding:8px; width:45px;">Puesto</th>
+                            <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Honorable Diputado / Bancada</th>
+                            <th style="border:1px solid #0f172a; padding:8px; width:75px;">Aprobadas</th>
+                            <th style="border:1px solid #0f172a; padding:8px; width:75px;">Archivadas</th>
+                            <th style="border:1px solid #0f172a; padding:8px; width:70px;">Total</th>
+                            <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Detalle de Iniciativas Aprobadas</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${filasTablaAutores}
+                        ${filasRankingHtml || '<tr><td colspan="6" style="border:1px solid #cbd5e1; padding:12px; text-align:center;">Sin registros disponibles.</td></tr>'}
                     </tbody>
                 </table>
 
-                <h3 style="font-size:14px; font-weight:900; text-transform:uppercase; color:#15803d; border-bottom:1.5px solid #15803d; padding-bottom:4px; margin:20px 0 12px 0;">
+                <h2 style="font-size:15px; font-weight:800; text-transform:uppercase; color:#0f172a; border-left:4px solid #15803d; padding-left:10px; margin:20px 0 10px 0;">
                     2. Relación Oficial de Proposiciones y Proyectos Aprobados (${aprobados.length})
-                </h3>
-                <div style="margin-bottom:24px;">
-                    ${detalleAprobadasHtml}
-                </div>
-
-                <h3 style="font-size:14px; font-weight:900; text-transform:uppercase; color:#334155; border-bottom:1.5px solid #64748b; padding-bottom:4px; margin:20px 0 10px 0;">
-                    3. Otras Iniciativas Radicadas (En Debate o Archivadas)
-                </h3>
-                <table style="width:100%; border-collapse:collapse; margin-bottom:32px;">
+                </h2>
+                <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:32px;">
                     <thead>
-                        <tr style="background:#e2e8f0; color:#0f172a;">
-                            <th style="border:1px solid #cbd5e1; padding:7px; text-align:left; font-size:11px;">Radicado</th>
-                            <th style="border:1px solid #cbd5e1; padding:7px; text-align:left; font-size:11px;">Tipo</th>
-                            <th style="border:1px solid #cbd5e1; padding:7px; text-align:left; font-size:11px;">Título / Epígrafe</th>
-                            <th style="border:1px solid #cbd5e1; padding:7px; text-align:left; font-size:11px;">Autor</th>
-                            <th style="border:1px solid #cbd5e1; padding:7px; text-align:left; font-size:11px;">Estado</th>
+                        <tr style="background:#14532d; color:#ffffff;">
+                            <th style="border:1px solid #14532d; padding:8px; width:40px;">N.°</th>
+                            <th style="border:1px solid #14532d; padding:8px; width:100px;">Radicado</th>
+                            <th style="border:1px solid #14532d; padding:8px; width:115px;">Tipo de Acto</th>
+                            <th style="border:1px solid #14532d; padding:8px; text-align:left;">Título y Contenido</th>
+                            <th style="border:1px solid #14532d; padding:8px; width:150px;">Autor / Ponente</th>
+                            <th style="border:1px solid #14532d; padding:8px; width:90px;">Comisión</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${detalleOtrasHtml}
+                        ${filasDetalleAprobadasHtml}
                     </tbody>
                 </table>
 
-                <div style="margin-top:44px; padding-top:16px; border-top:1px solid #94a3b8; display:flex; justify-content:space-around; text-align:center; font-size:12px; color:#0f172a;">
-                    <div style="width:42%;">
-                        <div style="border-top:1.5px solid #0f172a; padding-top:6px; font-weight:bold;">
-                            PRESIDENCIA DE LA ASAMBLEA
-                        </div>
+                <div style="margin-top:42px; display:flex; justify-content:space-between; gap:30px; text-align:center; font-size:12px;">
+                    <div style="flex:1; border-top:1px solid #0f172a; padding-top:8px;">
+                        <strong>PRESIDENCIA DE LA ASAMBLEA</strong><br>
                         <span style="font-size:11px; color:#475569;">Asamblea Departamental del Tolima</span>
                     </div>
-                    <div style="width:42%;">
-                        <div style="border-top:1.5px solid #0f172a; padding-top:6px; font-weight:bold;">
-                            SECRETARÍA GENERAL
-                        </div>
-                        <span style="font-size:11px; color:#475569;">Fundación Creer y Merecer</span>
+                    <div style="flex:1; border-top:1px solid #0f172a; padding-top:8px;">
+                        <strong>SECRETARÍA GENERAL</strong><br>
+                        <span style="font-size:11px; color:#475569;">Certificación y Fe Pública Legislativa</span>
                     </div>
                 </div>
             `;
         }
 
         function descargarWordIniciativas() {
-            const contenido = document.getElementById('contenido-documento-iniciativas');
-            if (!contenido) return;
-
-            const htmlCompleto = `
+            const contenidoHtml = document.getElementById('contenido-documento-iniciativas').innerHTML;
+            const documentoWord = `
                 <html xmlns:o='urn:schemas-microsoft-com:office:office'
                       xmlns:w='urn:schemas-microsoft-com:office:word'
                       xmlns='http://www.w3.org/TR/REC-html40'>
                 <head>
-                    <meta charset='utf-8'>
-                    <title>Acta de Iniciativas Aprobadas - Asamblea Departamental del Tolima</title>
+                    <meta charset="utf-8">
+                    <title>Acta Oficial de Iniciativas Aprobadas - Asamblea Departamental del Tolima</title>
                     <style>
-                        body { font-family: 'Times New Roman', Georgia, serif; color: #0f172a; line-height: 1.45; }
+                        body { font-family: 'Times New Roman', Georgia, serif; font-size: 12pt; color: #0f172a; }
                         table { width: 100%; border-collapse: collapse; }
-                        td, th { border: 1px solid #94a3b8; padding: 6px; }
+                        th, td { border: 1px solid #94a3b8; padding: 6pt; }
                     </style>
                 </head>
                 <body>
-                    ${contenido.innerHTML}
+                    ${contenidoHtml}
                 </body>
                 </html>
             `;
 
-            const blob = new Blob(['\ufeff', htmlCompleto], { type: 'application/msword' });
+            const blob = new Blob(['\ufeff', documentoWord], { type: 'application/msword;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const enlace = document.createElement('a');
             const fechaArchivo = new Date().toISOString().slice(0, 10);
             enlace.href = url;
-            enlace.download = `Acta_Iniciativas_Asamblea_Tolima_${fechaArchivo}.doc`;
+            enlace.download = `Acta_Iniciativas_Aprobadas_Asamblea_Tolima_${fechaArchivo}.doc`;
             document.body.appendChild(enlace);
             enlace.click();
             document.body.removeChild(enlace);
             URL.revokeObjectURL(url);
-            notificar('📥 Documento Word (.doc) descargado');
+            notificar('📄 Documento Word (.doc) descargado correctamente');
         }
 
         function imprimirActaIniciativas() {
-            const contenido = document.getElementById('contenido-documento-iniciativas');
-            if (!contenido) return;
-
-            const ventana = window.open('', '_blank', 'width=960,height=800');
-            if (!ventana) return alert('Permita las ventanas emergentes en su navegador para imprimir o guardar como PDF.');
-
-            ventana.document.write(`
+            const contenidoHtml = document.getElementById('contenido-documento-iniciativas').innerHTML;
+            const ventanaImpresion = window.open('', '_blank', 'width=960,height=780');
+            if (!ventanaImpresion) {
+                return alert('Por favor permita las ventanas emergentes para imprimir o guardar en PDF.');
+            }
+            ventanaImpresion.document.write(`
                 <!DOCTYPE html>
                 <html lang="es">
                 <head>
                     <meta charset="UTF-8">
                     <title>Acta de Iniciativas Aprobadas - Asamblea Departamental del Tolima</title>
                     <style>
-                        body {
-                            font-family: Georgia, 'Times New Roman', serif;
-                            color: #0f172a;
-                            padding: 28px;
-                            line-height: 1.45;
-                        }
+                        body { font-family: Georgia, 'Times New Roman', serif; margin: 24px; color: #0f172a; }
                         @media print {
-                            body { padding: 0; }
+                            body { margin: 12mm; }
                         }
                     </style>
                 </head>
                 <body>
-                    ${contenido.innerHTML}
+                    ${contenidoHtml}
                     <script>
                         window.onload = function() {
                             window.print();
@@ -4391,7 +4449,7 @@
                 </body>
                 </html>
             `);
-            ventana.document.close();
+            ventanaImpresion.document.close();
         }
     </script>
 </body>
