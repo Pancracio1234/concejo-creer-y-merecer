@@ -10,6 +10,15 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Evitar caché en todas las rutas de la API para garantizar datos en tiempo real
+app.use('/api', (req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // =====================================================================
@@ -20,9 +29,9 @@ const pool = new Pool({
     ssl: process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('localhost')
         ? { rejectUnauthorized: false }
         : false,
-    max: 12,
+    max: 15,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 5000
+    connectionTimeoutMillis: 8000
 });
 
 // Claves institucionales
@@ -32,8 +41,9 @@ const CLAVE_CONCEJAL = process.env.CONCEJAL_PASSWORD || 'CreerYMerecer2026';
 // Sesiones activas en memoria
 const sesionesActivas = new Map();
 
-// Bloqueo instantáneo en memoria para evitar peticiones simultáneas duplicadas
+// Bloqueos instantáneos en memoria para evitar doble clic / condiciones de carrera
 const solicitudesEnProceso = new Set();
+const cierresEnProceso = new Set();
 
 // Caché en memoria para logo y marca de agua
 let cacheConfigVisual = null;
@@ -154,8 +164,8 @@ async function inicializarBaseDatos() {
                 descripcion TEXT,
                 ambito VARCHAR(80) DEFAULT 'Plenaria',
                 duracion_seg INT DEFAULT 120,
-                fecha_apertura TIMESTAMP DEFAULT NOW(),
-                fecha_cierre TIMESTAMP,
+                fecha_apertura TIMESTAMPTZ DEFAULT NOW(),
+                fecha_cierre TIMESTAMPTZ,
                 estado VARCHAR(40) DEFAULT 'Abierta',
                 ronda_numero INT DEFAULT 1,
                 resultado_final VARCHAR(80),
@@ -266,7 +276,7 @@ async function inicializarBaseDatos() {
             ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS resultado_final VARCHAR(80);
             ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS mensaje_veredicto TEXT;
             ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS duracion_seg INT DEFAULT 120;
-            ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS fecha_apertura TIMESTAMP DEFAULT NOW();
+            ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS fecha_apertura TIMESTAMPTZ DEFAULT NOW();
 
             ALTER TABLE configuracion_visual ADD COLUMN IF NOT EXISTS logo_base64 TEXT;
             ALTER TABLE configuracion_visual ADD COLUMN IF NOT EXISTS marca_agua_visible BOOLEAN DEFAULT TRUE;
@@ -276,7 +286,6 @@ async function inicializarBaseDatos() {
             ALTER TABLE configuracion_visual ADD COLUMN IF NOT EXISTS actualizado_en TIMESTAMP DEFAULT NOW();
         `);
 
-        // Precargar configuración visual en caché al arrancar
         const cfgRes = await client.query('SELECT * FROM configuracion_visual WHERE id = 1');
         if (cfgRes.rows.length > 0) {
             cacheConfigVisual = cfgRes.rows[0];
@@ -439,11 +448,9 @@ app.get('/api/eventos', (req, res) => {
     });
 });
 
-// Ruta PÚBLICA para que Administradores, Concejales y Observadores vean el logo
 app.get('/api/configuracion-visual', async (req, res) => {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     try {
-        if (cacheConfigVisual && cacheConfigVisual.id && cacheConfigVisual.logo_base64) {
+        if (cacheConfigVisual && cacheConfigVisual.id) {
             return res.json(cacheConfigVisual);
         }
 
@@ -468,7 +475,6 @@ app.get('/api/configuracion-visual', async (req, res) => {
     }
 });
 
-// Ruta PROTEGIDA (solo Administrador puede subir o cambiar el logo/marca de agua)
 app.put('/api/configuracion-visual', verificarAdmin, async (req, res) => {
     try {
         const {
@@ -636,7 +642,7 @@ app.delete('/api/integrantes/:id', verificarAdmin, async (req, res) => {
 });
 
 // =====================================================================
-// 4. SESIONES Y LLAMADO A LISTA / QUÓRUM (ULTRA RÁPIDO)
+// 4. SESIONES Y LLAMADO A LISTA / QUÓRUM
 // =====================================================================
 app.get('/api/sesiones', async (req, res) => {
     try {
@@ -810,7 +816,7 @@ app.post('/api/intervenciones/solicitar', verificarConcejal, async (req, res) =>
 
         if (existente.rows.length > 0) {
             return res.status(400).json({
-                error: `Ya tienes una solicitud activa en el Turno #${existente.rows[0].orden_turno}.`
+                error: `Ya tienes una solicitud activa en esta sesión.`
             });
         }
 
@@ -839,7 +845,12 @@ app.post('/api/intervenciones/solicitar', verificarConcejal, async (req, res) =>
             tiempoSeg
         ]);
 
-        res.status(201).json({ turno: siguienteTurno, intervencion: inserted.rows[0] });
+        const activosRes = await pool.query(
+            "SELECT COUNT(*)::int AS pos FROM intervenciones WHERE id_sesion = $1 AND id_intervencion <= $2",
+            [id_sesion, inserted.rows[0].id_intervencion]
+        );
+
+        res.status(201).json({ turno: activosRes.rows[0].pos, intervencion: inserted.rows[0] });
         emitirEventoTiempoReal('intervenciones');
     } catch (err) {
         if (err.code === '23505') {
@@ -1099,6 +1110,7 @@ async function evaluarYCerrarSiExpiro(votacion) {
         return { ...votacion, segundos_restantes: 0 };
     }
 
+    // Cálculo sincronizado usando el reloj del servidor Node
     const apertura = new Date(votacion.fecha_apertura).getTime();
     const duracion = parseInt(votacion.duracion_seg, 10) || 120;
     const transcurridos = Math.floor((Date.now() - apertura) / 1000);
@@ -1109,60 +1121,77 @@ async function evaluarYCerrarSiExpiro(votacion) {
     }
 
     const cerrada = await dictaminarYCerrarVotacion(votacion.id_votacion);
-    return { ...cerrada, segundos_restantes: 0 };
+    return { ...(cerrada || votacion), segundos_restantes: 0 };
 }
 
 async function dictaminarYCerrarVotacion(id_votacion) {
-    const votRes = await pool.query('SELECT * FROM votaciones WHERE id_votacion = $1', [id_votacion]);
-    if (votRes.rows.length === 0) return null;
-    const vot = votRes.rows[0];
+    const idNum = parseInt(id_votacion, 10);
+    if (cierresEnProceso.has(idNum)) {
+        const yaCerrada = await pool.query('SELECT * FROM votaciones WHERE id_votacion = $1', [idNum]);
+        return yaCerrada.rows[0] || null;
+    }
+    cierresEnProceso.add(idNum);
 
-    const votosRes = await pool.query('SELECT opcion FROM votos WHERE id_votacion = $1', [id_votacion]);
-    const si = votosRes.rows.filter(v => v.opcion === 'SI').length;
-    const no = votosRes.rows.filter(v => v.opcion === 'NO').length;
-    const abs = votosRes.rows.filter(v => v.opcion === 'ABSTENCION').length;
-    const ronda = parseInt(vot.ronda_numero, 10) || 1;
+    try {
+        const votRes = await pool.query('SELECT * FROM votaciones WHERE id_votacion = $1', [idNum]);
+        if (votRes.rows.length === 0) return null;
+        const vot = votRes.rows[0];
+        if (vot.estado === 'Cerrada') return vot;
 
-    let resultado_final = 'RECHAZADA';
-    let mensaje_veredicto = `Resultado final: ${si} SÍ, ${no} NO, ${abs} Abstenciones. La iniciativa NO alcanzó mayoría y queda ARCHIVADA.`;
-    let nuevoEstadoProyecto = 'Archivado';
+        const votosRes = await pool.query('SELECT opcion FROM votos WHERE id_votacion = $1', [idNum]);
+        const si = votosRes.rows.filter(v => v.opcion === 'SI').length;
+        const no = votosRes.rows.filter(v => v.opcion === 'NO').length;
+        const abs = votosRes.rows.filter(v => v.opcion === 'ABSTENCION').length;
+        const ronda = parseInt(vot.ronda_numero, 10) || 1;
 
-    if (si > no && si > abs) {
-        resultado_final = 'ACEPTADA';
-        mensaje_veredicto = `Resultado final: ${si} votos por el SÍ frente a ${no} por el NO (${abs} abstenciones). Proposición APROBADA por mayoría.`;
-        nuevoEstadoProyecto = 'Aprobado';
-    } else if (abs > si && abs > no) {
-        resultado_final = 'ARCHIVADA_ABSTENCION';
-        mensaje_veredicto = `Resultado final: Prevaleció la ABSTENCIÓN (${abs} votos) sobre el SÍ (${si}) y el NO (${no}). La iniciativa queda ARCHIVADA.`;
-        nuevoEstadoProyecto = 'Archivado';
-    } else if (si === no) {
-        if (ronda < 2) {
-            resultado_final = 'EMPATE_REPETIR';
-            mensaje_veredicto = `EMPATE EN PRIMERA RONDA (${si} SÍ vs. ${no} NO, ${abs} abstenciones). De acuerdo con el reglamento, debe repetirse la votación.`;
-            nuevoEstadoProyecto = null;
-        } else {
-            resultado_final = 'ARCHIVADA_SEGUNDO_EMPATE';
-            mensaje_veredicto = `SEGUNDO EMPATE CONSECUTIVO (${si} SÍ vs. ${no} NO, ${abs} abstenciones). La iniciativa queda definitivamente ARCHIVADA.`;
+        let resultado_final = 'RECHAZADA';
+        let mensaje_veredicto = `Resultado final: ${si} SÍ, ${no} NO, ${abs} Abstenciones. La iniciativa NO alcanzó mayoría y queda ARCHIVADA.`;
+        let nuevoEstadoProyecto = 'Archivado';
+
+        if (si > no && si > abs) {
+            resultado_final = 'ACEPTADA';
+            mensaje_veredicto = `Resultado final: ${si} votos por el SÍ frente a ${no} por el NO (${abs} abstenciones). Proposición APROBADA por mayoría.`;
+            nuevoEstadoProyecto = 'Aprobado';
+        } else if (abs > si && abs > no) {
+            resultado_final = 'ARCHIVADA_ABSTENCION';
+            mensaje_veredicto = `Resultado final: Prevaleció la ABSTENCIÓN (${abs} votos) sobre el SÍ (${si}) y el NO (${no}). La iniciativa queda ARCHIVADA.`;
             nuevoEstadoProyecto = 'Archivado';
+        } else if (si === no) {
+            if (ronda < 2) {
+                resultado_final = 'EMPATE_REPETIR';
+                mensaje_veredicto = `EMPATE EN PRIMERA RONDA (${si} SÍ vs. ${no} NO, ${abs} abstenciones). De acuerdo con el reglamento, debe repetirse la votación.`;
+                nuevoEstadoProyecto = null;
+            } else {
+                resultado_final = 'ARCHIVADA_SEGUNDO_EMPATE';
+                mensaje_veredicto = `SEGUNDO EMPATE CONSECUTIVO (${si} SÍ vs. ${no} NO, ${abs} abstenciones). La iniciativa queda definitivamente ARCHIVADA.`;
+                nuevoEstadoProyecto = 'Archivado';
+            }
         }
+
+        const updated = await pool.query(`
+            UPDATE votaciones
+            SET estado = 'Cerrada',
+                fecha_cierre = $1,
+                resultado_final = $2,
+                mensaje_veredicto = $3
+            WHERE id_votacion = $4 AND estado = 'Abierta'
+            RETURNING *
+        `, [new Date().toISOString(), resultado_final, mensaje_veredicto, idNum]);
+
+        if (updated.rows.length > 0) {
+            if (vot.id_proyecto && nuevoEstadoProyecto) {
+                await pool.query('UPDATE proyectos SET estado = $1 WHERE id_proyecto = $2', [nuevoEstadoProyecto, vot.id_proyecto]);
+                emitirEventoTiempoReal('proyectos');
+            }
+            emitirEventoTiempoReal('votaciones');
+            return updated.rows[0];
+        }
+
+        const fallback = await pool.query('SELECT * FROM votaciones WHERE id_votacion = $1', [idNum]);
+        return fallback.rows[0];
+    } finally {
+        cierresEnProceso.delete(idNum);
     }
-
-    const updated = await pool.query(`
-        UPDATE votaciones
-        SET estado = 'Cerrada',
-            fecha_cierre = NOW(),
-            resultado_final = $1,
-            mensaje_veredicto = $2
-        WHERE id_votacion = $3
-        RETURNING *
-    `, [resultado_final, mensaje_veredicto, id_votacion]);
-
-    if (vot.id_proyecto && nuevoEstadoProyecto) {
-        await pool.query('UPDATE proyectos SET estado = $1 WHERE id_proyecto = $2', [nuevoEstadoProyecto, vot.id_proyecto]);
-        emitirEventoTiempoReal('proyectos');
-    }
-
-    return updated.rows[0];
 }
 
 app.get('/api/votaciones', async (req, res) => {
@@ -1188,19 +1217,20 @@ app.post('/api/votaciones', verificarAdmin, async (req, res) => {
         const proyId = id_proyecto ? parseInt(id_proyecto, 10) : null;
         const sesId = id_sesion ? parseInt(id_sesion, 10) : null;
         const duracion = parseInt(duracion_seg, 10) || 120;
+        const ahoraISO = new Date().toISOString();
 
         const inserted = await pool.query(`
             INSERT INTO votaciones (id_sesion, id_proyecto, titulo, descripcion, ambito, duracion_seg, fecha_apertura, estado, ronda_numero)
-            VALUES ($1, $2, $3, $4, $5, $6, NOW(), 'Abierta', 1)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, 'Abierta', 1)
             RETURNING *
-        `, [sesId, proyId, titulo.trim(), (descripcion || '').trim(), ambito || 'Plenaria', duracion]);
+        `, [sesId, proyId, titulo.trim(), (descripcion || '').trim(), ambito || 'Plenaria', duracion, ahoraISO]);
 
         if (proyId) {
             await pool.query("UPDATE proyectos SET estado = 'En Debate' WHERE id_proyecto = $1", [proyId]);
             emitirEventoTiempoReal('proyectos');
         }
 
-        res.status(201).json(inserted.rows[0]);
+        res.status(201).json({ ...inserted.rows[0], segundos_restantes: duracion });
         emitirEventoTiempoReal('votaciones');
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -1284,6 +1314,9 @@ app.post('/api/votaciones/:id/votar', verificarConcejal, async (req, res) => {
         res.status(201).json({ ok: true });
         emitirEventoTiempoReal('votos');
     } catch (err) {
+        if (err.code === '23505') {
+            return res.status(400).json({ error: 'Su curul ya depositó su único voto definitivo en esta urna.' });
+        }
         res.status(500).json({ error: err.message });
     }
 });
@@ -1296,12 +1329,12 @@ app.put('/api/votaciones/:id/estado', verificarAdmin, async (req, res) => {
         } else {
             await pool.query(`
                 UPDATE votaciones
-                SET estado = 'Abierta', fecha_apertura = NOW(), fecha_cierre = NULL, resultado_final = NULL, mensaje_veredicto = NULL
-                WHERE id_votacion = $1
-            `, [req.params.id]);
+                SET estado = 'Abierta', fecha_apertura = $1, fecha_cierre = NULL, resultado_final = NULL, mensaje_veredicto = NULL
+                WHERE id_votacion = $2
+            `, [new Date().toISOString(), req.params.id]);
+            emitirEventoTiempoReal('votaciones');
         }
         res.json({ ok: true });
-        emitirEventoTiempoReal('votaciones');
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -1314,12 +1347,12 @@ app.post('/api/votaciones/:id/repetir', verificarAdmin, async (req, res) => {
             UPDATE votaciones
             SET estado = 'Abierta',
                 ronda_numero = 2,
-                fecha_apertura = NOW(),
+                fecha_apertura = $1,
                 fecha_cierre = NULL,
                 resultado_final = NULL,
                 mensaje_veredicto = NULL
-            WHERE id_votacion = $1
-        `, [req.params.id]);
+            WHERE id_votacion = $2
+        `, [new Date().toISOString(), req.params.id]);
 
         res.json({ ok: true });
         emitirEventoTiempoReal('votaciones');
