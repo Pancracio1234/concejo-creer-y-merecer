@@ -1,4 +1,3 @@
-
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
@@ -23,12 +22,15 @@ const pool = new Pool({
         : false
 });
 
-// Claves institucionales (puedes sobreescribirlas en Render con variables de entorno)
+// Claves institucionales
 const CLAVE_ADMIN = process.env.ADMIN_PASSWORD || 'Concejo2026)';
 const CLAVE_CONCEJAL = process.env.CONCEJAL_PASSWORD || 'CreerYMerecer2026';
 
 // Sesiones activas en memoria
 const sesionesActivas = new Map();
+
+// Bloqueo instantáneo en memoria para evitar peticiones simultáneas duplicadas
+const solicitudesEnProceso = new Set();
 
 // Clientes conectados en tiempo real (SSE)
 const clientesSSE = new Set();
@@ -175,7 +177,7 @@ async function inicializarBaseDatos() {
             INSERT INTO configuracion_visual (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
         `);
 
-        // Migraciones seguras y corrección de restricciones CHECK en tablas existentes
+        // Migraciones seguras y limpieza automática de turnos duplicados existentes
         await client.query(`
             ALTER TABLE intervenciones ADD COLUMN IF NOT EXISTS motivo_detalle TEXT;
             ALTER TABLE intervenciones ALTER COLUMN tipo_intervencion TYPE VARCHAR(120);
@@ -183,6 +185,18 @@ async function inicializarBaseDatos() {
             ALTER TABLE intervenciones ADD CONSTRAINT intervenciones_estado_check
                 CHECK (estado IN ('Pendiente', 'En Espera', 'En Curso', 'Finalizada', 'Cancelada'));
             ALTER TABLE intervenciones DROP CONSTRAINT IF EXISTS intervenciones_tipo_intervencion_check;
+
+            DELETE FROM intervenciones a
+            USING intervenciones b
+            WHERE a.id_intervencion > b.id_intervencion
+              AND a.id_sesion = b.id_sesion
+              AND a.id_integrante = b.id_integrante
+              AND LOWER(COALESCE(a.estado, '')) NOT IN ('finalizada', 'cancelada')
+              AND LOWER(COALESCE(b.estado, '')) NOT IN ('finalizada', 'cancelada');
+
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_unico_turno_pendiente
+            ON intervenciones (id_sesion, id_integrante)
+            WHERE estado IN ('Pendiente', 'En Espera', 'En Curso');
 
             ALTER TABLE proyectos ADD COLUMN IF NOT EXISTS visible_publico BOOLEAN DEFAULT TRUE;
             ALTER TABLE proyectos ADD COLUMN IF NOT EXISTS archivo_nombre VARCHAR(255);
@@ -197,7 +211,7 @@ async function inicializarBaseDatos() {
             ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS fecha_apertura TIMESTAMP DEFAULT NOW();
         `);
 
-        console.log('✅ Base de datos PostgreSQL sincronizada y restricciones actualizadas.');
+        console.log('✅ Base de datos PostgreSQL sincronizada y turnos duplicados limpiados.');
     } catch (err) {
         console.error('❌ Error al inicializar PostgreSQL:', err);
     } finally {
@@ -437,7 +451,6 @@ app.post('/api/integrantes', verificarAdmin, async (req, res) => {
 
         const nuevo = inserted.rows[0];
 
-        // Si hay sesión activa, agregarlo al listado de asistencia si corresponde
         if (id_sesion) {
             const sesRes = await pool.query('SELECT id_comision FROM sesiones WHERE id_sesion = $1', [id_sesion]);
             if (sesRes.rows.length > 0) {
@@ -598,7 +611,7 @@ app.put('/api/asistencias/sesion/:id_sesion/todos-presentes', verificarAdmin, as
 });
 
 // =====================================================================
-// 5. USO DE LA PALABRA (ORDEN DE LLEGADA PARA CONCEJALES Y ADMIN)
+// 5. USO DE LA PALABRA (ORDEN DE LLEGADA SIN DUPLICADOS)
 // =====================================================================
 app.get('/api/intervenciones/:id_sesion', async (req, res) => {
     try {
@@ -622,8 +635,16 @@ app.get('/api/intervenciones/:id_sesion', async (req, res) => {
     }
 });
 
-// Ruta para que el Concejal pida la palabra con su sesión única en estricto orden de llegada
+// Ruta protegida con bloqueo en memoria + validación SQL para garantizar 1 solo turno
 app.post('/api/intervenciones/solicitar', verificarConcejal, async (req, res) => {
+    const id_integrante = req.concejal.id_integrante;
+    const llaveBloqueo = `${req.body.id_sesion}-${id_integrante}`;
+
+    if (solicitudesEnProceso.has(llaveBloqueo)) {
+        return res.status(429).json({ error: 'Ya se está procesando tu solicitud de turno.' });
+    }
+    solicitudesEnProceso.add(llaveBloqueo);
+
     try {
         const { id_sesion, tipo_intervencion, motivo_detalle } = req.body;
         if (!id_sesion) {
@@ -633,13 +654,11 @@ app.post('/api/intervenciones/solicitar', verificarConcejal, async (req, res) =>
             return res.status(400).json({ error: 'Debe seleccionar el motivo de su intervención.' });
         }
 
-        const id_integrante = req.concejal.id_integrante;
-
-        // Evitar duplicados si ya tiene un turno pendiente o en curso en la misma sesión
         const existente = await pool.query(`
             SELECT id_intervencion, orden_turno
             FROM intervenciones
-            WHERE id_sesion = $1 AND id_integrante = $2 AND estado IN ('Pendiente', 'En Espera', 'En Curso')
+            WHERE id_sesion = $1 AND id_integrante = $2
+              AND LOWER(COALESCE(estado, '')) NOT IN ('finalizada', 'cancelada')
         `, [id_sesion, id_integrante]);
 
         if (existente.rows.length > 0) {
@@ -648,7 +667,6 @@ app.post('/api/intervenciones/solicitar', verificarConcejal, async (req, res) =>
             });
         }
 
-        // Tiempo reglamentario automático según modalidad
         const tipoNorm = normalizar(tipo_intervencion);
         let tiempoSeg = 180;
         if (tipoNorm.includes('vocero')) tiempoSeg = 300;
@@ -677,7 +695,12 @@ app.post('/api/intervenciones/solicitar', verificarConcejal, async (req, res) =>
         emitirEventoTiempoReal('intervenciones');
         res.status(201).json({ turno: siguienteTurno, intervencion: inserted.rows[0] });
     } catch (err) {
+        if (err.code === '23505') {
+            return res.status(400).json({ error: 'Ya tienes una solicitud de turno activa en esta sesión.' });
+        }
         res.status(500).json({ error: err.message });
+    } finally {
+        solicitudesEnProceso.delete(llaveBloqueo);
     }
 });
 
@@ -788,7 +811,6 @@ app.get('/api/proyectos', async (req, res) => {
     }
 });
 
-// Radicación directa de Proposición por Concejal autenticado
 app.post('/api/proyectos/concejal', verificarConcejal, async (req, res) => {
     try {
         const {
@@ -837,7 +859,6 @@ app.post('/api/proyectos/concejal', verificarConcejal, async (req, res) => {
     }
 });
 
-// Radicación administrativa de Proyectos / Proposiciones
 app.post('/api/proyectos', verificarAdmin, async (req, res) => {
     try {
         const {
@@ -938,7 +959,6 @@ async function evaluarYCerrarSiExpiro(votacion) {
         return { ...votacion, segundos_restantes: restantes };
     }
 
-    // Si el tiempo expiró, cerrar automáticamente y dictaminar veredicto
     const cerrada = await dictaminarYCerrarVotacion(votacion.id_votacion);
     return { ...cerrada, segundos_restantes: 0 };
 }
@@ -1091,7 +1111,6 @@ app.post('/api/votaciones/:id/votar', verificarConcejal, async (req, res) => {
 
         const id_integrante = req.concejal.id_integrante;
 
-        // Validar ámbito si la votación es de Comisión Primera o Segunda
         if (votActual.ambito === 'Comisión Primera' && req.concejal.id_comision !== 1) {
             return res.status(403).json({ error: 'Esta votación es exclusiva de la Comisión Primera.' });
         }
