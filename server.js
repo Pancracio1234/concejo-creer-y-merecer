@@ -29,26 +29,189 @@ const pool = new Pool(
 );
 
 // =========================================================================
-// SEGURIDAD ADMINISTRATIVA (CLAVE MAESTRA: Concejo2026) )
+// SEGURIDAD Y SESIÓN ÚNICA (ADMINISTRADOR Y CONCEJALES)
 // =========================================================================
 const CLAVE_ADMIN_MAESTRA = 'Concejo2026)';
 const sesionesAdminActivas = new Map();
+const sesionesConcejalActivas = new Map();
 
 function esTokenAdminValido(token) {
     return Boolean(token && sesionesAdminActivas.has(token));
+}
+
+function esTokenConcejalValido(token) {
+    return Boolean(token && sesionesConcejalActivas.has(token));
 }
 
 function verificarAdmin(req, res, next) {
     const token = req.headers['x-admin-token'];
     if (!esTokenAdminValido(token)) {
         return res.status(401).json({
-            error: 'Acceso denegado. Debe registrarse como Administrador con la clave institucional para realizar esta acción.',
+            error: 'Acceso denegado. Debe iniciar sesión como Administrador con la clave institucional para realizar esta acción.',
         });
     }
     req.adminUsuario = sesionesAdminActivas.get(token);
     next();
 }
 
+function verificarConcejal(req, res, next) {
+    const token = req.headers['x-concejal-token'];
+    if (!esTokenConcejalValido(token)) {
+        return res.status(401).json({
+            error: 'Debe iniciar sesión como Honorable Concejal al ingresar a la aplicación.',
+        });
+    }
+    req.concejalUsuario = sesionesConcejalActivas.get(token);
+    next();
+}
+
+function limpiarTextoComparacion(txt) {
+    return (txt || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ' ');
+}
+
+async function autenticarConcejalPorNombre(primer_nombre, primer_apellido, password) {
+    if (!primer_nombre || !primer_apellido || !password || !password.trim()) {
+        return { error: 'Ingrese su primer nombre, primer apellido y contraseña.', status: 400 };
+    }
+
+    const nomBuscado = limpiarTextoComparacion(primer_nombre).split(' ')[0];
+    const apeBuscado = limpiarTextoComparacion(primer_apellido).split(' ')[0];
+
+    const result = await pool.query(`
+        SELECT i.id_integrante, i.nombre_completo, i.id_comision, i.id_bancada, i.es_directiva,
+               COALESCE(c.nombre, 'Sin Comisión') AS comision,
+               b.nombre AS bancada
+        FROM integrantes i
+        LEFT JOIN comisiones c ON i.id_comision = c.id_comision
+        JOIN bancadas b ON i.id_bancada = b.id_bancada
+        WHERE i.activo = TRUE
+    `);
+
+    const encontrado = result.rows.find((row) => {
+        const palabras = limpiarTextoComparacion(row.nombre_completo).split(' ');
+        const primerNombreReal = palabras[0] || '';
+        const contieneApellido = palabras.slice(1).includes(apeBuscado);
+        return primerNombreReal === nomBuscado && contieneApellido;
+    });
+
+    if (!encontrado) {
+        return {
+            error: 'No se encontró ningún Honorable Concejal activo con ese primer nombre y primer apellido.',
+            status: 401,
+        };
+    }
+
+    return { concejal: encontrado };
+}
+
+// =========================================================================
+// INICIO DE SESIÓN ÚNICO AL ENTRAR A LA APLICACIÓN (ADMIN O CONCEJAL)
+// =========================================================================
+app.post('/api/sesion/login', async (req, res) => {
+    const { rol, nombre_admin, cargo_admin, primer_nombre, primer_apellido, password } = req.body;
+
+    try {
+        await asegurarTablasSistema();
+
+        // 1. INGRESO COMO ADMINISTRADOR
+        if (rol === 'admin') {
+            if (!nombre_admin || !nombre_admin.trim()) {
+                return res.status(400).json({ error: 'Ingrese su nombre completo para ingresar como administrador.' });
+            }
+            if (!password || password.trim() !== CLAVE_ADMIN_MAESTRA) {
+                return res.status(401).json({ error: 'Clave administrativa incorrecta.' });
+            }
+
+            const cargoLimpio = (cargo_admin && cargo_admin.trim()) ? cargo_admin.trim() : 'Mesa Directiva / Secretaría';
+            const reg = await pool.query(
+                `INSERT INTO administradores_registro (nombre_admin, cargo_admin)
+                 VALUES ($1, $2) RETURNING *`,
+                [nombre_admin.trim(), cargoLimpio]
+            );
+
+            const token = crypto.randomBytes(24).toString('hex');
+            const infoAdmin = {
+                id_admin: reg.rows[0].id_admin,
+                nombre_admin: reg.rows[0].nombre_admin,
+                cargo_admin: reg.rows[0].cargo_admin,
+                fecha_ingreso: reg.rows[0].fecha_ingreso,
+            };
+            sesionesAdminActivas.set(token, infoAdmin);
+
+            return res.json({
+                ok: true,
+                rol: 'admin',
+                token,
+                usuario: infoAdmin,
+                escenarios_habilitados: ['quorum', 'intervenciones', 'votaciones', 'proyectos', 'integrantes', 'configuracion'],
+            });
+        }
+
+        // 2. INGRESO COMO CONCEJAL (UNA SOLA VEZ AL ENTRAR)
+        if (rol === 'concejal') {
+            const auth = await autenticarConcejalPorNombre(primer_nombre, primer_apellido, password);
+            if (auth.error) {
+                return res.status(auth.status).json({ error: auth.error });
+            }
+
+            const token = crypto.randomBytes(24).toString('hex');
+            sesionesConcejalActivas.set(token, auth.concejal);
+
+            return res.json({
+                ok: true,
+                rol: 'concejal',
+                token,
+                usuario: auth.concejal,
+                // Solo los 3 escenarios permitidos para el concejal (sin quórum ni administración)
+                escenarios_habilitados: ['intervenciones', 'votaciones', 'proyectos'],
+            });
+        }
+
+        return res.status(400).json({ error: 'Seleccione un rol válido (admin o concejal).' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Verificar sesión activa al recargar la página
+app.get('/api/sesion/verificar', (req, res) => {
+    const adminToken = req.headers['x-admin-token'];
+    if (esTokenAdminValido(adminToken)) {
+        return res.json({
+            ok: true,
+            rol: 'admin',
+            usuario: sesionesAdminActivas.get(adminToken),
+            escenarios_habilitados: ['quorum', 'intervenciones', 'votaciones', 'proyectos', 'integrantes', 'configuracion'],
+        });
+    }
+
+    const concejalToken = req.headers['x-concejal-token'];
+    if (esTokenConcejalValido(concejalToken)) {
+        return res.json({
+            ok: true,
+            rol: 'concejal',
+            usuario: sesionesConcejalActivas.get(concejalToken),
+            escenarios_habilitados: ['intervenciones', 'votaciones', 'proyectos'],
+        });
+    }
+
+    res.status(401).json({ ok: false });
+});
+
+app.post('/api/sesion/salir', (req, res) => {
+    const adminToken = req.headers['x-admin-token'];
+    const concejalToken = req.headers['x-concejal-token'];
+    if (adminToken) sesionesAdminActivas.delete(adminToken);
+    if (concejalToken) sesionesConcejalActivas.delete(concejalToken);
+    res.json({ ok: true });
+});
+
+// Endpoints heredados de compatibilidad para admin
 app.post('/api/admin/registro', async (req, res) => {
     const { nombre_admin, cargo_admin, password } = req.body;
     if (!nombre_admin || !nombre_admin.trim()) {
@@ -57,7 +220,6 @@ app.post('/api/admin/registro', async (req, res) => {
     if (!password || password.trim() !== CLAVE_ADMIN_MAESTRA) {
         return res.status(401).json({ error: 'Clave administrativa incorrecta.' });
     }
-
     try {
         await asegurarTablasSistema();
         const cargoLimpio = (cargo_admin && cargo_admin.trim()) ? cargo_admin.trim() : 'Mesa Directiva / Secretaría';
@@ -66,7 +228,6 @@ app.post('/api/admin/registro', async (req, res) => {
              VALUES ($1, $2) RETURNING *`,
             [nombre_admin.trim(), cargoLimpio]
         );
-
         const token = crypto.randomBytes(24).toString('hex');
         const infoAdmin = {
             id_admin: reg.rows[0].id_admin,
@@ -75,7 +236,6 @@ app.post('/api/admin/registro', async (req, res) => {
             fecha_ingreso: reg.rows[0].fecha_ingreso,
         };
         sesionesAdminActivas.set(token, infoAdmin);
-
         res.json({ ok: true, token, admin: infoAdmin });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -137,6 +297,9 @@ function emitirActualizacionGlobal(tipo, extra = {}) {
     }
 }
 
+// =========================================================================
+// INICIALIZACIÓN Y MIGRACIÓN SEGURA DE TABLAS EN POSTGRESQL
+// =========================================================================
 let tablasSistemaListas = false;
 
 async function asegurarTablasSistema() {
@@ -168,11 +331,20 @@ async function asegurarTablasSistema() {
         );
     `);
 
+    // Columnas de visibilidad (Público / Privado) en proyectos y proposiciones
     await pool.query(`
         ALTER TABLE proyectos ADD COLUMN IF NOT EXISTS visible_publico BOOLEAN DEFAULT TRUE;
     `);
     await pool.query(`
         ALTER TABLE proyectos ADD COLUMN IF NOT EXISTS fecha_radicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+    `);
+
+    // Detalle del motivo de solicitud de uso de la palabra
+    await pool.query(`
+        ALTER TABLE intervenciones ADD COLUMN IF NOT EXISTS motivo_detalle TEXT;
+    `);
+    await pool.query(`
+        ALTER TABLE intervenciones ADD COLUMN IF NOT EXISTS fecha_solicitud TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
     `);
 
     await pool.query(`
@@ -227,7 +399,7 @@ asegurarTablasSistema()
     .catch((err) => console.error('❌ ERROR INICIALIZANDO POSTGRESQL:', err.message));
 
 // =========================================================================
-// CONFIGURACIÓN VISUAL GLOBAL (LECTURA PARA TODOS / EDICIÓN SOLO ADMIN)
+// CONFIGURACIÓN VISUAL GLOBAL
 // =========================================================================
 app.get('/api/configuracion-visual', async (req, res) => {
     try {
@@ -284,53 +456,6 @@ app.put('/api/configuracion-visual', verificarAdmin, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
-// =========================================================================
-// UTILIDAD DE AUTENTICACIÓN DE CONCEJALES (PRIMER NOMBRE + PRIMER APELLIDO)
-// =========================================================================
-function limpiarTextoComparacion(txt) {
-    return (txt || '')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, ' ');
-}
-
-async function autenticarConcejalPorNombre(primer_nombre, primer_apellido, password) {
-    if (!primer_nombre || !primer_apellido || !password || !password.trim()) {
-        return { error: 'Ingrese su primer nombre, primer apellido y contraseña.', status: 400 };
-    }
-
-    const nomBuscado = limpiarTextoComparacion(primer_nombre).split(' ')[0];
-    const apeBuscado = limpiarTextoComparacion(primer_apellido).split(' ')[0];
-
-    const result = await pool.query(`
-        SELECT i.id_integrante, i.nombre_completo, i.id_comision, i.id_bancada, i.es_directiva,
-               COALESCE(c.nombre, 'Sin Comisión') AS comision,
-               b.nombre AS bancada
-        FROM integrantes i
-        LEFT JOIN comisiones c ON i.id_comision = c.id_comision
-        JOIN bancadas b ON i.id_bancada = b.id_bancada
-        WHERE i.activo = TRUE
-    `);
-
-    const encontrado = result.rows.find((row) => {
-        const palabras = limpiarTextoComparacion(row.nombre_completo).split(' ');
-        const primerNombreReal = palabras[0] || '';
-        const contieneApellido = palabras.slice(1).includes(apeBuscado);
-        return primerNombreReal === nomBuscado && contieneApellido;
-    });
-
-    if (!encontrado) {
-        return {
-            error: 'No se encontró ningún Honorable Concejal activo con ese primer nombre y primer apellido.',
-            status: 401,
-        };
-    }
-
-    return { concejal: encontrado };
-}
 
 // =========================================================================
 // CÁLCULO DE VEREDICTO PARLAMENTARIO Y DESEMPATE AUTOMÁTICO
@@ -405,7 +530,7 @@ async function evaluarYGuardarVeredictoVotacion(idVotacion) {
 }
 
 // =========================================================================
-// 1. GESTIÓN DE CONCEJALES (LECTURA PÚBLICA / EDICIÓN SOLO ADMIN)
+// 1. GESTIÓN DE CONCEJALES
 // =========================================================================
 app.get('/api/integrantes', async (req, res) => {
     try {
@@ -494,7 +619,7 @@ app.delete('/api/integrantes/:id_integrante', verificarAdmin, async (req, res) =
 });
 
 // =========================================================================
-// 2. SESIONES LIBRES Y ASISTENCIA (LECTURA PÚBLICA / EDICIÓN SOLO ADMIN)
+// 2. SESIONES LIBRES Y QUÓRUM (EXCLUSIVO ADMINISTRATIVO PARA EDICIÓN)
 // =========================================================================
 app.get('/api/sesiones', async (req, res) => {
     try {
@@ -562,7 +687,8 @@ app.delete('/api/sesiones/:id_sesion', verificarAdmin, async (req, res) => {
     }
 });
 
-app.get('/api/asistencias/:id_sesion', async (req, res) => {
+// Quórum solo visible y editable por Administrador
+app.get('/api/asistencias/:id_sesion', verificarAdmin, async (req, res) => {
     const idSesion = parseInt(req.params.id_sesion, 10);
     if (isNaN(idSesion)) return res.json([]);
     try {
@@ -612,18 +738,25 @@ app.put('/api/asistencias/sesion/:id_sesion/todos-presentes', verificarAdmin, as
 });
 
 // =========================================================================
-// 3. PROYECTOS DE ACUERDO Y PROPOSICIONES (COLAS EN ORDEN DE LLEGADA)
+// 3. PROYECTOS DE ACUERDO Y PROPOSICIONES (VISIBILIDAD PÚBLICA Y PRIVADA)
 // =========================================================================
 app.get('/api/proyectos', async (req, res) => {
     const esAdmin = esTokenAdminValido(req.headers['x-admin-token']);
+    const esConcejal = esTokenConcejalValido(req.headers['x-concejal-token']);
+
     try {
         await asegurarTablasSistema();
-        const whereClause = esAdmin
+        // Admin y Concejales autenticados pueden ver tanto Públicos como Privados.
+        // Usuarios externos sin sesión solo ven los Públicos.
+        const whereClause = (esAdmin || esConcejal)
             ? ''
             : `WHERE COALESCE(p.visible_publico, TRUE) = TRUE`;
 
         const result = await pool.query(`
-            SELECT p.*, COALESCE(i.nombre_completo, 'Mesa Directiva / Bancada') AS autor, 
+            SELECT p.*,
+                   COALESCE(p.visible_publico, TRUE) AS visible_publico,
+                   CASE WHEN COALESCE(p.visible_publico, TRUE) THEN 'PUBLICO' ELSE 'PRIVADO' END AS visibilidad_etiqueta,
+                   COALESCE(i.nombre_completo, 'Mesa Directiva / Bancada') AS autor, 
                    COALESCE(c.nombre, 'Plenaria') AS comision
             FROM proyectos p
             LEFT JOIN integrantes i ON p.id_autor = i.id_integrante
@@ -645,6 +778,7 @@ app.post('/api/proyectos', verificarAdmin, async (req, res) => {
         id_autor, 
         id_comision_asignada, 
         tipo_documento,
+        visible_publico,
         archivo_nombre,
         archivo_contenido 
     } = req.body;
@@ -656,12 +790,14 @@ app.post('/api/proyectos', verificarAdmin, async (req, res) => {
         await asegurarTablasSistema();
         const comisionId = id_comision_asignada ? parseInt(id_comision_asignada, 10) : null;
         const autorId = id_autor ? parseInt(id_autor, 10) : null;
+        const esPublico = visible_publico !== undefined ? Boolean(visible_publico) : true;
+
         const result = await pool.query(
             `INSERT INTO proyectos (
                 codigo_radicado, titulo, descripcion, id_autor, id_comision_asignada, 
                 tipo_documento, archivo_nombre, archivo_contenido, visible_publico
              )
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, TRUE) RETURNING *`,
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
             [
                 codigo_radicado.trim(), 
                 titulo.trim(), 
@@ -670,7 +806,8 @@ app.post('/api/proyectos', verificarAdmin, async (req, res) => {
                 comisionId,
                 tipo_documento || 'Proyecto de Acuerdo',
                 archivo_nombre || null,
-                archivo_contenido || null
+                archivo_contenido || null,
+                esPublico
             ]
         );
         emitirActualizacionGlobal('proyectos');
@@ -680,14 +817,13 @@ app.post('/api/proyectos', verificarAdmin, async (req, res) => {
     }
 });
 
-app.post('/api/proyectos/concejal', async (req, res) => {
+// Concejal sube proposición usando su sesión única (sin volver a loguearse)
+app.post('/api/proyectos/concejal', verificarConcejal, async (req, res) => {
     const {
-        primer_nombre,
-        primer_apellido,
-        password,
         titulo,
         descripcion,
         id_comision_asignada,
+        visible_publico,
         archivo_nombre,
         archivo_contenido
     } = req.body;
@@ -698,12 +834,8 @@ app.post('/api/proyectos/concejal', async (req, res) => {
 
     try {
         await asegurarTablasSistema();
-        const auth = await autenticarConcejalPorNombre(primer_nombre, primer_apellido, password);
-        if (auth.error) {
-            return res.status(auth.status).json({ error: auth.error });
-        }
+        const concejal = req.concejalUsuario;
 
-        const concejal = auth.concejal;
         const seqRes = await pool.query(`
             SELECT COUNT(*)::INTEGER + 1 AS turno
             FROM proyectos
@@ -714,13 +846,14 @@ app.post('/api/proyectos/concejal', async (req, res) => {
         const comisionId = (id_comision_asignada === '' || id_comision_asignada === undefined || id_comision_asignada === null)
             ? null
             : parseInt(id_comision_asignada, 10);
+        const esPublico = visible_publico !== undefined ? Boolean(visible_publico) : false;
 
         const result = await pool.query(
             `INSERT INTO proyectos (
                 codigo_radicado, titulo, descripcion, id_autor, id_comision_asignada,
                 tipo_documento, archivo_nombre, archivo_contenido, estado, visible_publico
              )
-             VALUES ($1, $2, $3, $4, $5, 'Proposición', $6, $7, 'Radicado', FALSE)
+             VALUES ($1, $2, $3, $4, $5, 'Proposición', $6, $7, 'Radicado', $8)
              RETURNING *`,
             [
                 codigoAuto,
@@ -729,7 +862,8 @@ app.post('/api/proyectos/concejal', async (req, res) => {
                 concejal.id_integrante,
                 comisionId,
                 archivo_nombre || null,
-                archivo_contenido || null
+                archivo_contenido || null,
+                esPublico
             ]
         );
 
@@ -739,6 +873,7 @@ app.post('/api/proyectos/concejal', async (req, res) => {
             turno: numeroOrden,
             codigo_radicado: codigoAuto,
             autor: concejal.nombre_completo,
+            visible_publico: esPublico,
             proyecto: result.rows[0]
         });
     } catch (err) {
@@ -786,12 +921,13 @@ app.delete('/api/proyectos/:id_proyecto', verificarAdmin, async (req, res) => {
 });
 
 // =========================================================================
-// 4. INTERVENCIONES (LECTURA PÚBLICA / EDICIÓN SOLO ADMIN)
+// 4. ORDEN DE LA PALABRA (CONCEJAL PIDE TURNO CON MOTIVO / ADMIN CONTROLA)
 // =========================================================================
 app.get('/api/intervenciones/:id_sesion', async (req, res) => {
     const idSesion = parseInt(req.params.id_sesion, 10);
     if (isNaN(idSesion)) return res.json([]);
     try {
+        await asegurarTablasSistema();
         const result = await pool.query(`
             SELECT iv.*, i.nombre_completo, b.nombre AS bancada, COALESCE(c.nombre, 'Sin Comisión') AS comision
             FROM intervenciones iv
@@ -807,17 +943,106 @@ app.get('/api/intervenciones/:id_sesion', async (req, res) => {
     }
 });
 
-app.post('/api/intervenciones', verificarAdmin, async (req, res) => {
-    const { id_sesion, id_integrante, tipo_intervencion, tiempo_asignado_seg } = req.body;
+// Concejal solicita el uso de la palabra especificando el motivo (registrado en orden estricto de llegada)
+app.post('/api/intervenciones/solicitar', verificarConcejal, async (req, res) => {
+    const { id_sesion, tipo_intervencion, motivo_detalle } = req.body;
+    const idSesion = parseInt(id_sesion, 10);
+    const concejal = req.concejalUsuario;
+
+    if (isNaN(idSesion)) {
+        return res.status(400).json({ error: 'No hay una sesión activa seleccionada.' });
+    }
+    if (!tipo_intervencion || !tipo_intervencion.trim()) {
+        return res.status(400).json({ error: 'Debe especificar para qué solicita el uso de la palabra.' });
+    }
+
     try {
+        await asegurarTablasSistema();
+
+        // Evitar solicitudes duplicadas pendientes del mismo concejal en la misma sesión
+        const existente = await pool.query(
+            `SELECT id_intervencion, orden_turno FROM intervenciones
+             WHERE id_sesion = $1 AND id_integrante = $2 AND COALESCE(estado, 'Pendiente') IN ('Pendiente', 'En Curso')`,
+            [idSesion, concejal.id_integrante]
+        );
+        if (existente.rows.length > 0) {
+            return res.status(409).json({
+                error: `Ya tienes una solicitud activa en el turno #${existente.rows[0].orden_turno}.`,
+            });
+        }
+
+        const ordenRes = await pool.query(
+            'SELECT COALESCE(MAX(orden_turno), 0) + 1 AS siguiente FROM intervenciones WHERE id_sesion = $1',
+            [idSesion]
+        );
+        const turnoAsignado = ordenRes.rows[0].siguiente;
+
+        const result = await pool.query(
+            `INSERT INTO intervenciones (
+                id_sesion, id_integrante, tipo_intervencion, motivo_detalle, tiempo_asignado_seg, orden_turno, estado
+             )
+             VALUES ($1, $2, $3, $4, 180, $5, 'Pendiente') RETURNING *`,
+            [
+                idSesion,
+                concejal.id_integrante,
+                tipo_intervencion.trim(),
+                (motivo_detalle && motivo_detalle.trim()) ? motivo_detalle.trim() : 'Sin observación adicional',
+                turnoAsignado
+            ]
+        );
+
+        emitirActualizacionGlobal('intervenciones');
+        res.status(201).json({
+            ok: true,
+            turno: turnoAsignado,
+            intervencion: result.rows[0],
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Concejal cancela su propia solicitud si aún está pendiente
+app.delete('/api/intervenciones/solicitar/:id_intervencion', verificarConcejal, async (req, res) => {
+    const idIntv = parseInt(req.params.id_intervencion, 10);
+    const concejal = req.concejalUsuario;
+    try {
+        const del = await pool.query(
+            `DELETE FROM intervenciones
+             WHERE id_intervencion = $1 AND id_integrante = $2 AND COALESCE(estado, 'Pendiente') = 'Pendiente'
+             RETURNING *`,
+            [idIntv, concejal.id_integrante]
+        );
+        if (del.rowCount === 0) {
+            return res.status(400).json({ error: 'No se puede cancelar esta intervención.' });
+        }
+        emitirActualizacionGlobal('intervenciones');
+        res.json({ ok: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Admin agrega manualmente una intervención
+app.post('/api/intervenciones', verificarAdmin, async (req, res) => {
+    const { id_sesion, id_integrante, tipo_intervencion, motivo_detalle, tiempo_asignado_seg } = req.body;
+    try {
+        await asegurarTablasSistema();
         const ordenRes = await pool.query(
             'SELECT COALESCE(MAX(orden_turno), 0) + 1 AS siguiente FROM intervenciones WHERE id_sesion = $1',
             [id_sesion]
         );
         const result = await pool.query(
-            `INSERT INTO intervenciones (id_sesion, id_integrante, tipo_intervencion, tiempo_asignado_seg, orden_turno)
-             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-            [id_sesion, id_integrante, tipo_intervencion, parseInt(tiempo_asignado_seg, 10), ordenRes.rows[0].siguiente]
+            `INSERT INTO intervenciones (id_sesion, id_integrante, tipo_intervencion, motivo_detalle, tiempo_asignado_seg, orden_turno)
+             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+            [
+                id_sesion,
+                id_integrante,
+                tipo_intervencion,
+                motivo_detalle || '',
+                parseInt(tiempo_asignado_seg, 10) || 180,
+                ordenRes.rows[0].siguiente
+            ]
         );
         emitirActualizacionGlobal('intervenciones');
         res.json(result.rows[0]);
@@ -868,55 +1093,6 @@ async function cerrarVotacionesExpiradas() {
         emitirActualizacionGlobal('votaciones');
     }
 }
-
-app.post('/api/votacion/login', async (req, res) => {
-    const { primer_nombre, primer_apellido, password, id_votacion } = req.body;
-
-    try {
-        await cerrarVotacionesExpiradas();
-
-        const auth = await autenticarConcejalPorNombre(primer_nombre, primer_apellido, password);
-        if (auth.error) {
-            return res.status(auth.status).json({ error: auth.error });
-        }
-        const encontrado = auth.concejal;
-
-        if (id_votacion) {
-            const idVot = parseInt(id_votacion, 10);
-            const votInfo = await pool.query('SELECT estado FROM votaciones WHERE id_votacion = $1', [idVot]);
-            if (votInfo.rows.length > 0 && votInfo.rows[0].estado !== 'Abierta') {
-                return res.status(403).json({
-                    error: 'El tiempo de votación ya concluyó y la urna se encuentra cerrada.',
-                });
-            }
-
-            const votoPrevio = await pool.query(
-                'SELECT id_voto FROM votos WHERE id_votacion = $1 AND id_integrante = $2',
-                [idVot, encontrado.id_integrante]
-            );
-            const regPrevio = await pool.query(
-                'SELECT id_registro FROM votacion_registros WHERE id_votacion = $1 AND id_integrante = $2',
-                [idVot, encontrado.id_integrante]
-            );
-
-            if (votoPrevio.rows.length > 0 || regPrevio.rows.length > 0) {
-                return res.status(409).json({
-                    error: `El H.C. ${encontrado.nombre_completo} ya se registró previamente en esta ronda de votación y no puede volver a ingresar.`,
-                });
-            }
-
-            await pool.query(
-                `INSERT INTO votacion_registros (id_votacion, id_integrante)
-                 VALUES ($1, $2) ON CONFLICT DO NOTHING`,
-                [idVot, encontrado.id_integrante]
-            );
-        }
-
-        res.json({ ok: true, concejal: encontrado });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
 
 app.get('/api/votaciones', async (req, res) => {
     const { id_sesion } = req.query;
@@ -1103,10 +1279,11 @@ app.get('/api/votaciones/:id_votacion/votos', async (req, res) => {
     }
 });
 
-app.post('/api/votaciones/:id_votacion/votar', async (req, res) => {
+// Concejal vota directamente con su sesión única ya iniciada (sin volver a loguearse)
+app.post('/api/votaciones/:id_votacion/votar', verificarConcejal, async (req, res) => {
     const idVotacion = parseInt(req.params.id_votacion, 10);
-    const { id_integrante, opcion } = req.body;
-    const idInt = parseInt(id_integrante, 10);
+    const { opcion } = req.body;
+    const idInt = req.concejalUsuario.id_integrante;
 
     if (!['SI', 'NO', 'ABSTENCION'].includes(opcion)) {
         return res.status(400).json({ error: 'Opción de voto inválida.' });
@@ -1128,7 +1305,7 @@ app.post('/api/votaciones/:id_votacion/votar', async (req, res) => {
         );
         if (yaVoto.rows.length > 0) {
             return res.status(409).json({
-                error: 'Este Honorable Concejal ya registró su voto en esta urna y no puede volver a votar.',
+                error: `El H.C. ${req.concejalUsuario.nombre_completo} ya registró su voto en esta urna y no puede volver a votar.`,
             });
         }
 

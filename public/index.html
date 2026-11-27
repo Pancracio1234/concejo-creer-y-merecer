@@ -21,9 +21,6 @@
             --borde-dorado: rgba(243, 207, 122, 0.45);
         }
 
-        /* =====================================================================
-           1. SCROLLBAR DE GALA Y FONDO DE HEMICICLO CON ILUMINACIÓN CENITAL
-           ===================================================================== */
         * {
             scrollbar-width: thin;
             scrollbar-color: #cfa349 #071022;
@@ -59,9 +56,6 @@
             overflow-x: hidden;
         }
 
-        /* =====================================================================
-           2. TIPOGRAFÍA SOLEMNE Y ORO METÁLICO CON RELIEVE
-           ===================================================================== */
         .font-solemne {
             font-family: 'Cinzel', serif;
             letter-spacing: 0.06em;
@@ -81,9 +75,6 @@
             filter: drop-shadow(0 3px 14px rgba(243, 207, 122, 0.35));
         }
 
-        /* =====================================================================
-           3. BANDERA TRICOLOR, FILETES LUMINOSOS Y EMBLEMA DE GALA
-           ===================================================================== */
         .cinta-republica {
             background: linear-gradient(90deg, #FCD116 0%, #FCD116 50%, #003893 50%, #003893 75%, #CE1126 75%, #CE1126 100%);
             height: 5px;
@@ -113,9 +104,6 @@
                 0 0 50px rgba(243, 207, 122, 0.65);
         }
 
-        /* =====================================================================
-           4. MARCA DE AGUA CENTRAL
-           ===================================================================== */
         #marca-agua-fondo {
             position: fixed;
             inset: 0;
@@ -141,9 +129,6 @@
             user-select: none;
         }
 
-        /* =====================================================================
-           5. PANELES DE CRISTAL AZUL REAL CON MARCO DORADO EVIDENTE
-           ===================================================================== */
         .panel-institucional {
             position: relative;
             background: linear-gradient(160deg, rgba(18, 34, 66, 0.92) 0%, rgba(10, 20, 42, 0.95) 55%, rgba(6, 13, 28, 0.98) 100%);
@@ -167,7 +152,6 @@
             pointer-events: none;
         }
 
-        /* Tarjeta de cada curul / concejal */
         .curul-institucional {
             position: relative;
             background: linear-gradient(145deg, rgba(24, 44, 82, 0.9) 0%, rgba(12, 23, 46, 0.96) 100%);
@@ -183,7 +167,6 @@
             transform: translateY(-2px);
         }
 
-        /* Tarjetas KPI luminosas */
         .kpi-card {
             position: relative;
             overflow: hidden;
@@ -203,9 +186,6 @@
             pointer-events: none;
         }
 
-        /* =====================================================================
-           6. BOTONES DE ORO REAL E INPUTS CON ENFOQUE DORADO
-           ===================================================================== */
         .btn-oro {
             background: linear-gradient(180deg, #fae094 0%, #dca842 48%, #b38022 100%);
             color: #050a14;
@@ -243,9 +223,6 @@
             outline: none;
         }
 
-        /* =====================================================================
-           7. BARRA DE PESTAÑAS PARLAMENTARIAS
-           ===================================================================== */
         .tab-btn {
             position: relative;
             transition: all 0.22s ease;
@@ -268,9 +245,6 @@
             }
         }
 
-        /* =====================================================================
-           8. DRAWER LATERAL, RELOJ CIRCULAR, LEDS Y VISOR DE DOCUMENTOS
-           ===================================================================== */
         #drawer-marca-agua {
             position: fixed;
             right: 0;
@@ -299,16 +273,20 @@
         .doc-render ul { list-style: disc; margin-left: 1.5rem; margin-bottom: 0.9rem; }
         .doc-render ol { list-style: decimal; margin-left: 1.5rem; margin-bottom: 0.9rem; }
 
+        /* VISIBILIDAD POR ROLES */
         body:not(.modo-admin) .solo-admin {
+            display: none !important;
+        }
+        body:not(.modo-concejal) .solo-concejal {
+            display: none !important;
+        }
+        body.modo-concejal .oculto-concejal {
             display: none !important;
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* =====================================================================
-           9. RESPONSIVE MÓVIL (< 640px)
-           ===================================================================== */
         @media (max-width: 640px) {
             input, select, textarea {
                 font-size: 16px !important;
@@ -348,9 +326,100 @@
 
     <input type="file" id="input-logo-pc" accept="image/*" class="hidden" onchange="cargarLogoDesdePC(event)">
 
-    <!-- MARCA DE AGUA DE FONDO VISIBLE PARA TODOS -->
+    <!-- MARCA DE AGUA DE FONDO -->
     <div id="marca-agua-fondo" aria-hidden="true">
         <img id="img-marca-agua" src="/logo-creer-y-merecer.png" alt="" class="hidden" onload="mostrarMarcaAgua()" onerror="ocultarMarcaAgua()">
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- PORTAL DE ACCESO ÚNICO AL INGRESAR A LA APLICACIÓN                    -->
+    <!-- ===================================================================== -->
+    <div id="portal-login-unico" class="fixed inset-0 z-50 bg-[#050b18]/95 backdrop-blur-xl flex items-center justify-center p-4 overflow-y-auto">
+        <div class="panel-institucional rounded-3xl max-w-lg w-full p-6 md:p-8 border-2 border-[#f3cf7a] shadow-[0_30px_90px_rgba(0,0,0,0.95)] my-auto">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#071126] border-2 border-[#f3cf7a] shadow-[0_0_25px_rgba(243,207,122,0.4)] mb-3">
+                    <i class="fa-solid fa-landmark text-[#f3cf7a] text-2xl"></i>
+                </div>
+                <span class="block text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#f3cf7a]">
+                    Fundación Creer y Merecer • Modelo Concejo
+                </span>
+                <h2 class="font-solemne texto-oro-metalico text-2xl md:text-3xl font-black uppercase mt-1">
+                    Concejo Municipal de Ibagué
+                </h2>
+                <p class="text-xs text-slate-300 mt-1">
+                    Inicie sesión una única vez para ingresar al recinto electrónico
+                </p>
+            </div>
+
+            <!-- Selector de Rol -->
+            <div class="grid grid-cols-2 gap-2 p-1.5 bg-[#060d1c] rounded-2xl border border-[#f3cf7a]/35 mb-5">
+                <button type="button" id="btn-tab-rol-concejal" onclick="seleccionarRolLogin('concejal')" class="py-2.5 px-3 rounded-xl text-xs font-extrabold uppercase tracking-wider transition btn-oro">
+                    <i class="fa-solid fa-user-tie mr-1.5"></i> Concejal
+                </button>
+                <button type="button" id="btn-tab-rol-admin" onclick="seleccionarRolLogin('admin')" class="py-2.5 px-3 rounded-xl text-xs font-extrabold uppercase tracking-wider transition text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-shield-halved mr-1.5"></i> Administrador
+                </button>
+            </div>
+
+            <!-- FORMULARIO CONCEJAL -->
+            <div id="form-login-rol-concejal" class="space-y-4">
+                <div class="bg-[#060d1c]/80 p-3 rounded-xl border border-[#f3cf7a]/25 text-xs text-slate-200">
+                    <i class="fa-solid fa-circle-info text-[#f3cf7a] mr-1.5"></i>
+                    Con su único ingreso podrá <strong>pedir la palabra</strong>, <strong>votar en urna</strong> y <strong>ver/radicar proposiciones</strong> sin volver a autenticarse.
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Primer Nombre</label>
+                        <input type="text" id="login-unico-nombre" autocapitalize="words" placeholder="Ej: Kaory" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Primer Apellido</label>
+                        <input type="text" id="login-unico-apellido" autocapitalize="words" placeholder="Ej: Carrero" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Contraseña</label>
+                    <input type="password" id="login-unico-pass-concejal" placeholder="••••••••" onkeydown="if(event.key==='Enter') ejecutarLoginUnico()" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm">
+                </div>
+                <button type="button" onclick="ejecutarLoginUnico()" class="w-full btn-oro font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider">
+                    <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Ingresar como Honorable Concejal
+                </button>
+            </div>
+
+            <!-- FORMULARIO ADMINISTRADOR -->
+            <div id="form-login-rol-admin" class="hidden space-y-4">
+                <div class="bg-[#060d1c]/80 p-3 rounded-xl border border-[#f3cf7a]/25 text-xs text-slate-200">
+                    <i class="fa-solid fa-lock text-[#f3cf7a] mr-1.5"></i>
+                    Acceso institucional para Presidencia y Secretaría General (Quórum, control de tiempos, urnas y actas).
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Nombre Completo</label>
+                    <input type="text" id="login-unico-admin-nombre" placeholder="Ej: Secretario General" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Cargo / Rol</label>
+                    <select id="login-unico-admin-cargo" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm font-semibold">
+                        <option value="Secretaría General">Secretaría General</option>
+                        <option value="Presidencia del Concejo">Presidencia del Concejo</option>
+                        <option value="Vicepresidencia">Vicepresidencia</option>
+                        <option value="Coordinación Logística">Coordinación Logística</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-[#fff3c4] mb-1">Clave Institucional Administrativa</label>
+                    <input type="password" id="login-unico-admin-pass" placeholder="Ingrese la clave administrativa" onkeydown="if(event.key==='Enter') ejecutarLoginUnico()" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm">
+                </div>
+                <button type="button" onclick="ejecutarLoginUnico()" class="w-full btn-oro font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider">
+                    <i class="fa-solid fa-key mr-1.5"></i> Ingresar como Administrador
+                </button>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-white/10 text-center">
+                <button type="button" onclick="cerrarPortalLoginPublico()" class="text-[11px] text-slate-400 hover:text-[#f3cf7a] underline font-semibold">
+                    Continuar solo como observador público (sin sesión)
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- PANEL LATERAL DE PERSONALIZACIÓN DE LOGO/MARCA DE AGUA (SOLO ADMINISTRADORES) -->
@@ -426,14 +495,17 @@
                 </div>
 
                 <div class="flex items-center gap-2 md:gap-3 ml-auto sm:ml-0">
-                    <div id="barra-admin-status" class="flex items-center gap-2">
-                        <button type="button" id="btn-abrir-login-admin" onclick="abrirModalAdmin()" class="bg-[#f3cf7a]/15 hover:bg-[#f3cf7a] text-[#f3cf7a] hover:text-slate-950 border border-[#f3cf7a]/60 px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition flex items-center gap-1.5 shadow-[0_0_15px_rgba(243,207,122,0.2)]">
-                            <i class="fa-solid fa-shield-halved"></i> <span class="hidden xs:inline">Acceso</span> Admin
+                    <!-- Barra de Sesión Activa (Admin o Concejal) -->
+                    <div id="barra-sesion-status" class="flex items-center gap-2">
+                        <button type="button" id="btn-abrir-portal-login" onclick="abrirPortalLogin()" class="bg-[#f3cf7a]/15 hover:bg-[#f3cf7a] text-[#f3cf7a] hover:text-slate-950 border border-[#f3cf7a]/60 px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition flex items-center gap-1.5 shadow-[0_0_15px_rgba(243,207,122,0.2)]">
+                            <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
                         </button>
-                        <div id="info-admin-conectado" class="hidden flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/50 px-3 py-1 rounded-lg">
+
+                        <div id="info-usuario-conectado" class="hidden flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/50 px-3 py-1 rounded-lg">
                             <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                            <span id="nombre-admin-barra" class="text-[10px] font-extrabold text-emerald-300 tracking-wider max-w-[130px] sm:max-w-none truncate">ADMIN</span>
-                            <button type="button" onclick="cerrarSesionAdmin()" class="text-rose-300 hover:text-white ml-1 text-[10px] font-bold underline" title="Cerrar sesión administrativa">
+                            <span id="etiqueta-rol-barra" class="text-[9px] font-black uppercase bg-[#f3cf7a] text-slate-950 px-1.5 py-0.5 rounded">ROL</span>
+                            <span id="nombre-usuario-barra" class="text-[10px] font-extrabold text-emerald-200 tracking-wider max-w-[160px] sm:max-w-none truncate">USUARIO</span>
+                            <button type="button" onclick="cerrarSesionGlobal()" class="text-rose-300 hover:text-white ml-1 text-[10px] font-bold underline" title="Cerrar sesión">
                                 Salir
                             </button>
                         </div>
@@ -451,7 +523,6 @@
             <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3.5 md:gap-5">
                 
                 <div class="flex items-center gap-3.5 md:gap-5">
-                    <!-- LOGO SUPERIOR CON DOBLE ANILLO DORADO -->
                     <div class="emblema-ring w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-[#050b18] overflow-hidden flex items-center justify-center shrink-0">
                         <img id="img-logo-header" src="/logo-creer-y-merecer.png" alt="Emblema" class="w-full h-full object-cover hidden" onload="mostrarImagenLogo()" onerror="ocultarImagenLogo()">
                         <div id="placeholder-logo-header" class="flex flex-col items-center justify-center text-center p-1">
@@ -501,10 +572,10 @@
     <!-- Barra de Navegación Parlamentaria -->
     <nav class="bg-[#071126]/95 backdrop-blur-xl sticky top-0 z-30 md:static border-b border-[#f3cf7a]/25 shadow-2xl">
         <div class="max-w-[1440px] mx-auto px-2 md:px-4 flex space-x-1 md:space-x-2 overflow-x-auto no-scrollbar">
-            <button onclick="mostrarTab('asistencia')" class="tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-[#f3cf7a] text-[#fff3c4] font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="asistencia">
+            <button onclick="mostrarTab('asistencia')" class="oculto-concejal tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-[#f3cf7a] text-[#fff3c4] font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="asistencia">
                 <i class="fa-solid fa-landmark text-[#f3cf7a]"></i> Quórum y Bancadas
             </button>
-            <button onclick="mostrarTab('comisiones')" class="tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-transparent text-slate-300 font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="comisiones">
+            <button onclick="mostrarTab('comisiones')" class="oculto-concejal tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-transparent text-slate-300 font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="comisiones">
                 <i class="fa-solid fa-sitemap text-[#f3cf7a]/80"></i> Comisiones
             </button>
             <button onclick="mostrarTab('intervenciones')" class="tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-transparent text-slate-300 font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="intervenciones">
@@ -516,7 +587,7 @@
             <button onclick="mostrarTab('proyectos')" class="tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-transparent text-slate-300 font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="proyectos">
                 <i class="fa-solid fa-scale-balanced text-[#f3cf7a]/80"></i> Orden del Día y Docs
             </button>
-            <button onclick="mostrarTab('integrantes')" class="tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-transparent text-slate-300 font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="integrantes">
+            <button onclick="mostrarTab('integrantes')" class="oculto-concejal tab-btn py-3 md:py-3.5 px-3.5 md:px-4 border-b-2 border-transparent text-slate-300 font-bold text-[11px] md:text-xs uppercase tracking-[0.11em] whitespace-nowrap flex items-center gap-2" data-tab="integrantes">
                 <i class="fa-solid fa-id-card-clip text-[#f3cf7a]/80"></i> Curules (<span id="nav-total-integrantes">21</span>)
             </button>
         </div>
@@ -543,9 +614,9 @@
         </div>
 
         <!-- ===================================================================== -->
-        <!-- TAB 1: TABLERO ELECTRÓNICO DE QUÓRUM POR BANCADAS                     -->
+        <!-- TAB 1: TABLERO ELECTRÓNICO DE QUÓRUM POR BANCADAS (OCULTO A CONCEJAL) -->
         <!-- ===================================================================== -->
-        <section id="tab-asistencia" class="tab-content">
+        <section id="tab-asistencia" class="tab-content oculto-concejal">
             
             <div class="panel-institucional rounded-2xl p-4 md:p-6 mb-6">
                 <div class="flex flex-wrap justify-between items-center gap-3 md:gap-4 mb-5 pb-4 border-b border-[#f3cf7a]/25">
@@ -564,6 +635,10 @@
                             <i class="fa-solid fa-check-double mr-1.5"></i> Quórum Pleno
                         </button>
                     </div>
+                </div>
+
+                <div id="aviso-quorum-restringido" class="hidden text-center py-6 text-xs text-slate-300 bg-[#060d1c]/80 rounded-2xl border border-[#f3cf7a]/25 mb-4">
+                    <i class="fa-solid fa-lock text-[#f3cf7a] mr-1.5"></i> El control detallado del Quórum está reservado exclusivamente para la Mesa Directiva / Administrador.
                 </div>
 
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
@@ -605,9 +680,9 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 2: COMISIONES PERMANENTES                                         -->
+        <!-- TAB 2: COMISIONES PERMANENTES (OCULTO A CONCEJAL)                     -->
         <!-- ===================================================================== -->
-        <section id="tab-comisiones" class="tab-content hidden">
+        <section id="tab-comisiones" class="tab-content oculto-concejal hidden">
             
             <div class="panel-institucional rounded-2xl p-4 md:p-6 mb-6">
                 <div class="flex flex-wrap justify-between items-center gap-4">
@@ -675,7 +750,7 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 3: CONTROL DE USO DE LA PALABRA                                   -->
+        <!-- TAB 3: CONTROL DE USO DE LA PALABRA (CONCEJAL PIDE TURNO CON MOTIVO)  -->
         <!-- ===================================================================== -->
         <section id="tab-intervenciones" class="tab-content hidden">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 items-start">
@@ -765,13 +840,45 @@
                     <div class="flex justify-between items-center mb-4 border-b border-[#f3cf7a]/25 pb-3">
                         <div>
                             <h3 class="font-solemne text-base md:text-lg uppercase font-bold text-white">Orden de Uso de la Palabra</h3>
-                            <p class="text-xs text-slate-300">Lista oficial de oradores inscritos ante Presidencia.</p>
+                            <p class="text-xs text-slate-300">Asignación automática por orden estricto de llegada.</p>
                         </div>
                         <span class="bg-[#f3cf7a]/20 text-[#fff3c4] border border-[#f3cf7a]/55 text-xs font-extrabold px-3 py-1 rounded-lg shrink-0">
                             <span id="contador-turnos">0</span> inscritos
                         </span>
                     </div>
+
+                    <!-- CAJA PARA QUE EL CONCEJAL PIDA LA PALABRA CON SU SESIÓN ÚNICA -->
+                    <div class="solo-concejal space-y-3 mb-5 bg-[#060d1c]/90 p-4 rounded-2xl border-2 border-[#f3cf7a]/45">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-[#fff3c4]">
+                                <i class="fa-solid fa-hand-point-up mr-1.5 text-[#f3cf7a]"></i> Solicitar Uso de la Palabra
+                            </span>
+                            <span class="text-[10px] font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-400/40">
+                                Orden de Llegada
+                            </span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-200 mb-1">¿Para qué solicita la palabra? (Obligatorio)</label>
+                            <select id="conc-motivo-tipo" class="w-full border rounded-xl px-3 py-2.5 text-sm text-white font-semibold">
+                                <option value="">-- Seleccione el motivo reglamentario --</option>
+                                <option value="Intervención Ordinaria">Intervención Ordinaria (Debate del tema)</option>
+                                <option value="Vocero de Bancada">Vocero de Bancada</option>
+                                <option value="Derecho a Réplica">Derecho a Réplica</option>
+                                <option value="Moción de Orden">Moción de Orden</option>
+                                <option value="Moción de Procedimiento">Moción de Procedimiento</option>
+                                <option value="Sustentación de Proposición">Sustentación de Proposición</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Detalle / Tema específico de su intervención</label>
+                            <input type="text" id="conc-motivo-detalle" placeholder="Ej: Sobre el artículo 3 del Proyecto de Acuerdo..." class="w-full border rounded-xl px-3 py-2 text-xs text-white">
+                        </div>
+                        <button type="button" onclick="solicitarPalabraConcejal()" class="w-full btn-oro font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider">
+                            <i class="fa-solid fa-microphone-lines mr-1.5"></i> Pedir Turno Ahora
+                        </button>
+                    </div>
                     
+                    <!-- FORMULARIO ADMINISTRATIVO PARA INSCRIBIR ORADOR -->
                     <div class="solo-admin space-y-3 mb-5 bg-[#060d1c]/80 p-3.5 md:p-4 rounded-2xl border border-[#f3cf7a]/25">
                         <div>
                             <div class="flex justify-between items-center mb-1">
@@ -808,7 +915,7 @@
                     </div>
 
                     <div class="flex flex-wrap justify-between items-center gap-2 mb-2.5">
-                        <h4 class="text-xs font-bold uppercase text-slate-300 tracking-wider">Turnos Inscritos</h4>
+                        <h4 class="text-xs font-bold uppercase text-slate-300 tracking-wider">Turnos en Orden de Llegada</h4>
                         <div class="relative w-full sm:w-48">
                             <i class="fa-solid fa-filter absolute left-2.5 top-1/2 -translate-y-1/2 text-[#f3cf7a] text-[10px]"></i>
                             <input type="text" id="filtro-cola-intervenciones" oninput="renderizarListaIntervenciones()" placeholder="Buscar en turnos..." class="w-full border rounded-lg pl-7 pr-6 py-1.5 text-xs text-white placeholder-slate-400">
@@ -823,7 +930,7 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 4: SISTEMA DE VOTACIÓN NOMINAL CON VEREDICTO Y DESEMPATE          -->
+        <!-- TAB 4: SISTEMA DE VOTACIÓN NOMINAL (CON SESIÓN ÚNICA YA INICIADA)     -->
         <!-- ===================================================================== -->
         <section id="tab-votacion" class="tab-content hidden">
             
@@ -837,7 +944,7 @@
                             Urna de Votación del Concejo Municipal
                         </h2>
                         <p class="text-xs text-slate-300 mt-1">
-                            Cada Honorable Concejal dispone de un único ingreso y un solo voto dentro del tiempo reglamentario fijado para la urna.
+                            Cada Honorable Concejal dispone de un solo voto definitivo dentro del tiempo reglamentario fijado para la urna.
                         </p>
                     </div>
 
@@ -904,7 +1011,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 items-start">
                 
-                <!-- COLUMNA IZQUIERDA (5 cols): CABINA DE AUTENTICACIÓN Y VOTO ÚNICO -->
+                <!-- COLUMNA IZQUIERDA (5 cols): CABINA DE VOTO DIRECTO CON SESIÓN ÚNICA -->
                 <div class="lg:col-span-5 panel-institucional rounded-2xl p-4 md:p-6 border-2 border-[#f3cf7a]/55">
                     <div class="flex items-center justify-between border-b border-[#f3cf7a]/25 pb-3 mb-4">
                         <div>
@@ -912,48 +1019,29 @@
                             <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-white">Cabina de Votación</h3>
                         </div>
                         <span class="bg-amber-500/20 border border-amber-400/55 text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg text-amber-200">
-                            Ingreso Único
+                            1 Voto Único
                         </span>
                     </div>
 
-                    <div id="cabina-login-form" class="space-y-4">
-                        <div class="bg-[#060d1c]/90 p-3.5 rounded-xl border border-[#f3cf7a]/35 text-xs text-slate-200">
-                            <i class="fa-solid fa-shield-halved text-[#f3cf7a] mr-1.5"></i>
-                            Inicie sesión con su <strong>Primer Nombre</strong> y <strong>Primer Apellido</strong>. Una vez registrado en esta ronda, no podrá volver a ingresar.
+                    <!-- SI NO HA INICIADO SESIÓN COMO CONCEJAL -->
+                    <div id="cabina-sin-sesion" class="space-y-4">
+                        <div class="bg-[#060d1c]/90 p-4 rounded-xl border border-[#f3cf7a]/35 text-xs text-slate-200 leading-relaxed">
+                            <i class="fa-solid fa-user-lock text-[#f3cf7a] mr-1.5"></i>
+                            Para depositar su voto debe haber iniciado sesión como <strong>Honorable Concejal</strong> al ingresar a la aplicación.
                         </div>
-
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Primer Nombre</label>
-                            <input type="text" id="login-primer-nombre" autocapitalize="words" placeholder="Ej: Kaory" class="w-full border text-white rounded-xl px-3.5 py-3 text-base">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Primer Apellido</label>
-                            <input type="text" id="login-primer-apellido" autocapitalize="words" placeholder="Ej: Carrero" class="w-full border text-white rounded-xl px-3.5 py-3 text-base">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Contraseña (Cualquiera para prueba)</label>
-                            <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter') iniciarSesionConcejal()" class="w-full border text-white rounded-xl px-3.5 py-3 text-base">
-                        </div>
-
-                        <button type="button" onclick="iniciarSesionConcejal()" class="w-full btn-oro font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider">
-                            <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Ingresar a Curul para Votar
+                        <button type="button" onclick="abrirPortalLogin()" class="w-full btn-oro font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider">
+                            <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Iniciar Sesión de Concejal
                         </button>
                     </div>
 
+                    <!-- SI YA TIENE SESIÓN DE CONCEJAL INICIADA -->
                     <div id="cabina-concejal-autenticado" class="hidden space-y-5">
-                        <div class="bg-[#060d1c] p-4 rounded-2xl border-2 border-[#f3cf7a]/60 flex justify-between items-start gap-3 shadow-inner">
-                            <div>
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
-                                    <i class="fa-solid fa-circle-check mr-1"></i> Identidad Verificada
-                                </span>
-                                <h4 id="concejal-logueado-nombre" class="font-solemne text-base md:text-lg uppercase font-bold text-white mt-0.5">--</h4>
-                                <p id="concejal-logueado-detalle" class="text-xs text-slate-300 mt-0.5">--</p>
-                            </div>
-                            <button type="button" onclick="cerrarSesionConcejal()" class="bg-white/10 hover:bg-rose-900/50 text-slate-200 hover:text-rose-200 border border-white/15 px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase transition shrink-0">
-                                Salir
-                            </button>
+                        <div class="bg-[#060d1c] p-4 rounded-2xl border-2 border-[#f3cf7a]/60 shadow-inner">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
+                                <i class="fa-solid fa-circle-check mr-1"></i> Sesión Única Activa
+                            </span>
+                            <h4 id="concejal-logueado-nombre" class="font-solemne text-base md:text-lg uppercase font-bold text-white mt-0.5">--</h4>
+                            <p id="concejal-logueado-detalle" class="text-xs text-slate-300 mt-0.5">--</p>
                         </div>
 
                         <div id="estado-mi-voto-box" class="bg-white/[0.05] p-3.5 rounded-xl border border-[#f3cf7a]/25 text-center">
@@ -1036,7 +1124,7 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 5: PROYECTOS DE ACUERDO Y PROPOSICIONES CON VISOR DIRECTO         -->
+        <!-- TAB 5: PROYECTOS Y PROPOSICIONES (VISIBILIDAD PÚBLICA Y PRIVADA)      -->
         <!-- ===================================================================== -->
         <section id="tab-proyectos" class="tab-content hidden">
             
@@ -1055,7 +1143,7 @@
                     <button type="button" onclick="abrirModalResumenIniciativas()" class="flex-1 sm:flex-initial bg-gradient-to-b from-emerald-600 to-emerald-900 hover:from-emerald-500 hover:to-emerald-800 text-white font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-emerald-300/50 transition shadow-lg">
                         <i class="fa-solid fa-award mr-1.5 text-[#f3cf7a]"></i> Acta de Iniciativas
                     </button>
-                    <button type="button" onclick="toggleFormularioProposicionConcejal()" class="flex-1 sm:flex-initial btn-oro font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl">
+                    <button type="button" onclick="toggleFormularioProposicionConcejal()" class="solo-concejal flex-1 sm:flex-initial btn-oro font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl">
                         <i class="fa-solid fa-feather-pointed mr-1.5"></i> Radicar Proposición
                     </button>
                     <button type="button" onclick="toggleFormularioProyecto()" class="solo-admin flex-1 sm:flex-initial bg-gradient-to-b from-blue-600 to-blue-900 hover:from-blue-500 hover:to-blue-800 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-blue-300/45 transition shadow-lg">
@@ -1064,37 +1152,22 @@
                 </div>
             </div>
 
-            <!-- FORMULARIO PARA CONCEJALES: RADICACIÓN DE PROPOSICIÓN EN ORDEN DE LLEGADA -->
-            <div id="panel-form-proposicion-concejal" class="hidden panel-institucional p-4 md:p-6 rounded-2xl mb-6 border-2 border-[#f3cf7a]">
+            <!-- FORMULARIO PARA CONCEJALES: RADICACIÓN CON SESIÓN ÚNICA YA ACTIVA -->
+            <div id="panel-form-proposicion-concejal" class="solo-concejal hidden panel-institucional p-4 md:p-6 rounded-2xl mb-6 border-2 border-[#f3cf7a]">
                 <div class="flex justify-between items-center mb-4 border-b border-[#f3cf7a]/25 pb-3">
                     <div>
                         <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#f3cf7a] block">Ventanilla Única de Radicación • Orden de Llegada</span>
-                        <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-white">Radicar Proposición (Honorable Concejal)</h3>
+                        <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-white">Radicar Proposición (Sesión Activa)</h3>
                     </div>
                     <button type="button" onclick="toggleFormularioProposicionConcejal()" class="text-slate-300 hover:text-white text-sm font-bold shrink-0">
                         <i class="fa-solid fa-xmark"></i> Cerrar
                     </button>
                 </div>
 
-                <div class="bg-[#060d1c]/90 p-3.5 rounded-xl border border-[#f3cf7a]/40 text-xs text-slate-200 mb-4 flex items-start gap-2.5">
-                    <i class="fa-solid fa-lock text-[#f3cf7a] mt-0.5"></i>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div>
-                        Inicie sesión con su <strong>Primer Nombre</strong>, <strong>Primer Apellido</strong> y <strong>cualquier contraseña de prueba</strong>. Su proposición quedará registrada en estricto <strong>orden de llegada</strong> en la bandeja de Secretaría General y <strong>solo el Secretario / Administrador podrá visualizarla y proyectarla</strong> al recinto.
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Primer Nombre</label>
-                        <input type="text" id="prop-conc-nombre" placeholder="Ej: Kaory" class="w-full border text-white rounded-xl px-3 py-2 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Primer Apellido</label>
-                        <input type="text" id="prop-conc-apellido" placeholder="Ej: Carrero" class="w-full border text-white rounded-xl px-3 py-2 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Contraseña (Cualquiera de prueba)</label>
-                        <input type="password" id="prop-conc-password" placeholder="••••••••" class="w-full border text-white rounded-xl px-3 py-2 text-sm">
+                        <label class="block text-xs font-bold uppercase text-[#fff3c4] mb-1">Título / Asunto de la Proposición</label>
+                        <input type="text" id="prop-conc-titulo" placeholder="Ej: Proposición de citación a debate..." class="w-full border text-white rounded-xl px-3 py-2 text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Destino / Comisión</label>
@@ -1104,28 +1177,29 @@
                             <option value="2">Comisión Segunda</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-[#fff3c4] mb-1">Título / Asunto de la Proposición</label>
-                        <input type="text" id="prop-conc-titulo" placeholder="Ej: Proposición de citación a debate de control político..." class="w-full border text-white rounded-xl px-3 py-2 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Archivo Adjunto (Opcional: PDF, .docx o .txt)</label>
-                        <input type="file" id="prop-conc-archivo" accept=".pdf,.docx,.txt" class="w-full border border-[#f3cf7a]/35 bg-[#071022] text-slate-200 rounded-xl px-3 py-1.5 text-sm">
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Visibilidad del Documento</label>
+                        <select id="prop-conc-visibilidad" class="w-full border text-white rounded-xl px-3 py-2 text-sm font-semibold">
+                            <option value="false">Privada (Solo Concejales y Secretaría)</option>
+                            <option value="true">Pública (Visible para todos)</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="mb-4">
+                    <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Archivo Adjunto (Opcional: PDF, .docx o .txt)</label>
+                    <input type="file" id="prop-conc-archivo" accept=".pdf,.docx,.txt" class="w-full border border-[#f3cf7a]/35 bg-[#071022] text-slate-200 rounded-xl px-3 py-1.5 text-sm">
+                </div>
+
+                <div class="mb-4">
                     <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Texto Completo de la Proposición</label>
-                    <textarea id="prop-conc-descripcion" rows="4" placeholder="Redacte aquí el contenido completo de su proposición para que Secretaría la proyecte..." class="w-full border text-white rounded-xl px-3 py-2 text-sm"></textarea>
+                    <textarea id="prop-conc-descripcion" rows="4" placeholder="Redacte aquí el contenido completo de su proposición..." class="w-full border text-white rounded-xl px-3 py-2 text-sm"></textarea>
                 </div>
 
                 <div class="flex justify-end gap-2">
                     <button type="button" onclick="toggleFormularioProposicionConcejal()" class="px-4 py-2.5 text-xs font-bold uppercase text-slate-300 hover:text-white">Cancelar</button>
                     <button type="button" onclick="enviarProposicionConcejal()" class="flex-1 sm:flex-initial btn-oro rounded-xl px-6 py-2.5 text-xs uppercase tracking-wider font-extrabold">
-                        <i class="fa-solid fa-paper-plane mr-1.5"></i> Enviar Proposición a Secretaría
+                        <i class="fa-solid fa-paper-plane mr-1.5"></i> Enviar Proposición
                     </button>
                 </div>
             </div>
@@ -1136,7 +1210,7 @@
                     <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-[#fff3c4]">Radicación Oficial en Secretaría General</h3>
                     <button onclick="toggleFormularioProyecto()" class="text-slate-300 hover:text-white text-sm font-bold"><i class="fa-solid fa-xmark"></i> Cerrar</button>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Tipo de Acto</label>
                         <select id="proy-tipo" class="w-full border text-white rounded-xl px-3 py-2 text-sm font-semibold">
@@ -1159,6 +1233,13 @@
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Concejal Ponente / Autor</label>
                         <select id="proy-autor" class="w-full border text-white rounded-xl px-3 py-2 text-sm"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Visibilidad</label>
+                        <select id="proy-visibilidad" class="w-full border text-white rounded-xl px-3 py-2 text-sm font-semibold">
+                            <option value="true">Público (Todos)</option>
+                            <option value="false">Privado (Solo Concejales / Admin)</option>
+                        </select>
                     </div>
                 </div>
 
@@ -1191,7 +1272,7 @@
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-200">
                             Orden de Llegada / Trámite (<span id="contador-docs">0</span>)
                         </h4>
-                        <span class="solo-admin text-[10px] font-bold text-[#fff3c4]">Vista Secretaría</span>
+                        <span id="etiqueta-vista-docs" class="text-[10px] font-bold text-[#fff3c4]">Vista Recinto</span>
                     </div>
                     <div id="lista-lateral-proyectos" class="space-y-3 max-h-[82vh] overflow-y-auto pr-1"></div>
                 </div>
@@ -1201,6 +1282,7 @@
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-2 mb-1 flex-wrap">
                                 <span id="visor-badge" class="bg-[#f3cf7a] text-slate-950 text-[10px] md:text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded">DOCUMENTO</span>
+                                <span id="visor-visibilidad-badge" class="hidden text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded"></span>
                                 <span id="visor-comision" class="text-xs text-[#fff3c4] font-bold">Comisión</span>
                             </div>
                             <h3 id="visor-titulo" class="font-solemne text-base md:text-xl uppercase font-bold text-white leading-snug">Seleccione un documento del orden del día</h3>
@@ -1221,9 +1303,9 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 6: ADMINISTRACIÓN DE CURULES Y CONCEJALES                         -->
+        <!-- TAB 6: ADMINISTRACIÓN DE CURULES (OCULTO A CONCEJAL)                  -->
         <!-- ===================================================================== -->
-        <section id="tab-integrantes" class="tab-content hidden">
+        <section id="tab-integrantes" class="tab-content oculto-concejal hidden">
             <div class="solo-admin panel-institucional p-4 md:p-6 rounded-2xl mb-6 border-t-4 border-t-[#f3cf7a]">
                 <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-white mb-1">Acreditación de Curul / Honorable Concejal</h3>
                 <p class="text-xs text-slate-300 mb-4">El registro se sincroniza automáticamente con el tablero de quórum, votación y comisiones.</p>
@@ -1304,55 +1386,6 @@
         </div>
     </footer>
 
-    <!-- MODAL REGISTRO / ACCESO ADMINISTRATIVO -->
-    <div id="modal-admin" class="fixed inset-0 bg-black/85 hidden items-center justify-center p-4 z-50 backdrop-blur-md">
-        <div class="panel-institucional rounded-2xl max-w-md w-full p-5 md:p-6 border-2 border-[#f3cf7a]">
-            <div class="flex justify-between items-start mb-4">
-                <div>
-                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#f3cf7a]">Mesa Directiva • Secretaría General</span>
-                    <h3 class="font-solemne text-xl md:text-2xl uppercase font-bold text-white mt-0.5">Registro Administrativo</h3>
-                </div>
-                <button type="button" onclick="cerrarModalAdmin()" class="text-slate-300 hover:text-white text-base p-1">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <p class="text-xs text-slate-200 bg-[#060d1c]/90 p-3 rounded-xl border border-[#f3cf7a]/30 mb-4">
-                <i class="fa-solid fa-lock text-[#f3cf7a] mr-1.5"></i>
-                Regístrese con su nombre, cargo y la clave institucional para habilitar el control de sesiones, quórum, uso de la palabra, urnas, logo y proyección de proposiciones.
-            </p>
-
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Nombre Completo del Administrador</label>
-                    <input type="text" id="admin-reg-nombre" placeholder="Ej: Secretario General / Presidente" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Cargo o Rol</label>
-                    <select id="admin-reg-cargo" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm font-semibold">
-                        <option value="Secretaría General">Secretaría General</option>
-                        <option value="Presidencia del Concejo">Presidencia del Concejo</option>
-                        <option value="Vicepresidencia">Vicepresidencia</option>
-                        <option value="Coordinación Logística">Coordinación Logística</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold uppercase text-[#fff3c4] mb-1">Clave Institucional Administrativa</label>
-                    <input type="password" id="admin-reg-password" placeholder="Ingrese la clave de administrador" onkeydown="if(event.key==='Enter') registrarAccesoAdmin()" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm">
-                </div>
-
-                <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-[#f3cf7a]/25">
-                    <button type="button" onclick="cerrarModalAdmin()" class="px-4 py-2 text-xs font-bold uppercase text-slate-300 hover:text-white rounded-xl">Cancelar</button>
-                    <button type="button" onclick="registrarAccesoAdmin()" class="btn-oro font-extrabold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider">
-                        <i class="fa-solid fa-key mr-1.5"></i> Ingresar como Admin
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- MODAL ABRIR SESIÓN -->
     <div id="modal-sesion" class="fixed inset-0 bg-black/85 hidden items-center justify-center p-4 z-50 backdrop-blur-md">
         <div class="panel-institucional rounded-2xl max-w-md w-full p-5 md:p-6 border-2 border-[#f3cf7a]">
@@ -1393,8 +1426,6 @@
     <!-- MODAL ACTA OFICIAL Y RESUMEN DE INICIATIVAS APROBADAS -->
     <div id="modal-resumen-iniciativas" class="fixed inset-0 bg-black/90 hidden items-center justify-center p-2 sm:p-4 z-50 backdrop-blur-md">
         <div class="panel-institucional rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col border-2 border-[#f3cf7a] overflow-hidden shadow-[0_25px_70px_rgba(0,0,0,0.95)]">
-            
-            <!-- Barra superior de acciones del documento -->
             <div class="bg-[#071126] p-4 border-b border-[#f3cf7a]/40 flex flex-wrap justify-between items-center gap-3">
                 <div>
                     <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#f3cf7a] block">Balance Legislativo y Mérito Parlamentario</span>
@@ -1413,19 +1444,24 @@
                 </div>
             </div>
 
-            <!-- Hoja Blanca Formal del Documento -->
             <div class="flex-1 overflow-y-auto bg-slate-300 p-3 sm:p-6">
-                <div id="contenido-documento-iniciativas" class="bg-white text-slate-900 max-w-4xl mx-auto p-6 sm:p-12 rounded-xl shadow-xl border border-slate-400 font-serif leading-relaxed">
-                    <!-- Se genera dinámicamente -->
-                </div>
+                <div id="contenido-documento-iniciativas" class="bg-white text-slate-900 max-w-4xl mx-auto p-6 sm:p-12 rounded-xl shadow-xl border border-slate-400 font-serif leading-relaxed"></div>
             </div>
         </div>
     </div>
 
     <script>
+        // =====================================================================
+        // ESTADO DE SESIÓN ÚNICA (ADMIN O CONCEJAL)
+        // =====================================================================
         let adminToken = localStorage.getItem('concejo_admin_token') || null;
-        let adminInfo = null;
+        let concejalToken = localStorage.getItem('concejo_concejal_token') || null;
+        let rolActual = null; // 'admin' | 'concejal' | null
+        let usuarioActual = null;
+        let rolSeleccionadoEnLogin = 'concejal';
+
         let esModoAdmin = false;
+        let esModoConcejal = false;
 
         let sesionActual = null;
         let integrantesGlobal = [];
@@ -1434,7 +1470,6 @@
         let intervencionesGlobal = [];
         let votacionesGlobal = [];
         let votacionSeleccionadaId = null;
-        let concejalAutenticado = null;
         let intervaloSyncGlobal = null;
         let intervaloCuentaRegresivaUrna = null;
         let segundosRestantesUrna = 0;
@@ -1462,136 +1497,216 @@
         const CIRCUNFERENCIA_ANILLO = 2 * Math.PI * 114;
 
         // =====================================================================
-        // GESTIÓN DE SESIÓN Y PERMISOS DE ADMINISTRADOR
+        // PORTAL DE ACCESO ÚNICO AL INGRESAR
         // =====================================================================
-        function abrirModalAdmin() {
-            const modal = document.getElementById('modal-admin');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.getElementById('admin-reg-nombre').focus();
-        }
+        function seleccionarRolLogin(rol) {
+            rolSeleccionadoEnLogin = rol;
+            const btnConc = document.getElementById('btn-tab-rol-concejal');
+            const btnAdm = document.getElementById('btn-tab-rol-admin');
+            const formConc = document.getElementById('form-login-rol-concejal');
+            const formAdm = document.getElementById('form-login-rol-admin');
 
-        function cerrarModalAdmin() {
-            const modal = document.getElementById('modal-admin');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        async function aplicarEstadoAdminUI() {
-            const btnLogin = document.getElementById('btn-abrir-login-admin');
-            const infoConectado = document.getElementById('info-admin-conectado');
-            const nombreBarra = document.getElementById('nombre-admin-barra');
-
-            if (esModoAdmin && adminInfo) {
-                document.body.classList.add('modo-admin');
-                if (btnLogin) btnLogin.classList.add('hidden');
-                if (infoConectado) infoConectado.classList.remove('hidden');
-                if (nombreBarra) nombreBarra.innerText = `${adminInfo.nombre_admin} (${adminInfo.cargo_admin})`;
+            if (rol === 'concejal') {
+                btnConc.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold uppercase tracking-wider transition btn-oro';
+                btnAdm.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold uppercase tracking-wider transition text-slate-300 hover:text-white';
+                formConc.classList.remove('hidden');
+                formAdm.classList.add('hidden');
             } else {
-                document.body.classList.remove('modo-admin');
-                if (btnLogin) btnLogin.classList.remove('hidden');
-                if (infoConectado) infoConectado.classList.add('hidden');
+                btnAdm.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold uppercase tracking-wider transition btn-oro';
+                btnConc.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold uppercase tracking-wider transition text-slate-300 hover:text-white';
+                formAdm.classList.remove('hidden');
+                formConc.classList.add('hidden');
+            }
+        }
+
+        function abrirPortalLogin() {
+            const portal = document.getElementById('portal-login-unico');
+            portal.classList.remove('hidden');
+            portal.classList.add('flex');
+        }
+
+        function cerrarPortalLoginPublico() {
+            const portal = document.getElementById('portal-login-unico');
+            portal.classList.add('hidden');
+            portal.classList.remove('flex');
+        }
+
+        async function ejecutarLoginUnico() {
+            let payload = { rol: rolSeleccionadoEnLogin };
+
+            if (rolSeleccionadoEnLogin === 'concejal') {
+                payload.primer_nombre = document.getElementById('login-unico-nombre').value;
+                payload.primer_apellido = document.getElementById('login-unico-apellido').value;
+                payload.password = document.getElementById('login-unico-pass-concejal').value;
+                if (!payload.primer_nombre.trim() || !payload.primer_apellido.trim() || !payload.password.trim()) {
+                    return alert('Ingrese su Primer Nombre, Primer Apellido y contraseña.');
+                }
+            } else {
+                payload.nombre_admin = document.getElementById('login-unico-admin-nombre').value;
+                payload.cargo_admin = document.getElementById('login-unico-admin-cargo').value;
+                payload.password = document.getElementById('login-unico-admin-pass').value;
+                if (!payload.nombre_admin.trim() || !payload.password.trim()) {
+                    return alert('Ingrese su nombre completo y la clave administrativa.');
+                }
             }
 
-            renderizarBancadasAsistencia(asistenciasGlobal);
+            try {
+                const res = await fetch('/api/sesion/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    return alert(data.error || 'No se pudo iniciar sesión.');
+                }
+
+                // Limpiar tokens previos
+                localStorage.removeItem('concejo_admin_token');
+                localStorage.removeItem('concejo_concejal_token');
+                adminToken = null;
+                concejalToken = null;
+
+                rolActual = data.rol;
+                usuarioActual = data.usuario;
+
+                if (data.rol === 'admin') {
+                    adminToken = data.token;
+                    localStorage.setItem('concejo_admin_token', adminToken);
+                } else {
+                    concejalToken = data.token;
+                    localStorage.setItem('concejo_concejal_token', concejalToken);
+                }
+
+                document.getElementById('login-unico-pass-concejal').value = '';
+                document.getElementById('login-unico-admin-pass').value = '';
+                cerrarPortalLoginPublico();
+
+                await aplicarEstadoSesionUI();
+                notificar(
+                    data.rol === 'admin'
+                        ? `🛡️ Bienvenido Administrador: ${usuarioActual.nombre_admin}`
+                        : `✅ Bienvenido H.C. ${usuarioActual.nombre_completo}`
+                );
+            } catch (err) {
+                alert('Error de conexión al iniciar sesión: ' + err.message);
+            }
+        }
+
+        async function verificarSesionGuardada() {
+            if (!adminToken && !concejalToken) {
+                rolActual = null;
+                usuarioActual = null;
+                await aplicarEstadoSesionUI();
+                abrirPortalLogin();
+                return;
+            }
+
+            try {
+                const headers = {};
+                if (adminToken) headers['x-admin-token'] = adminToken;
+                if (concejalToken) headers['x-concejal-token'] = concejalToken;
+
+                const res = await fetch('/api/sesion/verificar', { headers });
+                if (res.ok) {
+                    const data = await res.json();
+                    rolActual = data.rol;
+                    usuarioActual = data.usuario;
+                    cerrarPortalLoginPublico();
+                } else {
+                    localStorage.removeItem('concejo_admin_token');
+                    localStorage.removeItem('concejo_concejal_token');
+                    adminToken = null;
+                    concejalToken = null;
+                    rolActual = null;
+                    usuarioActual = null;
+                    abrirPortalLogin();
+                }
+            } catch (e) {
+                rolActual = null;
+                usuarioActual = null;
+            }
+
+            await aplicarEstadoSesionUI();
+        }
+
+        async function cerrarSesionGlobal() {
+            try {
+                const headers = {};
+                if (adminToken) headers['x-admin-token'] = adminToken;
+                if (concejalToken) headers['x-concejal-token'] = concejalToken;
+                await fetch('/api/sesion/salir', { method: 'POST', headers });
+            } catch (e) {}
+
+            localStorage.removeItem('concejo_admin_token');
+            localStorage.removeItem('concejo_concejal_token');
+            adminToken = null;
+            concejalToken = null;
+            rolActual = null;
+            usuarioActual = null;
+            proyectoSeleccionadoId = null;
+
+            await aplicarEstadoSesionUI();
+            abrirPortalLogin();
+            notificar('🔒 Sesión cerrada');
+        }
+
+        async function aplicarEstadoSesionUI() {
+            esModoAdmin = rolActual === 'admin' && Boolean(usuarioActual);
+            esModoConcejal = rolActual === 'concejal' && Boolean(usuarioActual);
+
+            document.body.classList.toggle('modo-admin', esModoAdmin);
+            document.body.classList.toggle('modo-concejal', esModoConcejal);
+
+            const btnAbrir = document.getElementById('btn-abrir-portal-login');
+            const infoConectado = document.getElementById('info-usuario-conectado');
+            const etiquetaRol = document.getElementById('etiqueta-rol-barra');
+            const nombreBarra = document.getElementById('nombre-usuario-barra');
+
+            if (esModoAdmin || esModoConcejal) {
+                btnAbrir.classList.add('hidden');
+                infoConectado.classList.remove('hidden');
+                if (esModoAdmin) {
+                    etiquetaRol.innerText = 'ADMIN';
+                    nombreBarra.innerText = `${usuarioActual.nombre_admin} (${usuarioActual.cargo_admin})`;
+                } else {
+                    etiquetaRol.innerText = 'CONCEJAL';
+                    nombreBarra.innerText = `H.C. ${usuarioActual.nombre_completo}`;
+                }
+            } else {
+                btnAbrir.classList.remove('hidden');
+                infoConectado.classList.add('hidden');
+            }
+
+            // Actualizar cabina de votación según sesión única
+            actualizarCabinaConcejal();
+
+            // Si entró un Concejal, asegurarse de que esté en una de las 3 pestañas permitidas
+            if (esModoConcejal && ['asistencia', 'comisiones', 'integrantes'].includes(tabActivaActual)) {
+                mostrarTab('intervenciones');
+            }
+
+            if (esModoAdmin) {
+                await cargarAsistencias();
+            } else {
+                asistenciasGlobal = [];
+                renderizarBancadasAsistencia([]);
+            }
+
             renderizarTableroComisiones();
             renderizarListaIntervenciones();
             await cargarProyectos(false);
             renderizarGestionIntegrantes();
-            cargarDetalleVotacion();
-        }
-
-        async function verificarSesionAdminGuardada() {
-            if (!adminToken) {
-                esModoAdmin = false;
-                adminInfo = null;
-                await aplicarEstadoAdminUI();
-                return;
-            }
-            try {
-                const res = await fetch('/api/admin/verificar', {
-                    headers: { 'x-admin-token': adminToken }
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    esModoAdmin = true;
-                    adminInfo = data.admin;
-                } else {
-                    localStorage.removeItem('concejo_admin_token');
-                    adminToken = null;
-                    esModoAdmin = false;
-                    adminInfo = null;
-                }
-            } catch (e) {
-                esModoAdmin = false;
-                adminInfo = null;
-            }
-            await aplicarEstadoAdminUI();
-        }
-
-        async function registrarAccesoAdmin() {
-            const nombre_admin = document.getElementById('admin-reg-nombre').value;
-            const cargo_admin = document.getElementById('admin-reg-cargo').value;
-            const password = document.getElementById('admin-reg-password').value;
-
-            if (!nombre_admin.trim()) {
-                return alert('Ingrese su nombre completo para quedar registrado.');
-            }
-            if (!password.trim()) {
-                return alert('Ingrese la clave administrativa.');
-            }
-
-            try {
-                const res = await fetch('/api/admin/registro', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre_admin, cargo_admin, password })
-                });
-                const data = await res.json();
-                if (!res.ok) {
-                    return alert(data.error || 'Clave administrativa incorrecta.');
-                }
-
-                adminToken = data.token;
-                adminInfo = data.admin;
-                esModoAdmin = true;
-                localStorage.setItem('concejo_admin_token', adminToken);
-
-                document.getElementById('admin-reg-nombre').value = '';
-                document.getElementById('admin-reg-password').value = '';
-                cerrarModalAdmin();
-                await aplicarEstadoAdminUI();
-                notificar(`🛡️ Bienvenido Administrador: ${adminInfo.nombre_admin}`);
-            } catch (err) {
-                alert('Error de conexión al verificar clave: ' + err.message);
-            }
-        }
-
-        async function cerrarSesionAdmin() {
-            if (adminToken) {
-                try {
-                    await fetch('/api/admin/salir', {
-                        method: 'POST',
-                        headers: { 'x-admin-token': adminToken }
-                    });
-                } catch (e) {}
-            }
-            localStorage.removeItem('concejo_admin_token');
-            adminToken = null;
-            adminInfo = null;
-            esModoAdmin = false;
-            proyectoSeleccionadoId = null;
-            await aplicarEstadoAdminUI();
-            notificar('🔒 Sesión administrativa cerrada');
+            await cargarDetalleVotacion();
         }
 
         function fetchAdmin(url, options = {}) {
             if (!esModoAdmin || !adminToken) {
-                abrirModalAdmin();
+                abrirPortalLogin();
                 return Promise.resolve({
                     ok: false,
                     status: 401,
-                    json: async () => ({ error: 'Debe registrarse como administrador primero.' })
+                    json: async () => ({ error: 'Debe iniciar sesión como administrador.' })
                 });
             }
             const headers = {
@@ -1600,19 +1715,35 @@
             };
             return fetch(url, { ...options, headers }).then(async (res) => {
                 if (res.status === 401) {
-                    esModoAdmin = false;
-                    adminToken = null;
-                    adminInfo = null;
-                    localStorage.removeItem('concejo_admin_token');
-                    await aplicarEstadoAdminUI();
-                    abrirModalAdmin();
+                    await cerrarSesionGlobal();
+                }
+                return res;
+            });
+        }
+
+        function fetchConcejal(url, options = {}) {
+            if (!esModoConcejal || !concejalToken) {
+                abrirPortalLogin();
+                return Promise.resolve({
+                    ok: false,
+                    status: 401,
+                    json: async () => ({ error: 'Debe iniciar sesión como Honorable Concejal.' })
+                });
+            }
+            const headers = {
+                ...(options.headers || {}),
+                'x-concejal-token': concejalToken
+            };
+            return fetch(url, { ...options, headers }).then(async (res) => {
+                if (res.status === 401) {
+                    await cerrarSesionGlobal();
                 }
                 return res;
             });
         }
 
         // =====================================================================
-        // SINCRONIZACIÓN EN TIEMPO REAL PARA TODOS LOS CONECTADOS (SIN F5)
+        // SINCRONIZACIÓN EN TIEMPO REAL (SSE + POLLING RESPALDO)
         // =====================================================================
         function actualizarIndicadorConexion(conectado) {
             const dot = document.getElementById('indicador-en-vivo-dot');
@@ -1642,7 +1773,7 @@
                 if (tipoEvento === 'integrantes' || tipoEvento === 'todos') {
                     await cargarIntegrantes();
                 }
-                if (sesionActual && (tipoEvento === 'asistencias' || tipoEvento === 'integrantes' || tipoEvento === 'todos')) {
+                if (esModoAdmin && sesionActual && (tipoEvento === 'asistencias' || tipoEvento === 'integrantes' || tipoEvento === 'todos')) {
                     await cargarAsistencias();
                 }
                 if (sesionActual && (tipoEvento === 'intervenciones' || tipoEvento === 'todos')) {
@@ -1664,9 +1795,7 @@
 
             try {
                 fuenteEventosSSE = new EventSource('/api/eventos');
-                fuenteEventosSSE.onopen = () => {
-                    actualizarIndicadorConexion(true);
-                };
+                fuenteEventosSSE.onopen = () => actualizarIndicadorConexion(true);
                 fuenteEventosSSE.onmessage = (event) => {
                     try {
                         const data = JSON.parse(event.data);
@@ -1675,9 +1804,7 @@
                         }
                     } catch (e) {}
                 };
-                fuenteEventosSSE.onerror = () => {
-                    actualizarIndicadorConexion(false);
-                };
+                fuenteEventosSSE.onerror = () => actualizarIndicadorConexion(false);
             } catch (e) {
                 actualizarIndicadorConexion(false);
             }
@@ -1689,16 +1816,14 @@
         }
 
         document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                sincronizarTodoSilencioso('todos');
-            }
+            if (!document.hidden) sincronizarTodoSilencioso('todos');
         });
 
         // =====================================================================
         // GESTIÓN GLOBAL DE LOGO Y MARCA DE AGUA
         // =====================================================================
         function toggleDrawerMarcaAgua() {
-            if (!esModoAdmin) return abrirModalAdmin();
+            if (!esModoAdmin) return abrirPortalLogin();
             const drawer = document.getElementById('drawer-marca-agua');
             if (drawer) drawer.classList.toggle('abierto');
         }
@@ -1765,20 +1890,12 @@
             }
 
             const fuenteImagen = cfg.logo_base64 || '/logo-creer-y-merecer.png';
-            if (imgHeader && imgHeader.getAttribute('src') !== fuenteImagen) {
-                imgHeader.src = fuenteImagen;
-            }
-            if (imgFooter && imgFooter.getAttribute('src') !== fuenteImagen) {
-                imgFooter.src = fuenteImagen;
-            }
-            if (imgMarca && imgMarca.getAttribute('src') !== fuenteImagen) {
-                imgMarca.src = fuenteImagen;
-            }
+            if (imgHeader && imgHeader.getAttribute('src') !== fuenteImagen) imgHeader.src = fuenteImagen;
+            if (imgFooter && imgFooter.getAttribute('src') !== fuenteImagen) imgFooter.src = fuenteImagen;
+            if (imgMarca && imgMarca.getAttribute('src') !== fuenteImagen) imgMarca.src = fuenteImagen;
 
             if (visible) {
-                if (imgMarca && imgMarca.complete && imgMarca.naturalWidth > 0) {
-                    imgMarca.classList.remove('hidden');
-                }
+                if (imgMarca && imgMarca.complete && imgMarca.naturalWidth > 0) imgMarca.classList.remove('hidden');
             } else {
                 ocultarMarcaAgua();
             }
@@ -1794,7 +1911,7 @@
         }
 
         async function guardarConfiguracionVisualServidor(parcial) {
-            if (!esModoAdmin) return abrirModalAdmin();
+            if (!esModoAdmin) return abrirPortalLogin();
             try {
                 const res = await fetchAdmin('/api/configuracion-visual', {
                     method: 'PUT',
@@ -1826,15 +1943,13 @@
         }
 
         async function quitarMarcaAgua() {
-            await guardarConfiguracionVisualServidor({
-                marca_agua_visible: false
-            });
+            await guardarConfiguracionVisualServidor({ marca_agua_visible: false });
             ocultarMarcaAgua();
-            notificar('Marca de agua ocultada para todos los conectados');
+            notificar('Marca de agua ocultada');
         }
 
         function cargarLogoDesdePC(event) {
-            if (!esModoAdmin) return abrirModalAdmin();
+            if (!esModoAdmin) return abrirPortalLogin();
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
@@ -1846,7 +1961,7 @@
                 });
                 mostrarImagenLogo();
                 mostrarMarcaAgua();
-                notificar('✅ Logo institucional y marca de agua publicados para todos los concejales');
+                notificar('✅ Logo institucional y marca de agua publicados');
             };
             reader.readAsDataURL(file);
         }
@@ -1871,9 +1986,7 @@
                 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
                 audioCtx = new AudioContextClass();
             }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             return audioCtx;
         }
 
@@ -1901,8 +2014,7 @@
             try {
                 const ctx = obtenerAudioContext();
                 const ahora = ctx.currentTime;
-                const frecuencias = [523.25, 659.25, 392.00];
-                frecuencias.forEach((freq, idx) => {
+                [523.25, 659.25, 392.00].forEach((freq, idx) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
                     osc.type = idx === 2 ? 'triangle' : 'sine';
@@ -1934,7 +2046,6 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 cerrarModalSesion();
-                cerrarModalAdmin();
                 cerrarModalResumenIniciativas();
                 const drawer = document.getElementById('drawer-marca-agua');
                 if (drawer) drawer.classList.remove('abierto');
@@ -1943,7 +2054,7 @@
 
         window.onload = async () => {
             await cargarConfiguracionVisualGlobal();
-            await verificarSesionAdminGuardada();
+            await verificarSesionGuardada();
             await cargarIntegrantes();
             await cargarSesiones();
             await cargarVotaciones();
@@ -1972,16 +2083,23 @@
         };
 
         function mostrarTab(tabId) {
+            if (esModoConcejal && ['asistencia', 'comisiones', 'integrantes'].includes(tabId)) {
+                return;
+            }
             tabActivaActual = tabId;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const tabEl = document.getElementById(`tab-${tabId}`);
+            if (tabEl) tabEl.classList.remove('hidden');
+
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('border-[#f3cf7a]', 'text-[#fff3c4]');
                 btn.classList.add('border-transparent', 'text-slate-300');
             });
             const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
-            activeBtn.classList.add('border-[#f3cf7a]', 'text-[#fff3c4]');
-            activeBtn.classList.remove('border-transparent', 'text-slate-300');
+            if (activeBtn) {
+                activeBtn.classList.add('border-[#f3cf7a]', 'text-[#fff3c4]');
+                activeBtn.classList.remove('border-transparent', 'text-slate-300');
+            }
 
             if (tabId === 'votacion') {
                 actualizarSelectProyectosVotacion();
@@ -1992,7 +2110,7 @@
         }
 
         // =====================================================================
-        // 1. CONCEJALES, FILTRO DE ORADORES Y COMISIONES PERMANENTES
+        // 1. CONCEJALES Y COMISIONES
         // =====================================================================
         function normalizarTexto(txt) {
             return (txt || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -2006,14 +2124,10 @@
             if (!selectOrador) return;
 
             const termino = normalizarTexto(input ? input.value.trim() : '');
-            if (btnLimpiar) {
-                btnLimpiar.classList.toggle('hidden', termino.length === 0);
-            }
+            if (btnLimpiar) btnLimpiar.classList.toggle('hidden', termino.length === 0);
 
             const valorPrevio = selectOrador.value;
-            const filtrados = integrantesGlobal.filter(i =>
-                normalizarTexto(i.nombre_completo).includes(termino)
-            );
+            const filtrados = integrantesGlobal.filter(i => normalizarTexto(i.nombre_completo).includes(termino));
 
             selectOrador.innerHTML = '';
             if (filtrados.length === 0) {
@@ -2050,23 +2164,21 @@
                 integrantesGlobal = await res.json();
                 
                 document.getElementById('nav-total-integrantes').innerText = integrantesGlobal.length;
-
                 filtrarSelectOradores();
 
                 const selectAutor = document.getElementById('proy-autor');
-                const autorPrevio = selectAutor.value;
-                selectAutor.innerHTML = '<option value="" class="bg-slate-900">-- Mesa Directiva / Bancada --</option>';
-
-                integrantesGlobal.forEach(i => {
-                    selectAutor.innerHTML += `<option value="${i.id_integrante}" class="bg-slate-900">H.C. ${i.nombre_completo} (${i.bancada})</option>`;
-                });
-                if (autorPrevio) selectAutor.value = autorPrevio;
+                if (selectAutor) {
+                    const autorPrevio = selectAutor.value;
+                    selectAutor.innerHTML = '<option value="" class="bg-slate-900">-- Mesa Directiva / Bancada --</option>';
+                    integrantesGlobal.forEach(i => {
+                        selectAutor.innerHTML += `<option value="${i.id_integrante}" class="bg-slate-900">H.C. ${i.nombre_completo} (${i.bancada})</option>`;
+                    });
+                    if (autorPrevio) selectAutor.value = autorPrevio;
+                }
 
                 renderizarGestionIntegrantes();
                 renderizarTableroComisiones();
-            } catch (e) {
-                console.error('Error cargando concejales:', e);
-            }
+            } catch (e) {}
         }
 
         function renderizarTableroComisiones() {
@@ -2110,7 +2222,6 @@
                             <option value="2" ${i.id_comision === 2 ? 'selected' : ''}>Comisión Segunda</option>
                             <option value="" ${!i.id_comision ? 'selected' : ''}>Sin Comisión</option>
                         </select>
-
                         <button onclick="inscribirRapidoDesdeComision(${i.id_integrante})" class="bg-white/10 hover:bg-[#f3cf7a] text-[#fff3c4] hover:text-slate-950 border border-[#f3cf7a]/50 px-2.5 py-1.5 rounded-lg text-xs font-bold transition" title="Inscribir en Uso de la Palabra">
                             <i class="fa-solid fa-microphone-lines"></i>
                         </button>
@@ -2222,6 +2333,7 @@
 
         function renderizarGestionIntegrantes() {
             const tbody = document.getElementById('tabla-gestion-integrantes');
+            if (!tbody) return;
             const filtro = normalizarTexto(document.getElementById('buscar-integrante')?.value || '');
             tbody.innerHTML = '';
 
@@ -2315,7 +2427,7 @@
             document.getElementById('nuevo-int-directiva').checked = false;
             notificar('✅ Curul acreditada oficialmente');
             await cargarIntegrantes();
-            if (sesionActual) await cargarAsistencias();
+            if (sesionActual && esModoAdmin) await cargarAsistencias();
         }
 
         async function recolocarIntegrante(id_integrante, campo, valor) {
@@ -2338,7 +2450,7 @@
             if (res.ok) {
                 notificar('🔄 Registro de curul actualizado');
                 await cargarIntegrantes();
-                if (sesionActual) await cargarAsistencias();
+                if (sesionActual && esModoAdmin) await cargarAsistencias();
             }
         }
 
@@ -2348,7 +2460,7 @@
             if (res.ok) {
                 notificar('🗑️ Registro retirado');
                 await cargarIntegrantes();
-                if (sesionActual) await cargarAsistencias();
+                if (sesionActual && esModoAdmin) await cargarAsistencias();
             }
         }
 
@@ -2356,7 +2468,7 @@
         // 2. SESIONES
         // =====================================================================
         function abrirModalSesion() {
-            if (!esModoAdmin) return abrirModalAdmin();
+            if (!esModoAdmin) return abrirPortalLogin();
             const modal = document.getElementById('modal-sesion');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -2448,14 +2560,12 @@
             if (!sesionActual || !select.value) return alert('No hay ninguna sesión seleccionada para eliminar.');
 
             const nombreSesion = select.options[select.selectedIndex].text;
-            if (!confirm(`¿Confirma eliminar definitivamente la sesión "${nombreSesion}" junto con su llamado a lista e intervenciones?`)) {
-                return;
-            }
+            if (!confirm(`¿Confirma eliminar definitivamente la sesión "${nombreSesion}"?`)) return;
 
             try {
                 const res = await fetchAdmin(`/api/sesiones/${sesionActual}`, { method: 'DELETE' });
-                const data = await res.json();
                 if (!res.ok) {
+                    const data = await res.json();
                     return alert('Error al eliminar la sesión: ' + (data.error || 'Desconocido'));
                 }
                 sesionActual = null;
@@ -2474,17 +2584,27 @@
                 return;
             }
             if (btnEliminar) btnEliminar.classList.remove('hidden');
-            await cargarAsistencias();
+            if (esModoAdmin) await cargarAsistencias();
             await cargarIntervenciones();
             await cargarVotaciones();
         }
 
         // =====================================================================
-        // 3. TABLERO DE QUÓRUM POR BANCADAS
+        // 3. TABLERO DE QUÓRUM POR BANCADAS (SOLO ADMIN)
         // =====================================================================
         async function cargarAsistencias() {
+            const avisoRestringido = document.getElementById('aviso-quorum-restringido');
+            if (!esModoAdmin || !adminToken) {
+                asistenciasGlobal = [];
+                if (avisoRestringido) avisoRestringido.classList.remove('hidden');
+                renderizarBancadasAsistencia([]);
+                return;
+            }
+            if (avisoRestringido) avisoRestringido.classList.add('hidden');
             if (!sesionActual) return;
-            const res = await fetch(`/api/asistencias/${sesionActual}`);
+
+            const res = await fetchAdmin(`/api/asistencias/${sesionActual}`);
+            if (!res.ok) return;
             asistenciasGlobal = await res.json();
 
             let stats = { Presente: 0, Retardo: 0, Ausente: 0, Excusa: 0 };
@@ -2501,22 +2621,12 @@
 
         function renderizarBancadasAsistencia(lista) {
             const contenedor = document.getElementById('contenedor-bancadas-asistencia');
+            if (!contenedor) return;
+
             const bancadasConfig = [
-                { 
-                    nombre: 'Gobierno', 
-                    headerGrad: 'from-emerald-900 via-[#0e2a29] to-[#0c1933] border-emerald-400',
-                    badgeText: 'text-emerald-300'
-                },
-                { 
-                    nombre: 'Oposición', 
-                    headerGrad: 'from-rose-900 via-[#2c1321] to-[#0c1933] border-rose-400',
-                    badgeText: 'text-rose-300'
-                },
-                { 
-                    nombre: 'Independientes', 
-                    headerGrad: 'from-purple-900 via-[#22153b] to-[#0c1933] border-purple-400',
-                    badgeText: 'text-purple-300'
-                }
+                { nombre: 'Gobierno', headerGrad: 'from-emerald-900 via-[#0e2a29] to-[#0c1933] border-emerald-400', badgeText: 'text-emerald-300' },
+                { nombre: 'Oposición', headerGrad: 'from-rose-900 via-[#2c1321] to-[#0c1933] border-rose-400', badgeText: 'text-rose-300' },
+                { nombre: 'Independientes', headerGrad: 'from-purple-900 via-[#22153b] to-[#0c1933] border-purple-400', badgeText: 'text-purple-300' }
             ];
 
             contenedor.innerHTML = '';
@@ -2608,12 +2718,60 @@
         }
 
         // =====================================================================
-        // 4. TEMPORIZADOR DE HEMICICLO
+        // 4. ORDEN DE USO DE LA PALABRA (CONCEJAL PIDE CON MOTIVO + ADMIN CONTROLA)
         // =====================================================================
         function autocompletarSegundos() {
             const sel = document.getElementById('select-tipo-intervencion');
             const seg = sel.options[sel.selectedIndex].getAttribute('data-seg');
             document.getElementById('input-segundos').value = seg;
+        }
+
+        // Solicitud directa del Concejal con su sesión única
+        async function solicitarPalabraConcejal() {
+            if (!sesionActual) return alert('No hay ninguna sesión convocada actualmente.');
+            const tipo_intervencion = document.getElementById('conc-motivo-tipo').value;
+            const motivo_detalle = document.getElementById('conc-motivo-detalle').value;
+
+            if (!tipo_intervencion.trim()) {
+                return alert('Debe seleccionar obligatoriamente para qué solicita el uso de la palabra.');
+            }
+
+            try {
+                const res = await fetchConcejal('/api/intervenciones/solicitar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id_sesion: sesionActual,
+                        tipo_intervencion,
+                        motivo_detalle
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    return alert(data.error || 'No se pudo registrar su solicitud de palabra.');
+                }
+
+                document.getElementById('conc-motivo-tipo').value = '';
+                document.getElementById('conc-motivo-detalle').value = '';
+                notificar(`🎙️ Solicitud registrada en el Turno #${data.turno} (orden de llegada)`);
+                await cargarIntervenciones();
+            } catch (err) {
+                alert('Error de red al pedir la palabra: ' + err.message);
+            }
+        }
+
+        async function cancelarMiSolicitudPalabra(id_intervencion) {
+            if (!confirm('¿Desea retirar su solicitud de uso de la palabra?')) return;
+            const res = await fetchConcejal(`/api/intervenciones/solicitar/${id_intervencion}`, {
+                method: 'DELETE'
+            });
+            if (res.ok) {
+                notificar('🗑️ Solicitud de palabra cancelada');
+                await cargarIntervenciones();
+            } else {
+                const data = await res.json();
+                alert(data.error || 'No se pudo cancelar.');
+            }
         }
 
         async function agregarIntervencion() {
@@ -2658,9 +2816,7 @@
             if (!div) return;
 
             const termino = normalizarTexto(inputCola ? inputCola.value.trim() : '');
-            if (btnLimpiar) {
-                btnLimpiar.classList.toggle('hidden', termino.length === 0);
-            }
+            if (btnLimpiar) btnLimpiar.classList.toggle('hidden', termino.length === 0);
 
             div.innerHTML = '';
 
@@ -2670,36 +2826,53 @@
             }
 
             const filtradas = intervencionesGlobal.filter(item =>
-                normalizarTexto(item.nombre_completo).includes(termino)
+                normalizarTexto(item.nombre_completo).includes(termino) ||
+                normalizarTexto(item.tipo_intervencion).includes(termino)
             );
 
             if (filtradas.length === 0) {
-                div.innerHTML = '<div class="text-center py-8 bg-[#060d1c] rounded-2xl border border-dashed border-[#f3cf7a]/25"><p class="text-xs font-semibold text-slate-300">No hay turnos inscritos con ese nombre.</p></div>';
+                div.innerHTML = '<div class="text-center py-8 bg-[#060d1c] rounded-2xl border border-dashed border-[#f3cf7a]/25"><p class="text-xs font-semibold text-slate-300">No hay turnos inscritos con ese criterio.</p></div>';
                 return;
             }
 
             filtradas.forEach(item => {
                 const esActivo = item.id_intervencion === intervencionActivaId;
+                const esMio = esModoConcejal && usuarioActual && item.id_integrante === usuarioActual.id_integrante;
                 const badgeEstado = item.estado === 'Finalizada' 
                     ? 'bg-white/10 text-slate-300' 
                     : item.estado === 'En Curso' 
                         ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/45' 
                         : 'bg-[#f3cf7a]/20 text-[#fff3c4] border border-[#f3cf7a]/50';
 
-                const botonesTurnoHtml = esModoAdmin ? `
-                    <div class="flex items-center gap-1.5 shrink-0">
-                        <button onclick="seleccionarOrador(${item.id_intervencion}, 'H.C. ${item.nombre_completo}', '${item.bancada} — Comisión ${item.comision}', '${item.tipo_intervencion}', ${item.tiempo_asignado_seg})" class="btn-oro text-xs font-extrabold uppercase px-3 py-2 rounded-xl" title="Conceder uso de la palabra">
-                            <i class="fa-solid fa-microphone-lines mr-1"></i> ${Math.floor(item.tiempo_asignado_seg/60)}m ${item.tiempo_asignado_seg%60}s
+                const motivoHtml = item.motivo_detalle
+                    ? `<p class="text-[11px] text-[#fff3c4]/90 mt-1 italic"><i class="fa-solid fa-quote-left mr-1 text-[#f3cf7a]"></i>${item.motivo_detalle}</p>`
+                    : '';
+
+                let accionesTurnoHtml = '';
+                if (esModoAdmin) {
+                    accionesTurnoHtml = `
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button onclick="seleccionarOrador(${item.id_intervencion}, 'H.C. ${item.nombre_completo}', '${item.bancada} — Comisión ${item.comision}', '${item.tipo_intervencion}', ${item.tiempo_asignado_seg})" class="btn-oro text-xs font-extrabold uppercase px-3 py-2 rounded-xl" title="Conceder uso de la palabra">
+                                <i class="fa-solid fa-microphone-lines mr-1"></i> ${Math.floor(item.tiempo_asignado_seg/60)}m ${item.tiempo_asignado_seg%60}s
+                            </button>
+                            <button onclick="retirarIntervencion(${item.id_intervencion}, 'H.C. ${item.nombre_completo}')" class="bg-rose-500/20 hover:bg-rose-700 text-rose-300 hover:text-white border border-rose-400/40 px-2.5 py-2 rounded-xl text-xs font-bold transition" title="Retirar turno">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    `;
+                } else if (esMio && (item.estado === 'Pendiente' || !item.estado)) {
+                    accionesTurnoHtml = `
+                        <button onclick="cancelarMiSolicitudPalabra(${item.id_intervencion})" class="bg-rose-500/20 hover:bg-rose-700 text-rose-300 hover:text-white border border-rose-400/40 px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition shrink-0">
+                            Cancelar turno
                         </button>
-                        <button onclick="retirarIntervencion(${item.id_intervencion}, 'H.C. ${item.nombre_completo}')" class="bg-rose-500/20 hover:bg-rose-700 text-rose-300 hover:text-white border border-rose-400/40 px-2.5 py-2 rounded-xl text-xs font-bold transition" title="Retirar turno">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                ` : `
-                    <span class="text-xs font-mono-digital font-bold text-[#fff3c4] shrink-0">
-                        ${Math.floor(item.tiempo_asignado_seg/60)}m ${item.tiempo_asignado_seg%60}s
-                    </span>
-                `;
+                    `;
+                } else {
+                    accionesTurnoHtml = `
+                        <span class="text-xs font-mono-digital font-bold text-[#fff3c4] shrink-0">
+                            ${Math.floor(item.tiempo_asignado_seg/60)}m ${item.tiempo_asignado_seg%60}s
+                        </span>
+                    `;
+                }
 
                 div.innerHTML += `
                     <div class="p-3.5 rounded-2xl border transition flex flex-wrap justify-between items-center gap-2 ${
@@ -2709,13 +2882,15 @@
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <span class="font-mono-digital font-extrabold text-xs text-slate-950 bg-[#f3cf7a] px-2 py-0.5 rounded">#${item.orden_turno}</span>
                                 <span class="font-bold text-sm text-white truncate">H.C. ${item.nombre_completo}</span>
-                                <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${badgeEstado}">${item.estado}</span>
+                                ${esMio ? '<span class="bg-emerald-500/25 text-emerald-200 border border-emerald-400/50 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded">Tu turno</span>' : ''}
+                                <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${badgeEstado}">${item.estado || 'Pendiente'}</span>
                             </div>
                             <p class="text-xs text-slate-300 mt-1">
-                                ${item.bancada} • Com. ${item.comision} • <strong class="text-white">${item.tipo_intervencion}</strong>
+                                ${item.bancada} • <strong class="text-white">${item.tipo_intervencion}</strong>
                             </p>
+                            ${motivoHtml}
                         </div>
-                        ${botonesTurnoHtml}
+                        ${accionesTurnoHtml}
                     </div>
                 `;
             });
@@ -2723,7 +2898,6 @@
 
         async function retirarIntervencion(id_intervencion, nombre) {
             if (!confirm(`¿Retirar del orden de oradores a ${nombre}?`)) return;
-
             const res = await fetchAdmin(`/api/intervenciones/${id_intervencion}`, { method: 'DELETE' });
             if (res.ok) {
                 if (intervencionActivaId === id_intervencion) {
@@ -2760,17 +2934,13 @@
 
         function actualizarEstadoVisualIndicador(estado) {
             const dot = document.getElementById('indicador-estado-reloj');
-            if (estado === 'corriendo') {
-                dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping';
-            } else if (estado === 'pausado') {
-                dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
-            } else {
-                dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-500';
-            }
+            if (estado === 'corriendo') dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping';
+            else if (estado === 'pausado') dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
+            else dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-500';
         }
 
         function seleccionarOrador(id, nombre, detalle, tipo, segundos) {
-            if (!esModoAdmin) return abrirModalAdmin();
+            if (!esModoAdmin) return abrirPortalLogin();
             pausarCrono();
             ocultarAlertaVisualCrono();
             actualizarEstadoVisualIndicador('pausado');
@@ -2794,7 +2964,7 @@
         }
 
         function ajustarTiempo(deltaSegundos) {
-            if (!esModoAdmin) return abrirModalAdmin();
+            if (!esModoAdmin) return abrirPortalLogin();
             segundosRestantes = Math.max(0, segundosRestantes + deltaSegundos);
             segundosBase = Math.max(segundosBase, segundosRestantes);
             if (segundosRestantes > 10) ocultarAlertaVisualCrono();
@@ -2804,7 +2974,7 @@
         }
 
         function aplicarTiempoManual() {
-            if (!esModoAdmin) return abrirModalAdmin();
+            if (!esModoAdmin) return abrirPortalLogin();
             const mins = parseInt(document.getElementById('edit-minutos').value, 10) || 0;
             const segs = parseInt(document.getElementById('edit-segundos').value, 10) || 0;
             segundosRestantes = (mins * 60) + segs;
@@ -2845,7 +3015,7 @@
         }
 
         function iniciarCrono() {
-            if (!esModoAdmin) return abrirModalAdmin();
+            if (!esModoAdmin) return abrirPortalLogin();
             if (timerInterval) return;
             if (segundosRestantes <= 0) return alert('Fije un tiempo mayor a 0 segundos antes de conceder el uso de la palabra.');
 
@@ -2890,7 +3060,7 @@
         }
 
         async function finalizarTurnoActual(automatico = false) {
-            if (!esModoAdmin && !automatico) return abrirModalAdmin();
+            if (!esModoAdmin && !automatico) return abrirPortalLogin();
             clearInterval(timerInterval);
             timerInterval = null;
             actualizarEstadoVisualIndicador('detenido');
@@ -2920,7 +3090,7 @@
         }
 
         // =====================================================================
-        // 5. SISTEMA DE VOTACIÓN NOMINAL, VEREDICTO Y DESEMPATE
+        // 5. SISTEMA DE VOTACIÓN NOMINAL (USA SESIÓN ÚNICA DIRECTAMENTE)
         // =====================================================================
         function actualizarSelectProyectosVotacion() {
             const selectProy = document.getElementById('vot-select-proyecto');
@@ -2952,17 +3122,13 @@
             document.getElementById('vot-descripcion').value = `Ponente: ${proyecto.autor} • Radicado: ${proyecto.codigo_radicado}`;
 
             const selectAmbito = document.getElementById('vot-ambito');
-            if (proyecto.comision === 'Primera') {
-                selectAmbito.value = 'Comisión Primera';
-            } else if (proyecto.comision === 'Segunda') {
-                selectAmbito.value = 'Comisión Segunda';
-            } else {
-                selectAmbito.value = 'Plenaria';
-            }
+            if (proyecto.comision === 'Primera') selectAmbito.value = 'Comisión Primera';
+            else if (proyecto.comision === 'Segunda') selectAmbito.value = 'Comisión Segunda';
+            else selectAmbito.value = 'Plenaria';
         }
 
         function someterProyectoAVotacion(id_proyecto) {
-            if (!esModoAdmin) return abrirModalAdmin();
+            if (!esModoAdmin) return abrirPortalLogin();
             mostrarTab('votacion');
             const panel = document.getElementById('panel-form-votacion');
             if (panel) panel.classList.remove('hidden');
@@ -2982,74 +3148,26 @@
         }
 
         function toggleFormNuevaVotacion() {
-            if (!esModoAdmin) return abrirModalAdmin();
+            if (!esModoAdmin) return abrirPortalLogin();
             const panel = document.getElementById('panel-form-votacion');
             panel.classList.toggle('hidden');
-            if (!panel.classList.contains('hidden')) {
-                actualizarSelectProyectosVotacion();
-            }
+            if (!panel.classList.contains('hidden')) actualizarSelectProyectosVotacion();
         }
 
         function actualizarCabinaConcejal() {
-            const formLogin = document.getElementById('cabina-login-form');
+            const sinSesionBox = document.getElementById('cabina-sin-sesion');
             const panelAuth = document.getElementById('cabina-concejal-autenticado');
-            if (!formLogin || !panelAuth) return;
+            if (!sinSesionBox || !panelAuth) return;
 
-            if (!concejalAutenticado) {
-                formLogin.classList.remove('hidden');
-                panelAuth.classList.add('hidden');
-            } else {
-                formLogin.classList.add('hidden');
+            if (esModoConcejal && usuarioActual) {
+                sinSesionBox.classList.add('hidden');
                 panelAuth.classList.remove('hidden');
-                document.getElementById('concejal-logueado-nombre').innerText = `H.C. ${concejalAutenticado.nombre_completo}`;
-                document.getElementById('concejal-logueado-detalle').innerText = `Bancada ${concejalAutenticado.bancada} • ${concejalAutenticado.comision}`;
+                document.getElementById('concejal-logueado-nombre').innerText = `H.C. ${usuarioActual.nombre_completo}`;
+                document.getElementById('concejal-logueado-detalle').innerText = `Bancada ${usuarioActual.bancada} • ${usuarioActual.comision}`;
+            } else {
+                sinSesionBox.classList.remove('hidden');
+                panelAuth.classList.add('hidden');
             }
-        }
-
-        async function iniciarSesionConcejal() {
-            if (!votacionSeleccionadaId) {
-                return alert('Primero debe haber una votación abierta en la urna para ingresar.');
-            }
-
-            const primer_nombre = document.getElementById('login-primer-nombre').value;
-            const primer_apellido = document.getElementById('login-primer-apellido').value;
-            const password = document.getElementById('login-password').value;
-
-            if (!primer_nombre.trim() || !primer_apellido.trim() || !password.trim()) {
-                return alert('Por favor ingrese su Primer Nombre, Primer Apellido y una contraseña.');
-            }
-
-            try {
-                const res = await fetch('/api/votacion/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        primer_nombre,
-                        primer_apellido,
-                        password,
-                        id_votacion: votacionSeleccionadaId
-                    })
-                });
-                const data = await res.json();
-                if (!res.ok) {
-                    return alert(data.error || 'No se pudo verificar el ingreso del concejal.');
-                }
-
-                concejalAutenticado = data.concejal;
-                document.getElementById('login-primer-nombre').value = '';
-                document.getElementById('login-primer-apellido').value = '';
-                document.getElementById('login-password').value = '';
-                actualizarCabinaConcejal();
-                notificar(`✅ Registro único verificado: H.C. ${concejalAutenticado.nombre_completo}`);
-                await cargarDetalleVotacion();
-            } catch (err) {
-                alert('Error de conexión al iniciar sesión: ' + err.message);
-            }
-        }
-
-        function cerrarSesionConcejal() {
-            concejalAutenticado = null;
-            actualizarCabinaConcejal();
         }
 
         async function crearVotacion() {
@@ -3081,7 +3199,6 @@
                     return alert('Error al crear votación: ' + (data.error || 'Desconocido'));
                 }
 
-                cerrarSesionConcejal();
                 votacionSeleccionadaId = data.id_votacion;
                 document.getElementById('vot-select-proyecto').value = '';
                 document.getElementById('vot-titulo').value = '';
@@ -3104,10 +3221,7 @@
                     headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await res.json();
-                if (!res.ok) {
-                    return alert(data.error || 'No se pudo repetir la votación.');
-                }
-                cerrarSesionConcejal();
+                if (!res.ok) return alert(data.error || 'No se pudo repetir la votación.');
                 notificar('🔁 Segunda ronda de votación abierta por empate');
                 await cargarVotaciones();
             } catch (err) {
@@ -3143,13 +3257,10 @@
                 }
                 select.value = votacionSeleccionadaId;
                 await cargarDetalleVotacion();
-            } catch (err) {
-                console.error('Error cargando votaciones:', err);
-            }
+            } catch (err) {}
         }
 
         async function cambiarVotacionSeleccionada() {
-            cerrarSesionConcejal();
             votacionSeleccionadaId = document.getElementById('select-votacion-activa').value;
             await cargarDetalleVotacion();
         }
@@ -3164,9 +3275,7 @@
                 if (!res.ok) return;
                 const payload = await res.json();
                 renderizarDetalleVotacion(payload.votacion, payload.votos || []);
-            } catch (err) {
-                console.error('Error cargando votos:', err);
-            }
+            } catch (err) {}
         }
 
         function renderizarBannerVeredicto(votacion, si, no, abs, total) {
@@ -3184,13 +3293,10 @@
             if (estaAbierta) {
                 let tendenciaTexto = 'A la espera de los primeros votos en la urna...';
                 if (total > 0) {
-                    if (si > no && si > abs) {
-                        tendenciaTexto = `Tendencia parcial: Va ganando el SÍ (${si} vs. ${no} NO, ${abs} Abstenciones).`;
-                    } else if (no > si && no >= abs) {
-                        tendenciaTexto = `Tendencia parcial: Va ganando el NO (${no} vs. ${si} SÍ, ${abs} Abstenciones).`;
-                    } else if (abs > si && abs > no) {
-                        tendenciaTexto = `Tendencia parcial: Va ganando la ABSTENCIÓN (${abs} vs. ${si} SÍ, ${no} NO).`;
-                    } else if (si === no && si > 0) {
+                    if (si > no && si > abs) tendenciaTexto = `Tendencia parcial: Va ganando el SÍ (${si} vs. ${no} NO, ${abs} Abstenciones).`;
+                    else if (no > si && no >= abs) tendenciaTexto = `Tendencia parcial: Va ganando el NO (${no} vs. ${si} SÍ, ${abs} Abstenciones).`;
+                    else if (abs > si && abs > no) tendenciaTexto = `Tendencia parcial: Va ganando la ABSTENCIÓN (${abs} vs. ${si} SÍ, ${no} NO).`;
+                    else if (si === no && si > 0) {
                         tendenciaTexto = ronda < 2
                             ? `Tendencia parcial: EMPATE (${si} SÍ vs. ${no} NO). Si cierra así, se repetirá la elección.`
                             : `Tendencia parcial: SEGUNDO EMPATE (${si} SÍ vs. ${no} NO). Si cierra así, se archivará.`;
@@ -3213,33 +3319,6 @@
 
             let resultado = votacion.resultado_final || '';
             let mensaje = votacion.mensaje_veredicto || '';
-
-            if (!resultado) {
-                if (total === 0) {
-                    resultado = 'ARCHIVADA_SIN_VOTOS';
-                    mensaje = 'La urna cerró sin votos registrados. Por falta de pronunciamiento afirmativo, la proposición / proyecto será ARCHIVADO.';
-                } else if (si > no && si > abs) {
-                    resultado = 'ACEPTADA';
-                    mensaje = `¡PROPOSICIÓN / PROYECTO ACEPTADO! (${si} votos SÍ vs. ${no} NO y ${abs} Abstenciones). Se tomará en cuenta la proposición y será añadida oficialmente al trámite del Concejo.`;
-                } else if (no > si && no >= abs) {
-                    resultado = 'RECHAZADA';
-                    mensaje = `PROPOSICIÓN / PROYECTO RECHAZADO (${no} votos NO vs. ${si} SÍ y ${abs} Abstenciones). Al perder la votación, la iniciativa será ARCHIVADA.`;
-                } else if (abs > si && abs > no) {
-                    resultado = 'ARCHIVADA_ABSTENCION';
-                    mensaje = `GANÓ LA ABSTENCIÓN (${abs} Abstenciones vs. ${si} SÍ y ${no} NO). Al no obtener mayoría afirmativa, la proposición / proyecto será ARCHIVADO.`;
-                } else if (si === no && si > 0) {
-                    if (ronda < 2) {
-                        resultado = 'EMPATE_REPETIR';
-                        mensaje = `EMPATE EN PRIMERA VOTACIÓN (${si} votos SÍ vs. ${no} votos NO). Conforme al reglamento, se debe repetir nuevamente la elección.`;
-                    } else {
-                        resultado = 'ARCHIVADA_SEGUNDO_EMPATE';
-                        mensaje = `SEGUNDO EMPATE CONSECUTIVO (${si} votos SÍ vs. ${no} votos NO). Al persistir el empate tras repetir la elección, la proposición / proyecto se ARCHIVA definitivamente.`;
-                    }
-                } else {
-                    resultado = 'ARCHIVADA_SIN_MAYORIA';
-                    mensaje = `NO SE ALCANZÓ MAYORÍA AFIRMATIVA (${si} SÍ, ${no} NO, ${abs} Abstenciones). Por reglamento, la iniciativa será ARCHIVADA.`;
-                }
-            }
 
             let estilos = 'border-rose-400 bg-rose-950/75 text-rose-100';
             let icono = 'fa-box-archive text-rose-300';
@@ -3390,8 +3469,8 @@
 
             renderizarBannerVeredicto(votacion, si, no, abs, total);
 
-            if (concejalAutenticado) {
-                const miVoto = votos.find(v => v.id_integrante === concejalAutenticado.id_integrante);
+            if (esModoConcejal && usuarioActual) {
+                const miVoto = votos.find(v => v.id_integrante === usuarioActual.id_integrante);
                 if (!estaAbierta || miVoto) {
                     if (botonesVotoEl) botonesVotoEl.classList.add('opacity-40', 'pointer-events-none');
                     if (miVotoEl) {
@@ -3432,30 +3511,26 @@
             }).join('');
         }
 
+        // Voto directo del concejal sin volver a iniciar sesión
         async function emitirVoto(opcion) {
-            if (!concejalAutenticado) {
-                return alert('Debe iniciar sesión con su primer nombre y primer apellido antes de votar.');
+            if (!esModoConcejal || !usuarioActual) {
+                return abrirPortalLogin();
             }
             if (!votacionSeleccionadaId) {
                 return alert('No hay ninguna votación activa.');
             }
 
             try {
-                const res = await fetch(`/api/votaciones/${votacionSeleccionadaId}/votar`, {
+                const res = await fetchConcejal(`/api/votaciones/${votacionSeleccionadaId}/votar`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        id_integrante: concejalAutenticado.id_integrante,
-                        opcion
-                    })
+                    body: JSON.stringify({ opcion })
                 });
                 const data = await res.json();
                 if (!res.ok) {
                     return alert(data.error || 'No se pudo registrar el voto.');
                 }
-                const nombreVotante = concejalAutenticado.nombre_completo;
-                cerrarSesionConcejal();
-                notificar(`🗳️ Voto definitivo (${opcion}) registrado para H.C. ${nombreVotante}`);
+                notificar(`🗳️ Voto definitivo (${opcion}) registrado para H.C. ${usuarioActual.nombre_completo}`);
                 await cargarDetalleVotacion();
             } catch (err) {
                 alert('Error de red al emitir voto: ' + err.message);
@@ -3479,7 +3554,6 @@
             if (!confirm('¿Confirma eliminar esta votación y todos sus votos registrados?')) return;
             const res = await fetchAdmin(`/api/votaciones/${id_votacion}`, { method: 'DELETE' });
             if (res.ok) {
-                cerrarSesionConcejal();
                 votacionSeleccionadaId = null;
                 notificar('🗑️ Votación eliminada');
                 await cargarVotaciones();
@@ -3487,20 +3561,21 @@
         }
 
         // =====================================================================
-        // 6. PROYECTOS DE ACUERDO Y PROPOSICIONES (COLA EN ORDEN DE LLEGADA)
+        // 6. PROYECTOS Y PROPOSICIONES (PÚBLICAS Y PRIVADAS)
         // =====================================================================
         function toggleFormularioProposicionConcejal() {
+            if (!esModoConcejal) return abrirPortalLogin();
             const panelConc = document.getElementById('panel-form-proposicion-concejal');
             const panelSec = document.getElementById('panel-form-proyecto');
             if (panelSec) panelSec.classList.add('hidden');
             panelConc.classList.toggle('hidden');
             if (!panelConc.classList.contains('hidden')) {
-                document.getElementById('prop-conc-nombre').focus();
+                document.getElementById('prop-conc-titulo').focus();
             }
         }
 
         function toggleFormularioProyecto() {
-            if (!esModoAdmin) return abrirModalAdmin();
+            if (!esModoAdmin) return abrirPortalLogin();
             const panelConc = document.getElementById('panel-form-proposicion-concejal');
             const panelSec = document.getElementById('panel-form-proyecto');
             if (panelConc) panelConc.classList.add('hidden');
@@ -3517,17 +3592,14 @@
         }
 
         async function enviarProposicionConcejal() {
-            const primer_nombre = document.getElementById('prop-conc-nombre').value;
-            const primer_apellido = document.getElementById('prop-conc-apellido').value;
-            const password = document.getElementById('prop-conc-password').value;
-            const id_comision_asignada = document.getElementById('prop-conc-comision').value;
+            if (!esModoConcejal) return abrirPortalLogin();
+
             const titulo = document.getElementById('prop-conc-titulo').value;
+            const id_comision_asignada = document.getElementById('prop-conc-comision').value;
+            const visible_publico = document.getElementById('prop-conc-visibilidad').value === 'true';
             const descripcion = document.getElementById('prop-conc-descripcion').value;
             const fileInput = document.getElementById('prop-conc-archivo');
 
-            if (!primer_nombre.trim() || !primer_apellido.trim() || !password.trim()) {
-                return alert('Ingrese su Primer Nombre, Primer Apellido y contraseña de prueba.');
-            }
             if (!titulo.trim()) {
                 return alert('Ingrese el título o asunto de su proposición.');
             }
@@ -3545,16 +3617,14 @@
             }
 
             try {
-                const res = await fetch('/api/proyectos/concejal', {
+                const res = await fetchConcejal('/api/proyectos/concejal', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        primer_nombre,
-                        primer_apellido,
-                        password,
                         titulo,
                         descripcion,
                         id_comision_asignada,
+                        visible_publico,
                         archivo_nombre,
                         archivo_contenido
                     })
@@ -3564,21 +3634,13 @@
                     return alert(data.error || 'No se pudo radicar la proposición.');
                 }
 
-                document.getElementById('prop-conc-nombre').value = '';
-                document.getElementById('prop-conc-apellido').value = '';
-                document.getElementById('prop-conc-password').value = '';
                 document.getElementById('prop-conc-titulo').value = '';
                 document.getElementById('prop-conc-descripcion').value = '';
                 fileInput.value = '';
                 document.getElementById('panel-form-proposicion-concejal').classList.add('hidden');
 
-                alert(
-                    `✅ PROPOSICIÓN RADICADA CON ÉXITO\n\n` +
-                    `• Autor: H.C. ${data.autor}\n` +
-                    `• Radicado Oficial: ${data.codigo_radicado}\n` +
-                    `• Turno en Orden de Llegada: #${data.turno}\n\n` +
-                    `Su proposición quedó en la bandeja privada de Secretaría General y será proyectada al recinto cuando corresponda su turno.`
-                );
+                notificar(`✅ Proposición ${data.codigo_radicado} radicada (${visible_publico ? 'Pública' : 'Privada'})`);
+                proyectoSeleccionadoId = data.proyecto.id_proyecto;
                 await cargarProyectos(false);
             } catch (err) {
                 alert('Error de conexión al enviar proposición: ' + err.message);
@@ -3590,6 +3652,7 @@
             const codigo_radicado = document.getElementById('proy-codigo').value;
             const id_comision_asignada = document.getElementById('proy-comision').value;
             const id_autor = document.getElementById('proy-autor').value;
+            const visible_publico = document.getElementById('proy-visibilidad').value === 'true';
             const titulo = document.getElementById('proy-titulo').value;
             const descripcion = document.getElementById('proy-descripcion').value;
             const fileInput = document.getElementById('proy-archivo');
@@ -3617,6 +3680,7 @@
                     id_autor,
                     id_comision_asignada,
                     tipo_documento,
+                    visible_publico,
                     archivo_nombre,
                     archivo_contenido
                 })
@@ -3640,7 +3704,10 @@
         }
 
         async function cargarProyectos(silencioso = false) {
-            const headers = adminToken ? { 'x-admin-token': adminToken } : {};
+            const headers = {};
+            if (adminToken) headers['x-admin-token'] = adminToken;
+            if (concejalToken) headers['x-concejal-token'] = concejalToken;
+
             const res = await fetch('/api/proyectos', { headers });
             if (!res.ok) return;
             const nuevosProyectos = await res.json();
@@ -3649,9 +3716,8 @@
                 nuevosProyectos.map(p => `${p.id_proyecto}:${p.estado}:${p.visible_publico}`)
             );
 
-            if (silencioso && nuevoHash === ultimoHashProyectos) {
-                return;
-            }
+            if (silencioso && nuevoHash === ultimoHashProyectos) return;
+
             ultimoHashProyectos = nuevoHash;
             proyectosGlobal = nuevosProyectos;
             actualizarSelectProyectosVotacion();
@@ -3674,6 +3740,15 @@
         function renderizarProyectos() {
             const listaLateral = document.getElementById('lista-lateral-proyectos');
             listaLateral.innerHTML = '';
+
+            const etiquetaVista = document.getElementById('etiqueta-vista-docs');
+            if (etiquetaVista) {
+                etiquetaVista.innerText = esModoAdmin
+                    ? 'Vista Secretaría'
+                    : esModoConcejal
+                        ? 'Públicos + Privados'
+                        : 'Vista Pública';
+            }
 
             const filtrados = proyectosGlobal.filter(p => {
                 if (filtroComisionActual === 'TODOS') return true;
@@ -3704,10 +3779,11 @@
                         ? 'bg-rose-500/20 text-rose-300 border-rose-400/50'
                         : 'bg-amber-500/20 text-amber-200 border-amber-400/50';
 
-                const badgePrivacidad = esModoAdmin
+                // Insignia clara de Público vs Privado visible para Admin y Concejales
+                const badgePrivacidad = (esModoAdmin || esModoConcejal)
                     ? (esPrivado
-                        ? '<span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-rose-500/25 text-rose-200 border border-rose-400/50"><i class="fa-solid fa-eye-slash mr-1"></i>Solo Admin</span>'
-                        : '<span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-500/25 text-emerald-200 border border-emerald-400/50"><i class="fa-solid fa-eye mr-1"></i>Proyectado</span>')
+                        ? '<span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-rose-500/25 text-rose-200 border border-rose-400/50"><i class="fa-solid fa-lock mr-1"></i>Privado</span>'
+                        : '<span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-500/25 text-emerald-200 border border-emerald-400/50"><i class="fa-solid fa-globe mr-1"></i>Público</span>')
                     : '';
 
                 listaLateral.innerHTML += `
@@ -3751,6 +3827,8 @@
             document.getElementById('visor-autor').innerText = '--';
             document.getElementById('visor-comision').innerText = '';
             document.getElementById('visor-acciones').innerHTML = '';
+            const visBadge = document.getElementById('visor-visibilidad-badge');
+            if (visBadge) visBadge.classList.add('hidden');
             document.getElementById('visor-contenido').innerHTML = `
                 <div class="text-center text-slate-400 my-auto py-20">
                     <i class="fa-solid fa-folder-open text-5xl mb-3 text-slate-300"></i>
@@ -3767,8 +3845,8 @@
             });
             if (res.ok) {
                 notificar(nuevoEstado
-                    ? '👁️ Documento proyectado para todos los concejales'
-                    : '🔒 Documento ocultado del público (solo visible para Admin)');
+                    ? '🌐 Documento marcado como PÚBLICO'
+                    : '🔒 Documento marcado como PRIVADO (solo Concejales y Admin)');
                 await cargarProyectos(false);
             }
         }
@@ -3779,16 +3857,29 @@
 
             const badge = document.getElementById('visor-badge');
             badge.innerText = `${p.tipo_documento || 'Proyecto'} • ${p.codigo_radicado}`;
+
+            const esPrivado = p.visible_publico === false;
+            const visBadge = document.getElementById('visor-visibilidad-badge');
+            if (visBadge) {
+                visBadge.classList.remove('hidden');
+                if (esPrivado) {
+                    visBadge.className = 'bg-rose-500/25 text-rose-200 border border-rose-400/50 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
+                    visBadge.innerHTML = '<i class="fa-solid fa-lock mr-1"></i> PRIVADO';
+                } else {
+                    visBadge.className = 'bg-emerald-500/25 text-emerald-200 border border-emerald-400/50 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
+                    visBadge.innerHTML = '<i class="fa-solid fa-globe mr-1"></i> PÚBLICO';
+                }
+            }
+
             document.getElementById('visor-comision').innerText = `Comisión: ${p.comision} • Estado: ${p.estado}`;
             document.getElementById('visor-titulo').innerText = p.titulo;
             document.getElementById('visor-autor').innerText = `Ponente / Autor: ${p.autor}`;
 
             const accionesDiv = document.getElementById('visor-acciones');
-            const esPrivado = p.visible_publico === false;
 
             const controlesAdminVisor = esModoAdmin ? `
-                <button onclick="alternarVisibilidadProyecto(${p.id_proyecto}, ${esPrivado ? 'true' : 'false'})" class="${esPrivado ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-700 hover:bg-slate-600 text-amber-200'} font-extrabold text-xs uppercase px-3 py-1.5 rounded-xl transition shadow" title="Controlar si los concejales ven este documento">
-                    <i class="fa-solid ${esPrivado ? 'fa-eye' : 'fa-eye-slash'} mr-1"></i> ${esPrivado ? 'Proyectar a Todos' : 'Ocultar al Público'}
+                <button onclick="alternarVisibilidadProyecto(${p.id_proyecto}, ${esPrivado ? 'true' : 'false'})" class="${esPrivado ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-700 hover:bg-slate-600 text-amber-200'} font-extrabold text-xs uppercase px-3 py-1.5 rounded-xl transition shadow">
+                    <i class="fa-solid ${esPrivado ? 'fa-globe' : 'fa-lock'} mr-1"></i> ${esPrivado ? 'Hacer Público' : 'Hacer Privado'}
                 </button>
                 <button onclick="someterProyectoAVotacion(${p.id_proyecto})" class="btn-oro font-extrabold text-xs uppercase px-3 py-1.5 rounded-xl">
                     <i class="fa-solid fa-check-to-slot mr-1"></i> Someter a Votación
@@ -3959,27 +4050,19 @@
                     };
                 }
 
-                if (p.estado === 'Aprobado') {
-                    mapaAutores[nombreAutor].aprobadas.push(p);
-                } else if (p.estado === 'Archivado') {
-                    mapaAutores[nombreAutor].archivadas.push(p);
-                } else {
-                    mapaAutores[nombreAutor].enTramite.push(p);
-                }
+                if (p.estado === 'Aprobado') mapaAutores[nombreAutor].aprobadas.push(p);
+                else if (p.estado === 'Archivado') mapaAutores[nombreAutor].archivadas.push(p);
+                else mapaAutores[nombreAutor].enTramite.push(p);
             });
 
             const listaAutores = Object.values(mapaAutores).sort((a, b) => {
-                if (b.aprobadas.length !== a.aprobadas.length) {
-                    return b.aprobadas.length - a.aprobadas.length;
-                }
+                if (b.aprobadas.length !== a.aprobadas.length) return b.aprobadas.length - a.aprobadas.length;
                 return (b.aprobadas.length + b.archivadas.length + b.enTramite.length) -
                        (a.aprobadas.length + a.archivadas.length + a.enTramite.length);
             });
 
             const maxAprobadas = listaAutores.length > 0 ? listaAutores[0].aprobadas.length : 0;
-            const ganadores = maxAprobadas > 0
-                ? listaAutores.filter(a => a.aprobadas.length === maxAprobadas)
-                : [];
+            const ganadores = maxAprobadas > 0 ? listaAutores.filter(a => a.aprobadas.length === maxAprobadas) : [];
 
             let bloqueDestacadoHtml = '';
             if (ganadores.length === 1) {
@@ -4023,100 +4106,101 @@
             }
 
             const filasTablaAutores = listaAutores.length > 0
-                ? listaAutores.map((autor, index) => {
-                    const totalAutor = autor.aprobadas.length + autor.archivadas.length + autor.enTramite.length;
-                    const detalleAprobadas = autor.aprobadas.length > 0
-                        ? autor.aprobadas.map(item => `
-                            <li style="margin-bottom:4px;">
-                                <strong>[${item.codigo_radicado}]</strong> ${item.tipo_documento || 'Iniciativa'}: <em>“${item.titulo}”</em> (${item.comision})
-                            </li>
-                        `).join('')
-                        : '<span style="color:#64748b; font-style:italic;">Sin iniciativas aprobadas</span>';
-
+                ? listaAutores.map((a, idx) => {
+                    const totalAutor = a.aprobadas.length + a.archivadas.length + a.enTramite.length;
+                    const esTop = maxAprobadas > 0 && a.aprobadas.length === maxAprobadas;
                     return `
-                        <tr>
-                            <td style="border:1px solid #94a3b8; padding:8px; text-align:center; font-weight:bold;">${index + 1}</td>
-                            <td style="border:1px solid #94a3b8; padding:8px;">
-                                <strong>H.C. ${autor.nombre}</strong><br>
-                                <span style="font-size:11px; color:#475569;">Bancada ${autor.bancada} • Com. ${autor.comision}</span>
+                        <tr style="background:${esTop ? '#fefce8' : (idx % 2 === 0 ? '#ffffff' : '#f8fafc')};">
+                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:bold;">${idx + 1}</td>
+                            <td style="border:1px solid #cbd5e1; padding:8px; font-weight:bold; color:#0f172a;">
+                                H.C. ${a.nombre} ${esTop ? '★' : ''}
                             </td>
-                            <td style="border:1px solid #94a3b8; padding:8px; text-align:center; font-weight:bold; color:#047857; background:#ecfdf5;">
-                                ${autor.aprobadas.length}
-                            </td>
-                            <td style="border:1px solid #94a3b8; padding:8px; text-align:center; color:#be123c;">
-                                ${autor.archivadas.length}
-                            </td>
-                            <td style="border:1px solid #94a3b8; padding:8px; text-align:center; font-weight:bold;">
-                                ${totalAutor}
-                            </td>
-                            <td style="border:1px solid #94a3b8; padding:8px; font-size:12px;">
-                                ${autor.aprobadas.length > 0 ? `<ul style="margin:0; padding-left:16px;">${detalleAprobadas}</ul>` : detalleAprobadas}
-                            </td>
+                            <td style="border:1px solid #cbd5e1; padding:8px;">${a.bancada}</td>
+                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:900; color:#15803d;">${a.aprobadas.length}</td>
+                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#b91c1c;">${a.archivadas.length}</td>
+                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#b45309;">${a.enTramite.length}</td>
+                            <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:bold;">${totalAutor}</td>
                         </tr>
                     `;
                 }).join('')
-                : `<tr><td colspan="6" style="border:1px solid #94a3b8; padding:16px; text-align:center; color:#64748b;">No hay proposiciones ni proyectos radicados en el sistema.</td></tr>`;
+                : `<tr><td colspan="7" style="border:1px solid #cbd5e1; padding:12px; text-align:center; color:#64748b;">No hay iniciativas radicadas en el sistema.</td></tr>`;
 
-            const listaArchivadasHtml = archivados.length > 0
-                ? `<ul style="margin:6px 0 0 0; padding-left:18px; font-size:12.5px;">
-                    ${archivados.map(a => `
-                        <li style="margin-bottom:4px;">
-                            <strong>[${a.codigo_radicado}]</strong> ${a.tipo_documento || 'Iniciativa'} — <em>“${a.titulo}”</em> | Autor: <strong>H.C. ${a.autor}</strong>
-                        </li>
-                    `).join('')}
-                   </ul>`
-                : `<p style="font-size:12.5px; color:#64748b; font-style:italic; margin:4px 0 0 0;">No se registran proposiciones o proyectos archivados.</p>`;
+            const detalleAprobadasHtml = aprobados.length > 0
+                ? aprobados.map((p, idx) => `
+                    <div style="border-left:4px solid #16a34a; background:#f0fdf4; padding:10px 14px; margin-bottom:10px; border-radius:4px;">
+                        <p style="margin:0; font-size:12px; font-weight:bold; color:#166534;">
+                            ${idx + 1}. [${p.tipo_documento || 'Iniciativa'} • Rad. ${p.codigo_radicado}] — H.C. ${p.autor} (Comisión ${p.comision})
+                        </p>
+                        <p style="margin:4px 0 0 0; font-size:14px; font-weight:bold; color:#0f172a;">
+                            “${p.titulo}”
+                        </p>
+                        ${p.descripcion ? `<p style="margin:4px 0 0 0; font-size:12px; color:#334155;">${p.descripcion}</p>` : ''}
+                    </div>
+                `).join('')
+                : `<p style="font-size:13px; color:#64748b; font-style:italic;">No se registran proposiciones o proyectos aprobados hasta el momento.</p>`;
+
+            const detalleArchivadasHtml = archivados.length > 0
+                ? archivados.map((p, idx) => `
+                    <div style="border-left:4px solid #dc2626; background:#fef2f2; padding:8px 14px; margin-bottom:8px; border-radius:4px;">
+                        <p style="margin:0; font-size:12px; font-weight:bold; color:#991b1b;">
+                            ${idx + 1}. [${p.tipo_documento || 'Iniciativa'} • Rad. ${p.codigo_radicado}] — H.C. ${p.autor}
+                        </p>
+                        <p style="margin:2px 0 0 0; font-size:13px; color:#0f172a;">“${p.titulo}”</p>
+                    </div>
+                `).join('')
+                : `<p style="font-size:13px; color:#64748b; font-style:italic;">No se registran iniciativas archivadas.</p>`;
 
             contenedor.innerHTML = `
-                <div style="text-align:center; border-bottom:3px double #0f172a; padding-bottom:14px; margin-bottom:20px;">
-                    <p style="margin:0; font-size:11px; font-weight:bold; letter-spacing:2px; text-transform:uppercase; color:#475569;">
+                <div style="text-align:center; border-bottom:3px double #0f172a; padding-bottom:16px; margin-bottom:20px;">
+                    <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:2px; color:#475569;">
                         República de Colombia • Departamento del Tolima
                     </p>
-                    <h1 style="margin:4px 0; font-size:22px; font-weight:900; text-transform:uppercase; color:#0f172a;">
+                    <h1 style="margin:4px 0; font-size:24px; font-weight:900; text-transform:uppercase; color:#0f172a;">
                         CONCEJO MUNICIPAL DE IBAGUÉ
                     </h1>
-                    <p style="margin:0; font-size:12px; font-weight:bold; text-transform:uppercase; color:#92400e;">
+                    <p style="margin:0; font-size:13px; font-weight:bold; color:#854d0e; text-transform:uppercase;">
                         Fundación Creer y Merecer • Secretaría General
                     </p>
                     <p style="margin:8px 0 0 0; font-size:12px; color:#334155;">
-                        <strong>ACTA CONSOLIDADA DE INICIATIVAS LEGISLATIVAS Y PROPOSICIONES</strong><br>
-                        Referencia: ${nombreSesion} • Fecha de expedición: ${fechaHoy}
+                        <strong>ACTA DE BALANCE LEGISLATIVO Y PROPOSICIONES APROBADAS</strong><br>
+                        Sesión de Referencia: ${nombreSesion} • Fecha de expedición: ${fechaHoy}
                     </p>
+                </div>
+
+                <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin-bottom:22px; text-align:center;">
+                    <div style="border:1px solid #cbd5e1; padding:10px; border-radius:8px; background:#f8fafc;">
+                        <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#475569; display:block;">Total Radicadas</span>
+                        <strong style="font-size:22px; color:#0f172a;">${totalRadicados}</strong>
+                    </div>
+                    <div style="border:1px solid #86efac; padding:10px; border-radius:8px; background:#f0fdf4;">
+                        <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#166534; display:block;">Aprobadas</span>
+                        <strong style="font-size:22px; color:#15803d;">${aprobados.length}</strong>
+                    </div>
+                    <div style="border:1px solid #fca5a5; padding:10px; border-radius:8px; background:#fef2f2;">
+                        <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#991b1b; display:block;">Archivadas</span>
+                        <strong style="font-size:22px; color:#b91c1c;">${archivados.length}</strong>
+                    </div>
+                    <div style="border:1px solid #fde047; padding:10px; border-radius:8px; background:#fefce8;">
+                        <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#854d0e; display:block;">En Trámite</span>
+                        <strong style="font-size:22px; color:#b45309;">${enTramite.length}</strong>
+                    </div>
                 </div>
 
                 ${bloqueDestacadoHtml}
 
-                <div style="display:flex; justify-content:space-between; gap:10px; margin-bottom:20px; text-align:center;">
-                    <div style="flex:1; border:1px solid #cbd5e1; padding:10px; border-radius:8px; background:#f8fafc;">
-                        <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#475569; display:block;">Total Radicadas</span>
-                        <strong style="font-size:20px; color:#0f172a;">${totalRadicados}</strong>
-                    </div>
-                    <div style="flex:1; border:1px solid #6ee7b7; padding:10px; border-radius:8px; background:#ecfdf5;">
-                        <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#047857; display:block;">Aprobadas</span>
-                        <strong style="font-size:20px; color:#047857;">${aprobados.length}</strong>
-                    </div>
-                    <div style="flex:1; border:1px solid #fda4af; padding:10px; border-radius:8px; background:#fff1f2;">
-                        <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#be123c; display:block;">Archivadas</span>
-                        <strong style="font-size:20px; color:#be123c;">${archivados.length}</strong>
-                    </div>
-                    <div style="flex:1; border:1px solid #fcd34d; padding:10px; border-radius:8px; background:#fffbeb;">
-                        <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#b45309; display:block;">En Trámite</span>
-                        <strong style="font-size:20px; color:#b45309;">${enTramite.length}</strong>
-                    </div>
-                </div>
-
-                <h4 style="margin:0 0 10px 0; font-size:14px; font-weight:900; text-transform:uppercase; color:#0f172a; border-bottom:1px solid #cbd5e1; padding-bottom:4px;">
-                    1. Consolidado por Honorable Concejal y Relación de Iniciativas Aprobadas
-                </h4>
-                <table style="width:100%; border-collapse:collapse; margin-bottom:24px; font-size:13px;">
+                <h3 style="font-size:15px; font-weight:900; text-transform:uppercase; color:#0f172a; border-bottom:1px solid #94a3b8; padding-bottom:4px; margin-bottom:10px;">
+                    1. Consolidado por Honorable Concejal (Ordenado por Iniciativas Aprobadas)
+                </h3>
+                <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:24px;">
                     <thead>
-                        <tr style="background:#0f172a; color:#ffffff; font-size:11px; text-transform:uppercase;">
-                            <th style="border:1px solid #0f172a; padding:8px; width:40px;">#</th>
+                        <tr style="background:#0f172a; color:#ffffff;">
+                            <th style="border:1px solid #0f172a; padding:8px;">#</th>
                             <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Honorable Concejal</th>
-                            <th style="border:1px solid #0f172a; padding:8px; width:75px;">Aprob.</th>
-                            <th style="border:1px solid #0f172a; padding:8px; width:75px;">Archiv.</th>
-                            <th style="border:1px solid #0f172a; padding:8px; width:65px;">Total</th>
-                            <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Proposiciones / Proyectos Aprobados</th>
+                            <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Bancada</th>
+                            <th style="border:1px solid #0f172a; padding:8px;">Aprobadas</th>
+                            <th style="border:1px solid #0f172a; padding:8px;">Archivadas</th>
+                            <th style="border:1px solid #0f172a; padding:8px;">En Trámite</th>
+                            <th style="border:1px solid #0f172a; padding:8px;">Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -4124,41 +4208,60 @@
                     </tbody>
                 </table>
 
-                <h4 style="margin:0 0 6px 0; font-size:14px; font-weight:900; text-transform:uppercase; color:#0f172a; border-bottom:1px solid #cbd5e1; padding-bottom:4px;">
-                    2. Constancia de Proposiciones y Proyectos Archivados
-                </h4>
-                ${listaArchivadasHtml}
+                <h3 style="font-size:15px; font-weight:900; text-transform:uppercase; color:#166534; border-bottom:1px solid #86efac; padding-bottom:4px; margin-bottom:10px;">
+                    2. Relación Oficial de Proposiciones e Iniciativas Aprobadas (${aprobados.length})
+                </h3>
+                <div style="margin-bottom:24px;">
+                    ${detalleAprobadasHtml}
+                </div>
 
-                <div style="margin-top:48px; display:flex; justify-content:space-between; gap:40px; text-align:center; font-size:12px;">
-                    <div style="flex:1; border-top:1px solid #0f172a; padding-top:8px;">
-                        <strong>PRESIDENCIA DEL CONCEJO MUNICIPAL</strong><br>
+                <h3 style="font-size:15px; font-weight:900; text-transform:uppercase; color:#991b1b; border-bottom:1px solid #fca5a5; padding-bottom:4px; margin-bottom:10px;">
+                    3. Relación de Iniciativas Archivadas (${archivados.length})
+                </h3>
+                <div style="margin-bottom:32px;">
+                    ${detalleArchivadasHtml}
+                </div>
+
+                <div style="margin-top:40px; padding-top:20px; border-top:1px solid #cbd5e1; display:grid; grid-template-columns:1fr 1fr; gap:40px; text-align:center; font-size:12px;">
+                    <div>
+                        <div style="border-top:1px solid #0f172a; width:80%; margin:30px auto 6px auto;"></div>
+                        <strong>PRESIDENCIA DEL CONCEJO</strong><br>
                         <span style="color:#475569;">Concejo Municipal de Ibagué</span>
                     </div>
-                    <div style="flex:1; border-top:1px solid #0f172a; padding-top:8px;">
+                    <div>
+                        <div style="border-top:1px solid #0f172a; width:80%; margin:30px auto 6px auto;"></div>
                         <strong>SECRETARÍA GENERAL</strong><br>
-                        <span style="color:#475569;">Certificación y Registro Legislativo</span>
+                        <span style="color:#475569;">Fundación Creer y Merecer</span>
                     </div>
                 </div>
             `;
         }
 
         function descargarWordIniciativas() {
-            const contenido = document.getElementById('contenido-documento-iniciativas').innerHTML;
-            const htmlCompleto = `
+            const contenidoHtml = document.getElementById('contenido-documento-iniciativas').innerHTML;
+            const documentoWord = `
                 <html xmlns:o='urn:schemas-microsoft-com:office:office'
                       xmlns:w='urn:schemas-microsoft-com:office:word'
                       xmlns='http://www.w3.org/TR/REC-html40'>
-                <head><meta charset='utf-8'><title>Acta de Iniciativas - Concejo de Ibagué</title></head>
-                <body style="font-family: 'Times New Roman', serif; color:#0f172a;">
-                    ${contenido}
-                </body>
+                <head>
+                    <meta charset='utf-8'>
+                    <title>Acta Balance Legislativo - Concejo Municipal de Ibagué</title>
+                    <style>
+                        body { font-family: 'Times New Roman', Georgia, serif; color: #0f172a; line-height: 1.5; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid #94a3b8; padding: 6px; }
+                    </style>
+                </head>
+                <body>${contenidoHtml}</body>
                 </html>
             `;
-            const blob = new Blob(['\ufeff', htmlCompleto], { type: 'application/msword' });
+
+            const blob = new Blob(['\ufeff', documentoWord], { type: 'application/msword;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const enlace = document.createElement('a');
+            const fechaArchivo = new Date().toISOString().slice(0, 10);
             enlace.href = url;
-            enlace.download = `Acta_Iniciativas_Concejo_Ibague_${new Date().toISOString().slice(0, 10)}.doc`;
+            enlace.download = `Acta_Iniciativas_Concejo_Ibague_${fechaArchivo}.doc`;
             document.body.appendChild(enlace);
             enlace.click();
             document.body.removeChild(enlace);
@@ -4167,25 +4270,28 @@
         }
 
         function imprimirActaIniciativas() {
-            const contenido = document.getElementById('contenido-documento-iniciativas').innerHTML;
-            const ventana = window.open('', '_blank', 'width=900,height=700');
+            const contenidoHtml = document.getElementById('contenido-documento-iniciativas').innerHTML;
+            const ventana = window.open('', '_blank', 'width=900,height=750');
             ventana.document.write(`
-                <html>
+                <!DOCTYPE html>
+                <html lang="es">
                 <head>
-                    <title>Acta Oficial de Iniciativas - Concejo Municipal de Ibagué</title>
+                    <meta charset="UTF-8">
+                    <title>Acta Oficial - Concejo Municipal de Ibagué</title>
                     <style>
-                        body { font-family: Georgia, 'Times New Roman', serif; padding: 24px; color: #0f172a; }
+                        body { font-family: Georgia, 'Times New Roman', serif; padding: 30px; color: #0f172a; }
                         @media print { body { padding: 0; } }
                     </style>
                 </head>
-                <body>${contenido}</body>
+                <body>
+                    ${contenidoHtml}
+                    <script>
+                        window.onload = function() { window.print(); };
+                    <\/script>
+                </body>
                 </html>
             `);
             ventana.document.close();
-            ventana.focus();
-            setTimeout(() => {
-                ventana.print();
-            }, 300);
         }
     </script>
 </body>
