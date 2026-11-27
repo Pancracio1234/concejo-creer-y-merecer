@@ -616,7 +616,8 @@ app.put('/api/asistencias/sesion/:id_sesion/todos-presentes', verificarAdmin, as
 app.get('/api/intervenciones/:id_sesion', async (req, res) => {
     try {
         const result = await pool.query(`
-            SELECT iv.id_intervencion, iv.id_sesion, iv.id_integrante, iv.orden_turno,
+            SELECT DISTINCT ON (iv.id_intervencion)
+                   iv.id_intervencion, iv.id_sesion, iv.id_integrante, iv.orden_turno,
                    iv.tipo_intervencion, iv.motivo_detalle, iv.tiempo_asignado_seg,
                    iv.tiempo_usado_seg, iv.estado,
                    i.nombre_completo,
@@ -627,9 +628,18 @@ app.get('/api/intervenciones/:id_sesion', async (req, res) => {
             LEFT JOIN bancadas b ON i.id_bancada = b.id_bancada
             LEFT JOIN comisiones c ON i.id_comision = c.id_comision
             WHERE iv.id_sesion = $1
-            ORDER BY iv.orden_turno ASC, iv.id_intervencion ASC
+            ORDER BY iv.id_intervencion ASC
         `, [req.params.id_sesion]);
-        res.json(result.rows);
+
+        // Garantiza orden correlativo 1, 2, 3... sin saltos ni números repetidos
+        const ordenados = result.rows
+            .sort((a, b) => a.orden_turno - b.orden_turno || a.id_intervencion - b.id_intervencion)
+            .map((fila, idx) => ({
+                ...fila,
+                orden_turno: idx + 1
+            }));
+
+        res.json(ordenados);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
