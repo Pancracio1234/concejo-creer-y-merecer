@@ -838,7 +838,7 @@
                             <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Detalle / Tema específico de su intervención</label>
                             <input type="text" id="conc-motivo-detalle" placeholder="Ej: Sobre el artículo 3 del Proyecto de Acuerdo..." class="w-full border rounded-xl px-3 py-2 text-xs text-white">
                         </div>
-                        <button type="button" onclick="solicitarPalabraConcejal()" class="w-full btn-oro font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider">
+                        <button type="button" id="btn-solicitar-palabra" onclick="solicitarPalabraConcejal()" class="w-full btn-oro font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider">
                             <i class="fa-solid fa-microphone-lines mr-1.5"></i> Pedir Turno Ahora
                         </button>
                     </div>
@@ -1516,6 +1516,12 @@
         }
 
         async function ejecutarLoginUnico() {
+            const btnSubmit = rolSeleccionadoEnLogin === 'concejal'
+                ? document.getElementById('btn-submit-login-concejal')
+                : document.getElementById('btn-submit-login-admin');
+
+            if (btnSubmit && btnSubmit.disabled) return;
+
             let payload = { rol: rolSeleccionadoEnLogin };
 
             if (rolSeleccionadoEnLogin === 'concejal') {
@@ -1533,6 +1539,8 @@
                     return alert('Ingrese su nombre completo y la clave administrativa.');
                 }
             }
+
+            if (btnSubmit) btnSubmit.disabled = true;
 
             try {
                 const res = await fetch('/api/sesion/login', {
@@ -1573,6 +1581,8 @@
                 );
             } catch (err) {
                 alert('Error de conexión al iniciar sesión: ' + err.message);
+            } finally {
+                if (btnSubmit) btnSubmit.disabled = false;
             }
         }
 
@@ -1665,6 +1675,8 @@
 
             if (esModoConcejal && ['asistencia', 'comisiones', 'integrantes'].includes(tabActivaActual)) {
                 mostrarTab('intervenciones');
+            } else if (esModoAdmin && tabActivaActual === 'asistencia') {
+                mostrarTab('asistencia');
             }
 
             const tareas = [cargarProyectos(false), cargarDetalleVotacion()];
@@ -2160,7 +2172,7 @@
 
         function mostrarTab(tabId) {
             if (esModoConcejal && ['asistencia', 'comisiones', 'integrantes'].includes(tabId)) {
-                return;
+                tabId = 'intervenciones';
             }
             tabActivaActual = tabId;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -2267,21 +2279,21 @@
 
             const busqueda = normalizarTexto(document.getElementById('buscar-en-comisiones')?.value || '');
 
-            const comision1 = integrantesGlobal.filter(i => i.id_comision === 1 && normalizarTexto(i.nombre_completo).includes(busqueda));
-            const comision2 = integrantesGlobal.filter(i => i.id_comision === 2 && normalizarTexto(i.nombre_completo).includes(busqueda));
+            const comision1 = integrantesGlobal.filter(i => Number(i.id_comision) === 1 && normalizarTexto(i.nombre_completo).includes(busqueda));
+            const comision2 = integrantesGlobal.filter(i => Number(i.id_comision) === 2 && normalizarTexto(i.nombre_completo).includes(busqueda));
             const sinComision = integrantesGlobal.filter(i => !i.id_comision && normalizarTexto(i.nombre_completo).includes(busqueda));
 
-            document.getElementById('total-comision-1').innerText = integrantesGlobal.filter(i => i.id_comision === 1).length;
-            document.getElementById('total-comision-2').innerText = integrantesGlobal.filter(i => i.id_comision === 2).length;
+            document.getElementById('total-comision-1').innerText = integrantesGlobal.filter(i => Number(i.id_comision) === 1).length;
+            document.getElementById('total-comision-2').innerText = integrantesGlobal.filter(i => Number(i.id_comision) === 2).length;
             document.getElementById('total-comision-0').innerText = integrantesGlobal.filter(i => !i.id_comision).length;
 
             const generarTarjetaConcejalComision = (i, idx) => {
-                const regAsistencia = asistenciasGlobal.find(a => a.id_integrante === i.id_integrante);
+                const regAsistencia = asistenciasGlobal.find(a => Number(a.id_integrante) === Number(i.id_integrante));
                 const estadoAsis = regAsistencia ? regAsistencia.estado : null;
 
-                const badgeBancada = i.id_bancada === 1 
+                const badgeBancada = Number(i.id_bancada) === 1 
                     ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50' 
-                    : i.id_bancada === 2 
+                    : Number(i.id_bancada) === 2 
                         ? 'bg-rose-500/20 text-rose-300 border-rose-400/50' 
                         : 'bg-purple-500/20 text-purple-300 border-purple-400/50';
 
@@ -2297,8 +2309,8 @@
                 const controlesAdminComision = esModoAdmin ? `
                     <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end mt-2 sm:mt-0">
                         <select onchange="recolocarIntegrante(${i.id_integrante}, 'comision', this.value)" title="Reasignar comisión" class="flex-1 sm:flex-initial border text-slate-100 text-[11px] font-semibold rounded-lg px-2.5 py-1.5">
-                            <option value="1" ${i.id_comision === 1 ? 'selected' : ''}>Comisión Primera</option>
-                            <option value="2" ${i.id_comision === 2 ? 'selected' : ''}>Comisión Segunda</option>
+                            <option value="1" ${Number(i.id_comision) === 1 ? 'selected' : ''}>Comisión Primera</option>
+                            <option value="2" ${Number(i.id_comision) === 2 ? 'selected' : ''}>Comisión Segunda</option>
                             <option value="" ${!i.id_comision ? 'selected' : ''}>Sin Comisión</option>
                         </select>
                         <button onclick="inscribirRapidoDesdeComision(${i.id_integrante})" class="bg-white/10 hover:bg-[#f3cf7a] text-[#fff3c4] hover:text-slate-950 border border-[#f3cf7a]/50 px-2.5 py-1.5 rounded-lg text-xs font-bold transition" title="Inscribir en Uso de la Palabra">
@@ -2426,20 +2438,20 @@
                             </td>
                             <td class="p-3 md:p-4 whitespace-nowrap">
                                 <select onchange="recolocarIntegrante(${i.id_integrante}, 'bancada', this.value)" class="border rounded-xl px-3 py-1.5 text-xs font-bold ${
-                                    i.id_bancada === 1 ? '!bg-emerald-950 text-emerald-300 !border-emerald-400/50' :
-                                    i.id_bancada === 2 ? '!bg-rose-950 text-rose-300 !border-rose-400/50' :
+                                    Number(i.id_bancada) === 1 ? '!bg-emerald-950 text-emerald-300 !border-emerald-400/50' :
+                                    Number(i.id_bancada) === 2 ? '!bg-rose-950 text-rose-300 !border-rose-400/50' :
                                     '!bg-purple-950 text-purple-300 !border-purple-400/50'
                                 }">
-                                    <option value="1" ${i.id_bancada === 1 ? 'selected' : ''}>Gobierno</option>
-                                    <option value="2" ${i.id_bancada === 2 ? 'selected' : ''}>Oposición</option>
-                                    <option value="3" ${i.id_bancada === 3 ? 'selected' : ''}>Independientes</option>
+                                    <option value="1" ${Number(i.id_bancada) === 1 ? 'selected' : ''}>Gobierno</option>
+                                    <option value="2" ${Number(i.id_bancada) === 2 ? 'selected' : ''}>Oposición</option>
+                                    <option value="3" ${Number(i.id_bancada) === 3 ? 'selected' : ''}>Independientes</option>
                                 </select>
                             </td>
                             <td class="p-3 md:p-4 whitespace-nowrap">
                                 <select onchange="recolocarIntegrante(${i.id_integrante}, 'comision', this.value)" class="border rounded-xl px-3 py-1.5 text-xs font-bold text-slate-100">
-                                    <option value="1" ${i.id_comision === 1 ? 'selected' : ''}>Comisión Primera</option>
-                                    <option value="2" ${i.id_comision === 2 ? 'selected' : ''}>Comisión Segunda</option>
-                                    <option value="" ${i.id_comision === null ? 'selected' : ''}>Sin Comisión</option>
+                                    <option value="1" ${Number(i.id_comision) === 1 ? 'selected' : ''}>Comisión Primera</option>
+                                    <option value="2" ${Number(i.id_comision) === 2 ? 'selected' : ''}>Comisión Segunda</option>
+                                    <option value="" ${!i.id_comision ? 'selected' : ''}>Sin Comisión</option>
                                 </select>
                             </td>
                             <td class="p-3 md:p-4 text-center whitespace-nowrap">
@@ -2460,8 +2472,8 @@
                             </td>
                             <td class="p-3 md:p-4 whitespace-nowrap">
                                 <span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${
-                                    i.id_bancada === 1 ? 'bg-emerald-950/80 text-emerald-300 border-emerald-400/50' :
-                                    i.id_bancada === 2 ? 'bg-rose-950/80 text-rose-300 border-rose-400/50' :
+                                    Number(i.id_bancada) === 1 ? 'bg-emerald-950/80 text-emerald-300 border-emerald-400/50' :
+                                    Number(i.id_bancada) === 2 ? 'bg-rose-950/80 text-rose-300 border-rose-400/50' :
                                     'bg-purple-950/80 text-purple-300 border-purple-400/50'
                                 }">${escapeHTML(i.bancada)}</span>
                             </td>
@@ -2508,7 +2520,7 @@
         }
 
         async function recolocarIntegrante(id_integrante, campo, valor) {
-            const persona = integrantesGlobal.find(i => i.id_integrante === id_integrante);
+            const persona = integrantesGlobal.find(i => Number(i.id_integrante) === Number(id_integrante));
             if (!persona) return;
 
             const payload = {
@@ -2780,7 +2792,7 @@
         }
 
         async function marcarAsistencia(id_asistencia, estado) {
-            const registro = asistenciasGlobal.find(a => a.id_asistencia === id_asistencia);
+            const registro = asistenciasGlobal.find(a => Number(a.id_asistencia) === Number(id_asistencia));
             if (!registro || registro.estado === estado) return;
 
             const estadoAnterior = registro.estado;
@@ -2845,10 +2857,14 @@
             if (!sesionActual) return alert('No hay ninguna sesión convocada actualmente.');
             const tipo_intervencion = document.getElementById('conc-motivo-tipo').value;
             const motivo_detalle = document.getElementById('conc-motivo-detalle').value;
+            const btn = document.getElementById('btn-solicitar-palabra');
 
             if (!tipo_intervencion.trim()) {
                 return alert('Debe seleccionar obligatoriamente para qué solicita el uso de la palabra.');
             }
+
+            if (btn && btn.disabled) return;
+            if (btn) btn.disabled = true;
 
             try {
                 const res = await fetchConcejal('/api/intervenciones/solicitar', {
@@ -2871,6 +2887,8 @@
                 await cargarIntervenciones();
             } catch (err) {
                 alert('Error de red al pedir la palabra: ' + err.message);
+            } finally {
+                if (btn) btn.disabled = false;
             }
         }
 
@@ -2925,6 +2943,11 @@
                     segundosRestantes = Math.max(0, segundosBase - usado);
                     actualizarEstadoVisualIndicador('corriendo');
                     actualizarDisplayCrono();
+                } else {
+                    document.getElementById('crono-nombre').innerText = 'En Espera de Orador';
+                    document.getElementById('crono-bancada').innerText = 'Orden de oradores del recinto del Concejo Municipal';
+                    document.getElementById('crono-tipo-badge').classList.add('hidden');
+                    actualizarEstadoVisualIndicador('detenido');
                 }
             }
 
@@ -2971,8 +2994,8 @@
             }
 
             div.innerHTML = filtradas.map(item => {
-                const esActivo = item.id_intervencion === intervencionActivaId;
-                const esMio = esModoConcejal && usuarioActual && item.id_integrante === usuarioActual.id_integrante;
+                const esActivo = Number(item.id_intervencion) === Number(intervencionActivaId);
+                const esMio = esModoConcejal && usuarioActual && Number(item.id_integrante) === Number(usuarioActual.id_integrante);
                 const badgeEstado = item.estado === 'Finalizada' 
                     ? 'bg-white/10 text-slate-300' 
                     : item.estado === 'En Curso' 
@@ -3032,7 +3055,7 @@
         }
 
         function seleccionarOradorPorId(id_intervencion) {
-            const item = intervencionesGlobal.find(i => i.id_intervencion === id_intervencion);
+            const item = intervencionesGlobal.find(i => Number(i.id_intervencion) === Number(id_intervencion));
             if (!item) return;
             seleccionarOrador(
                 item.id_intervencion,
@@ -3044,12 +3067,12 @@
         }
 
         async function retirarIntervencionPorId(id_intervencion) {
-            const item = intervencionesGlobal.find(i => i.id_intervencion === id_intervencion);
+            const item = intervencionesGlobal.find(i => Number(i.id_intervencion) === Number(id_intervencion));
             if (!item) return;
             if (!confirm(`¿Retirar del orden de oradores a H.C. ${item.nombre_completo}?`)) return;
             const res = await fetchAdmin(`/api/intervenciones/${id_intervencion}`, { method: 'DELETE' });
             if (res.ok) {
-                if (intervencionActivaId === id_intervencion) {
+                if (Number(intervencionActivaId) === Number(id_intervencion)) {
                     clearInterval(timerInterval);
                     timerInterval = null;
                     intervencionActivaId = null;
@@ -3594,7 +3617,7 @@
                 estadoEl.className = 'bg-rose-500/20 text-rose-300 border border-rose-400/50 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded';
             }
 
-            const btnVerDocumento = (votacion.id_proyecto && proyectosGlobal.some(p => p.id_proyecto === votacion.id_proyecto))
+            const btnVerDocumento = (votacion.id_proyecto && proyectosGlobal.some(p => Number(p.id_proyecto) === Number(votacion.id_proyecto)))
                 ? `<button onclick="irAVerProyecto(${votacion.id_proyecto})" class="bg-[#1e3a8a] hover:bg-blue-700 text-white font-bold text-xs uppercase px-3 py-2 rounded-xl border border-blue-300/40 transition"><i class="fa-solid fa-file-lines mr-1"></i> Ver Documento</button>`
                 : '';
 
@@ -3626,7 +3649,7 @@
             renderizarBannerVeredicto(votacion, si, no, abs, total);
 
             if (esModoConcejal && usuarioActual) {
-                const miVoto = votos.find(v => v.id_integrante === usuarioActual.id_integrante);
+                const miVoto = votos.find(v => Number(v.id_integrante) === Number(usuarioActual.id_integrante));
                 if (!estaAbierta || miVoto) {
                     if (botonesVotoEl) botonesVotoEl.classList.add('opacity-40', 'pointer-events-none');
                     if (miVotoEl) {
@@ -3675,6 +3698,9 @@
                 return alert('No hay ninguna votación activa.');
             }
 
+            const botonesVotoEl = document.getElementById('botones-emitir-voto');
+            if (botonesVotoEl) botonesVotoEl.classList.add('opacity-40', 'pointer-events-none');
+
             try {
                 const res = await fetchConcejal(`/api/votaciones/${votacionSeleccionadaId}/votar`, {
                     method: 'POST',
@@ -3683,11 +3709,13 @@
                 });
                 const data = await res.json();
                 if (!res.ok) {
+                    if (botonesVotoEl) botonesVotoEl.classList.remove('opacity-40', 'pointer-events-none');
                     return alert(data.error || 'No se pudo registrar el voto.');
                 }
                 notificar(`🗳️ Voto definitivo (${opcion}) registrado para H.C. ${usuarioActual.nombre_completo}`);
                 await cargarDetalleVotacion();
             } catch (err) {
+                if (botonesVotoEl) botonesVotoEl.classList.remove('opacity-40', 'pointer-events-none');
                 alert('Error de red al emitir voto: ' + err.message);
             }
         }
@@ -3917,13 +3945,13 @@
                 return;
             }
 
-            if (!filtrados.some(p => p.id_proyecto === proyectoSeleccionadoId)) {
+            if (!filtrados.some(p => Number(p.id_proyecto) === Number(proyectoSeleccionadoId))) {
                 proyectoSeleccionadoId = filtrados[0].id_proyecto;
             }
 
             listaLateral.innerHTML = filtrados.map((p, idx) => {
                 const esProposicion = p.tipo_documento === 'Proposición';
-                const esSeleccionado = p.id_proyecto === proyectoSeleccionadoId;
+                const esSeleccionado = Number(p.id_proyecto) === Number(proyectoSeleccionadoId);
                 const esPrivado = p.visible_publico === false;
                 const turnoOrden = idx + 1;
 
@@ -4005,7 +4033,7 @@
         }
 
         async function mostrarEnVisorDirecto(id_proyecto) {
-            const p = proyectosGlobal.find(item => item.id_proyecto === id_proyecto);
+            const p = proyectosGlobal.find(item => Number(item.id_proyecto) === Number(id_proyecto));
             if (!p) return;
 
             const badge = document.getElementById('visor-badge');
@@ -4210,217 +4238,184 @@
 
             const listaAutores = Object.values(mapaAutores).sort((a, b) => {
                 if (b.aprobadas.length !== a.aprobadas.length) return b.aprobadas.length - a.aprobadas.length;
-                return (b.aprobadas.length + b.archivadas.length + b.enTramite.length) -
-                       (a.aprobadas.length + a.archivadas.length + a.enTramite.length);
+                const totalB = b.aprobadas.length + b.enTramite.length + b.archivadas.length;
+                const totalA = a.aprobadas.length + a.enTramite.length + a.archivadas.length;
+                return totalB - totalA;
             });
 
             const maxAprobadas = listaAutores.length > 0 ? listaAutores[0].aprobadas.length : 0;
-            const ganadores = maxAprobadas > 0 ? listaAutores.filter(a => a.aprobadas.length === maxAprobadas) : [];
+            const destacados = listaAutores.filter(a => a.aprobadas.length > 0 && a.aprobadas.length === maxAprobadas);
 
-            let bloqueDestacadoHtml = '';
-            if (ganadores.length === 1) {
-                const g = ganadores[0];
-                bloqueDestacadoHtml = `
-                    <div style="background:#fefce8; border:2px solid #ca8a04; border-radius:10px; padding:16px; margin-bottom:24px;">
-                        <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:1.5px; color:#854d0e;">
-                            ★ Reconocimiento al Mérito Legislativo e Iniciativa Parlamentaria
-                        </p>
-                        <h3 style="margin:6px 0 4px 0; font-size:20px; font-weight:900; color:#0f172a; text-transform:uppercase;">
-                            H.C. ${escapeHTML(g.nombre)}
-                        </h3>
-                        <p style="margin:0; font-size:13px; color:#334155;">
-                            Bancada <strong>${escapeHTML(g.bancada)}</strong> • Comisión <strong>${escapeHTML(g.comision)}</strong> — Obtuvo el mayor número de iniciativas aprobadas en el recinto con un total de <strong>${g.aprobadas.length} ${g.aprobadas.length === 1 ? 'iniciativa aprobada' : 'iniciativas aprobadas'}</strong>.
-                        </p>
-                    </div>
-                `;
-            } else if (ganadores.length > 1) {
-                const nombresEmpate = ganadores.map(g => `H.C. ${escapeHTML(g.nombre)} (${escapeHTML(g.bancada)})`).join(' y ');
-                bloqueDestacadoHtml = `
-                    <div style="background:#fefce8; border:2px solid #ca8a04; border-radius:10px; padding:16px; margin-bottom:24px;">
-                        <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:1.5px; color:#854d0e;">
-                            ★ Reconocimiento Compartido al Mérito Legislativo (Empate en Iniciativas Aprobadas)
-                        </p>
-                        <h3 style="margin:6px 0 4px 0; font-size:18px; font-weight:900; color:#0f172a;">
-                            ${nombresEmpate}
-                        </h3>
-                        <p style="margin:0; font-size:13px; color:#334155;">
-                            Cada uno obtuvo el máximo puntaje del recinto con <strong>${maxAprobadas} ${maxAprobadas === 1 ? 'iniciativa aprobada' : 'iniciativas aprobadas'}</strong>.
-                        </p>
-                    </div>
-                `;
-            } else {
-                bloqueDestacadoHtml = `
-                    <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:14px; margin-bottom:24px;">
-                        <p style="margin:0; font-size:13px; color:#475569;">
-                            Aún no se registran proposiciones o proyectos de acuerdo con estado <strong>Aprobado</strong> en el sistema.
-                        </p>
-                    </div>
-                `;
-            }
-
-            const filasTablaAutores = listaAutores.length > 0 ? listaAutores.map((autor, idx) => {
-                const totalAutor = autor.aprobadas.length + autor.archivadas.length + autor.enTramite.length;
-                const esTop = maxAprobadas > 0 && autor.aprobadas.length === maxAprobadas;
-                const bgFila = esTop ? 'background:#fef9c3;' : (idx % 2 === 1 ? 'background:#f8fafc;' : '');
-                const detalleAprobadas = autor.aprobadas.length > 0
-                    ? autor.aprobadas.map(p => `• [${escapeHTML(p.codigo_radicado)}] ${escapeHTML(p.titulo)}`).join('<br>')
-                    : '<span style="color:#94a3b8; font-style:italic;">Ninguna aprobada</span>';
-
-                return `
-                    <tr style="${bgFila}">
-                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:bold;">${idx + 1}</td>
-                        <td style="border:1px solid #cbd5e1; padding:8px;">
-                            <strong>H.C. ${escapeHTML(autor.nombre)}</strong><br>
-                            <span style="font-size:11px; color:#475569;">${escapeHTML(autor.bancada)} • Com. ${escapeHTML(autor.comision)}</span>
-                        </td>
-                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:900; color:#15803d; font-size:15px;">
-                            ${autor.aprobadas.length}
-                        </td>
-                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#b91c1c; font-weight:bold;">
-                            ${autor.archivadas.length}
-                        </td>
-                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#334155;">
-                            ${totalAutor}
-                        </td>
-                        <td style="border:1px solid #cbd5e1; padding:8px; font-size:12px;">
-                            ${detalleAprobadas}
-                        </td>
-                    </tr>
-                `;
-            }).join('') : `
-                <tr>
-                    <td colspan="6" style="border:1px solid #cbd5e1; padding:16px; text-align:center; color:#64748b;">
-                        No hay documentos radicados registrados.
-                    </td>
-                </tr>
+            const bloqueDestacadoHtml = destacados.length > 0 ? `
+                <div style="background: #fffbeb; border: 2px solid #d97706; border-radius: 10px; padding: 16px; margin-bottom: 24px;">
+                    <p style="margin: 0 0 6px 0; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em; color: #92400e;">
+                        ★ Mención de Honor por Eficiencia Legislativa (${maxAprobadas} ${maxAprobadas === 1 ? 'iniciativa aprobada' : 'iniciativas aprobadas'})
+                    </p>
+                    <p style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">
+                        ${destacados.map(d => `H.C. ${escapeHTML(d.nombre)} (${escapeHTML(d.bancada)})`).join(' • ')}
+                    </p>
+                </div>
+            ` : `
+                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; margin-bottom: 24px;">
+                    <p style="margin: 0; font-size: 13px; color: #475569;">
+                        Aún no se registran iniciativas con estado <strong>Aprobado</strong> en el sistema para otorgar mención de honor.
+                    </p>
+                </div>
             `;
 
-            const listadoAprobadosHtml = aprobados.length > 0 ? aprobados.map((p, idx) => `
-                <div style="border-left:4px solid #16a34a; background:#f0fdf4; padding:10px 14px; margin-bottom:10px; border-radius:4px;">
-                    <p style="margin:0; font-size:11px; font-weight:bold; color:#166534; text-transform:uppercase;">
-                        ${idx + 1}. ${escapeHTML(p.tipo_documento || 'Proposición')} • Radicado ${escapeHTML(p.codigo_radicado)} • Comisión ${escapeHTML(p.comision)}
-                    </p>
-                    <p style="margin:4px 0; font-size:14px; font-weight:bold; color:#0f172a;">
-                        “${escapeHTML(p.titulo)}”
-                    </p>
-                    <p style="margin:0; font-size:12px; color:#334155;">
-                        <strong>Ponente / Autor:</strong> H.C. ${escapeHTML(p.autor)}
-                    </p>
-                    ${p.descripcion ? `<p style="margin:6px 0 0 0; font-size:12px; color:#1e293b; white-space:pre-wrap;">${escapeHTML(p.descripcion)}</p>` : ''}
-                </div>
-            `).join('') : '<p style="font-size:13px; color:#64748b;">No existen proposiciones o proyectos aprobados todavía.</p>';
+            const filasTablaAutores = listaAutores.length > 0
+                ? listaAutores.map((a, idx) => {
+                    const totalAutor = a.aprobadas.length + a.enTramite.length + a.archivadas.length;
+                    const esTop = a.aprobadas.length > 0 && a.aprobadas.length === maxAprobadas;
+                    return `
+                        <tr style="background: ${esTop ? '#fef3c7' : idx % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+                            <td style="border: 1px solid #94a3b8; padding: 8px; text-align: center; font-weight: 800;">${idx + 1}</td>
+                            <td style="border: 1px solid #94a3b8; padding: 8px; font-weight: 700;">
+                                H.C. ${escapeHTML(a.nombre)} ${esTop ? '★' : ''}
+                            </td>
+                            <td style="border: 1px solid #94a3b8; padding: 8px; font-size: 12px;">${escapeHTML(a.bancada)}</td>
+                            <td style="border: 1px solid #94a3b8; padding: 8px; text-align: center; font-weight: 800; color: #047857;">${a.aprobadas.length}</td>
+                            <td style="border: 1px solid #94a3b8; padding: 8px; text-align: center;">${a.enTramite.length}</td>
+                            <td style="border: 1px solid #94a3b8; padding: 8px; text-align: center; color: #b91c1c;">${a.archivadas.length}</td>
+                            <td style="border: 1px solid #94a3b8; padding: 8px; text-align: center; font-weight: 700;">${totalAutor}</td>
+                        </tr>
+                    `;
+                }).join('')
+                : `<tr><td colspan="7" style="border: 1px solid #94a3b8; padding: 14px; text-align: center; color: #64748b;">No hay iniciativas radicadas en el Orden del Día.</td></tr>`;
+
+            const detallePorAutorHtml = listaAutores.map((a, idx) => {
+                const renderListaDocs = (docs, etiqueta, colorHex) => {
+                    if (docs.length === 0) return '';
+                    return `
+                        <div style="margin-top: 8px;">
+                            <p style="margin: 0 0 4px 0; font-size: 12px; font-weight: 800; color: ${colorHex}; text-transform: uppercase;">
+                                ${etiqueta} (${docs.length}):
+                            </p>
+                            <ul style="margin: 0 0 6px 20px; padding: 0; font-size: 13px;">
+                                ${docs.map(d => `
+                                    <li style="margin-bottom: 4px;">
+                                        <strong>[${escapeHTML(d.codigo_radicado)}]</strong> ${escapeHTML(d.tipo_documento || 'Iniciativa')}: 
+                                        “${escapeHTML(d.titulo)}” <em>(Comisión ${escapeHTML(d.comision)})</em>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                };
+
+                return `
+                    <div style="border: 1px solid #cbd5e1; border-left: 4px solid #0f172a; border-radius: 6px; padding: 12px 16px; margin-bottom: 14px; background: #ffffff;">
+                        <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #0f172a;">
+                            ${idx + 1}. H.C. ${escapeHTML(a.nombre)} — <span style="font-weight: 600; color: #475569;">Bancada ${escapeHTML(a.bancada)}</span>
+                        </h4>
+                        <p style="margin: 3px 0 6px 0; font-size: 12px; color: #334155;">
+                            Total radicadas: <strong>${a.aprobadas.length + a.enTramite.length + a.archivadas.length}</strong> | 
+                            Aprobadas: <strong style="color: #047857;">${a.aprobadas.length}</strong> | 
+                            En trámite: <strong>${a.enTramite.length}</strong> | 
+                            Archivadas: <strong style="color: #b91c1c;">${a.archivadas.length}</strong>
+                        </p>
+                        ${renderListaDocs(a.aprobadas, '✔ Iniciativas Aprobadas', '#047857')}
+                        ${renderListaDocs(a.enTramite, '• En Debate / Radicadas', '#b45309')}
+                        ${renderListaDocs(a.archivadas, '✖ Archivadas', '#b91c1c')}
+                    </div>
+                `;
+            }).join('');
 
             contenedor.innerHTML = `
-                <div id="acta-exportable-word">
-                    <div style="text-align:center; border-bottom:3px double #0f172a; padding-bottom:16px; margin-bottom:20px;">
-                        <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:2px; color:#475569;">
-                            República de Colombia • Municipio de Ibagué • Fundación Creer y Merecer
-                        </p>
-                        <h1 style="margin:6px 0; font-size:22px; font-weight:900; text-transform:uppercase; color:#0f172a;">
-                            CONCEJO MUNICIPAL DE IBAGUÉ
-                        </h1>
-                        <h2 style="margin:0; font-size:14px; font-weight:bold; text-transform:uppercase; color:#1e3a8a;">
-                            Acta Oficial de Proposiciones Aprobadas y Mérito Legislativo
-                        </h2>
-                        <p style="margin:6px 0 0 0; font-size:12px; color:#475569;">
-                            <strong>Sesión:</strong> ${escapeHTML(nombreSesion)} &nbsp;|&nbsp; <strong>Fecha de expedición:</strong> ${escapeHTML(fechaHoy)}
-                        </p>
-                    </div>
+                <div style="text-align: center; border-bottom: 3px double #0f172a; padding-bottom: 16px; margin-bottom: 20px;">
+                    <p style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: #475569;">
+                        República de Colombia • Municipio de Ibagué • Tolima
+                    </p>
+                    <h1 style="margin: 6px 0 4px 0; font-size: 22px; font-weight: 900; text-transform: uppercase; color: #0f172a;">
+                        CONCEJO MUNICIPAL DE IBAGUÉ
+                    </h1>
+                    <p style="margin: 0; font-size: 13px; font-weight: 700; color: #1e293b;">
+                        Secretaría General • Fundación Creer y Merecer (Modelo Concejo)
+                    </p>
+                    <p style="margin: 6px 0 0 0; font-size: 12px; color: #475569;">
+                        <strong>Sesión de referencia:</strong> ${escapeHTML(nombreSesion)} &nbsp;|&nbsp; <strong>Fecha de expedición:</strong> ${escapeHTML(fechaHoy)}
+                    </p>
+                </div>
 
-                    <table style="width:100%; border-collapse:collapse; margin-bottom:22px; text-align:center;">
-                        <tr>
-                            <td style="border:1px solid #cbd5e1; padding:10px; background:#f8fafc; width:25%;">
-                                <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#475569; display:block;">Total Radicados</span>
-                                <strong style="font-size:20px; color:#0f172a;">${totalRadicados}</strong>
-                            </td>
-                            <td style="border:1px solid #86efac; padding:10px; background:#f0fdf4; width:25%;">
-                                <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#166534; display:block;">Aprobadas</span>
-                                <strong style="font-size:20px; color:#15803d;">${aprobados.length}</strong>
-                            </td>
-                            <td style="border:1px solid #fecaca; padding:10px; background:#fef2f2; width:25%;">
-                                <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#991b1b; display:block;">Archivadas</span>
-                                <strong style="font-size:20px; color:#b91c1c;">${archivados.length}</strong>
-                            </td>
-                            <td style="border:1px solid #fde68a; padding:10px; background:#fffbeb; width:25%;">
-                                <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#92400e; display:block;">En Trámite</span>
-                                <strong style="font-size:20px; color:#b45309;">${enTramite.length}</strong>
-                            </td>
+                <h2 style="font-size: 16px; font-weight: 800; text-transform: uppercase; color: #0f172a; margin: 0 0 12px 0;">
+                    1. Balance Consolidado de Gestión Legislativa
+                </h2>
+
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px;">
+                    <thead>
+                        <tr style="background: #0f172a; color: #ffffff;">
+                            <th style="border: 1px solid #0f172a; padding: 8px; text-align: center;">Total Radicadas</th>
+                            <th style="border: 1px solid #0f172a; padding: 8px; text-align: center;">Aprobadas</th>
+                            <th style="border: 1px solid #0f172a; padding: 8px; text-align: center;">En Debate / Trámite</th>
+                            <th style="border: 1px solid #0f172a; padding: 8px; text-align: center;">Archivadas</th>
                         </tr>
-                    </table>
-
-                    ${bloqueDestacadoHtml}
-
-                    <h3 style="font-size:14px; font-weight:800; text-transform:uppercase; color:#0f172a; border-bottom:1px solid #94a3b8; padding-bottom:4px; margin-bottom:10px;">
-                        1. Consolidado y Ranking por Honorable Concejal
-                    </h3>
-                    <table style="width:100%; border-collapse:collapse; margin-bottom:24px; font-size:13px;">
-                        <thead>
-                            <tr style="background:#0f172a; color:#ffffff;">
-                                <th style="border:1px solid #0f172a; padding:8px; width:40px;">Pos.</th>
-                                <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Honorable Concejal</th>
-                                <th style="border:1px solid #0f172a; padding:8px; width:85px;">Aprobadas</th>
-                                <th style="border:1px solid #0f172a; padding:8px; width:85px;">Archivadas</th>
-                                <th style="border:1px solid #0f172a; padding:8px; width:75px;">Total</th>
-                                <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Iniciativas Aprobadas</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${filasTablaAutores}
-                        </tbody>
-                    </table>
-
-                    <h3 style="font-size:14px; font-weight:800; text-transform:uppercase; color:#0f172a; border-bottom:1px solid #94a3b8; padding-bottom:4px; margin-bottom:12px;">
-                        2. Relación Detallada de Iniciativas Aprobadas (${aprobados.length})
-                    </h3>
-                    <div style="margin-bottom:32px;">
-                        ${listadoAprobadosHtml}
-                    </div>
-
-                    <table style="width:100%; border-collapse:collapse; margin-top:36px; text-align:center;">
+                    </thead>
+                    <tbody>
                         <tr>
-                            <td style="width:50%; padding:16px;">
-                                <div style="border-top:1px solid #0f172a; width:80%; margin:0 auto; padding-top:6px;">
-                                    <strong style="font-size:12px; text-transform:uppercase;">Presidencia del Concejo</strong><br>
-                                    <span style="font-size:11px; color:#475569;">Concejo Municipal de Ibagué</span>
-                                </div>
-                            </td>
-                            <td style="width:50%; padding:16px;">
-                                <div style="border-top:1px solid #0f172a; width:80%; margin:0 auto; padding-top:6px;">
-                                    <strong style="font-size:12px; text-transform:uppercase;">Secretaría General</strong><br>
-                                    <span style="font-size:11px; color:#475569;">Certificación y Registro de Actas</span>
-                                </div>
-                            </td>
+                            <td style="border: 1px solid #94a3b8; padding: 10px; text-align: center; font-size: 18px; font-weight: 900;">${totalRadicados}</td>
+                            <td style="border: 1px solid #94a3b8; padding: 10px; text-align: center; font-size: 18px; font-weight: 900; color: #047857;">${aprobados.length}</td>
+                            <td style="border: 1px solid #94a3b8; padding: 10px; text-align: center; font-size: 18px; font-weight: 900; color: #b45309;">${enTramite.length}</td>
+                            <td style="border: 1px solid #94a3b8; padding: 10px; text-align: center; font-size: 18px; font-weight: 900; color: #b91c1c;">${archivados.length}</td>
                         </tr>
-                    </table>
+                    </tbody>
+                </table>
+
+                ${bloqueDestacadoHtml}
+
+                <h2 style="font-size: 16px; font-weight: 800; text-transform: uppercase; color: #0f172a; margin: 20px 0 10px 0;">
+                    2. Cuadro Comparativo de Iniciativas por Honorable Concejal
+                </h2>
+
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px;">
+                    <thead>
+                        <tr style="background: #1e293b; color: #ffffff;">
+                            <th style="border: 1px solid #1e293b; padding: 8px; text-align: center; width: 45px;">#</th>
+                            <th style="border: 1px solid #1e293b; padding: 8px; text-align: left;">Honorable Concejal / Proponente</th>
+                            <th style="border: 1px solid #1e293b; padding: 8px; text-align: left;">Bancada</th>
+                            <th style="border: 1px solid #1e293b; padding: 8px; text-align: center;">Aprobadas</th>
+                            <th style="border: 1px solid #1e293b; padding: 8px; text-align: center;">En Trámite</th>
+                            <th style="border: 1px solid #1e293b; padding: 8px; text-align: center;">Archivadas</th>
+                            <th style="border: 1px solid #1e293b; padding: 8px; text-align: center;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filasTablaAutores}
+                    </tbody>
+                </table>
+
+                <h2 style="font-size: 16px; font-weight: 800; text-transform: uppercase; color: #0f172a; margin: 24px 0 12px 0;">
+                    3. Relación Detallada de Proposiciones y Proyectos por Autor
+                </h2>
+
+                ${detallePorAutorHtml || '<p style="font-size: 13px; color: #64748b;">No existen documentos registrados para detallar.</p>'}
+
+                <div style="margin-top: 40px; padding-top: 18px; border-top: 1px solid #94a3b8; display: flex; justify-content: space-between; font-size: 12px; color: #334155;">
+                    <div>
+                        <p style="margin: 0; font-weight: 800;">SECRETARÍA GENERAL</p>
+                        <p style="margin: 2px 0 0 0;">Concejo Municipal de Ibagué</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="margin: 0; font-weight: 800;">PRESIDENCIA DEL CONCEJO</p>
+                        <p style="margin: 2px 0 0 0;">Fundación Creer y Merecer</p>
+                    </div>
                 </div>
             `;
         }
 
         function descargarWordIniciativas() {
-            const contenido = document.getElementById('acta-exportable-word');
+            const contenido = document.getElementById('contenido-documento-iniciativas');
             if (!contenido) return;
 
-            const preHtml = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office'
-                      xmlns:w='urn:schemas-microsoft-com:office:word'
-                      xmlns='http://www.w3.org/TR/REC-html40'>
-                <head>
-                    <meta charset='utf-8'>
-                    <title>Acta de Proposiciones Aprobadas - Concejo Municipal de Ibagué</title>
-                    <style>
-                        body { font-family: 'Times New Roman', Georgia, serif; color: #0f172a; line-height: 1.45; }
-                        table { border-collapse: collapse; width: 100%; }
-                    </style>
-                </head>
-                <body>
+            const htmlWord = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'><title>Acta Resumen de Iniciativas - Concejo Municipal de Ibagué</title></head>
+                <body style="font-family: 'Times New Roman', serif; color: #0f172a; line-height: 1.5;">
+                    ${contenido.innerHTML}
+                </body>
+                </html>
             `;
-            const postHtml = '</body></html>';
-            const htmlCompleto = preHtml + contenido.innerHTML + postHtml;
 
-            const blob = new Blob(['\ufeff', htmlCompleto], {
-                type: 'application/msword;charset=utf-8'
-            });
-
+            const blob = new Blob(['\ufeff', htmlWord], { type: 'application/msword;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const enlace = document.createElement('a');
             const fechaArchivo = new Date().toISOString().slice(0, 10);
@@ -4430,38 +4425,32 @@
             enlace.click();
             document.body.removeChild(enlace);
             URL.revokeObjectURL(url);
-
-            notificar('📄 Documento Word (.doc) descargado correctamente');
+            notificar('📥 Documento Word (.doc) descargado');
         }
 
         function imprimirActaIniciativas() {
-            const contenido = document.getElementById('acta-exportable-word');
+            const contenido = document.getElementById('contenido-documento-iniciativas');
             if (!contenido) return;
 
             const ventanaImpresion = window.open('', '_blank', 'width=900,height=700');
             if (!ventanaImpresion) {
-                return alert('Por favor permita las ventanas emergentes para imprimir o guardar en PDF.');
+                return alert('Por favor habilite las ventanas emergentes para imprimir o guardar como PDF.');
             }
-
             ventanaImpresion.document.write(`
                 <!DOCTYPE html>
                 <html lang="es">
                 <head>
                     <meta charset="UTF-8">
-                    <title>Acta Oficial - Concejo Municipal de Ibagué</title>
+                    <title>Acta Resumen de Iniciativas • Concejo Municipal de Ibagué</title>
                     <style>
-                        body { font-family: Georgia, 'Times New Roman', serif; color: #0f172a; padding: 24px; line-height: 1.45; }
-                        @media print {
-                            body { padding: 0; }
-                        }
+                        body { font-family: Georgia, 'Times New Roman', serif; color: #0f172a; padding: 28px; line-height: 1.5; }
+                        @media print { body { padding: 0; } }
                     </style>
                 </head>
                 <body>
                     ${contenido.innerHTML}
                     <script>
-                        window.onload = function() {
-                            window.print();
-                        };
+                        window.onload = function() { window.print(); window.close(); };
                     <\/script>
                 </body>
                 </html>
