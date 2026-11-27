@@ -48,15 +48,11 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--azul-abismo);
             background-image:
-                /* Foco de luz dorada cenital en el techo del recinto */
                 radial-gradient(ellipse 85% 42% at 50% -5%, rgba(243, 207, 122, 0.28) 0%, rgba(207, 163, 73, 0.08) 45%, transparent 75%),
-                /* Iluminación azul real lateral */
                 radial-gradient(circle at 10% 30%, rgba(37, 99, 235, 0.24) 0%, transparent 48%),
                 radial-gradient(circle at 90% 75%, rgba(29, 78, 216, 0.22) 0%, transparent 52%),
-                /* Trama arquitectónica sutil */
                 repeating-linear-gradient(0deg, rgba(243, 207, 122, 0.025) 0px, rgba(243, 207, 122, 0.025) 1px, transparent 1px, transparent 48px),
                 repeating-linear-gradient(90deg, rgba(243, 207, 122, 0.025) 0px, rgba(243, 207, 122, 0.025) 1px, transparent 1px, transparent 48px),
-                /* Degradado principal azul marino profundo */
                 linear-gradient(180deg, #071126 0%, #0d1d3d 48%, #050b18 100%);
             background-attachment: fixed;
             color: #f8fafc;
@@ -187,7 +183,7 @@
             transform: translateY(-2px);
         }
 
-        /* Tarjetas KPI luminosas (Presentes, Retardo, Ausentes, Excusa) */
+        /* Tarjetas KPI luminosas */
         .kpi-card {
             position: relative;
             overflow: hidden;
@@ -1056,6 +1052,9 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    <button type="button" onclick="abrirModalResumenIniciativas()" class="flex-1 sm:flex-initial bg-gradient-to-b from-emerald-600 to-emerald-900 hover:from-emerald-500 hover:to-emerald-800 text-white font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl border border-emerald-300/50 transition shadow-lg">
+                        <i class="fa-solid fa-award mr-1.5 text-[#f3cf7a]"></i> Acta de Iniciativas
+                    </button>
                     <button type="button" onclick="toggleFormularioProposicionConcejal()" class="flex-1 sm:flex-initial btn-oro font-extrabold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl">
                         <i class="fa-solid fa-feather-pointed mr-1.5"></i> Radicar Proposición
                     </button>
@@ -1386,6 +1385,38 @@
                 <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-[#f3cf7a]/25">
                     <button type="button" onclick="cerrarModalSesion()" class="px-4 py-2 text-xs font-bold uppercase text-slate-300 hover:text-white rounded-xl">Cancelar</button>
                     <button type="button" onclick="guardarSesion()" class="btn-oro font-extrabold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider">Instalar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ACTA OFICIAL Y RESUMEN DE INICIATIVAS APROBADAS -->
+    <div id="modal-resumen-iniciativas" class="fixed inset-0 bg-black/90 hidden items-center justify-center p-2 sm:p-4 z-50 backdrop-blur-md">
+        <div class="panel-institucional rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col border-2 border-[#f3cf7a] overflow-hidden shadow-[0_25px_70px_rgba(0,0,0,0.95)]">
+            
+            <!-- Barra superior de acciones del documento -->
+            <div class="bg-[#071126] p-4 border-b border-[#f3cf7a]/40 flex flex-wrap justify-between items-center gap-3">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#f3cf7a] block">Balance Legislativo y Mérito Parlamentario</span>
+                    <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-white">Acta Resumen de Proposiciones e Iniciativas</h3>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button type="button" onclick="descargarWordIniciativas()" class="btn-oro font-extrabold text-xs uppercase tracking-wider px-4 py-2 rounded-xl flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-word"></i> Descargar Word (.doc)
+                    </button>
+                    <button type="button" onclick="imprimirActaIniciativas()" class="bg-[#1e3a8a] hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-xl border border-blue-300/40 flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-print"></i> Imprimir / PDF
+                    </button>
+                    <button type="button" onclick="cerrarModalResumenIniciativas()" class="bg-white/10 hover:bg-rose-700 text-slate-200 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hoja Blanca Formal del Documento -->
+            <div class="flex-1 overflow-y-auto bg-slate-300 p-3 sm:p-6">
+                <div id="contenido-documento-iniciativas" class="bg-white text-slate-900 max-w-4xl mx-auto p-6 sm:p-12 rounded-xl shadow-xl border border-slate-400 font-serif leading-relaxed">
+                    <!-- Se genera dinámicamente -->
                 </div>
             </div>
         </div>
@@ -1904,6 +1935,7 @@
             if (e.key === 'Escape') {
                 cerrarModalSesion();
                 cerrarModalAdmin();
+                cerrarModalResumenIniciativas();
                 const drawer = document.getElementById('drawer-marca-agua');
                 if (drawer) drawer.classList.remove('abierto');
             }
@@ -3873,6 +3905,287 @@
                 proyectoSeleccionadoId = null;
                 await cargarProyectos(false);
             }
+        }
+
+        // =====================================================================
+        // 7. ACTA OFICIAL DE INICIATIVAS, RANKING Y EXPORTACIÓN WORD / PDF
+        // =====================================================================
+        function abrirModalResumenIniciativas() {
+            const modal = document.getElementById('modal-resumen-iniciativas');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            generarContenidoActaIniciativas();
+        }
+
+        function cerrarModalResumenIniciativas() {
+            const modal = document.getElementById('modal-resumen-iniciativas');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function generarContenidoActaIniciativas() {
+            const contenedor = document.getElementById('contenido-documento-iniciativas');
+            if (!contenedor) return;
+
+            const fechaHoy = new Date().toLocaleDateString('es-CO', {
+                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+            });
+
+            const selectSesion = document.getElementById('select-sesion');
+            const nombreSesion = (sesionActual && selectSesion && selectSesion.selectedIndex >= 0)
+                ? selectSesion.options[selectSesion.selectedIndex].text
+                : 'Sesiones del Periodo Legislativo';
+
+            const totalRadicados = proyectosGlobal.length;
+            const aprobados = proyectosGlobal.filter(p => p.estado === 'Aprobado');
+            const archivados = proyectosGlobal.filter(p => p.estado === 'Archivado');
+            const enTramite = proyectosGlobal.filter(p => p.estado !== 'Aprobado' && p.estado !== 'Archivado');
+
+            const mapaAutores = {};
+
+            proyectosGlobal.forEach(p => {
+                const nombreAutor = (p.autor || 'Mesa Directiva / Sin Autor').trim();
+                if (!mapaAutores[nombreAutor]) {
+                    const infoConcejal = integrantesGlobal.find(
+                        i => normalizarTexto(i.nombre_completo) === normalizarTexto(nombreAutor)
+                    );
+                    mapaAutores[nombreAutor] = {
+                        nombre: nombreAutor,
+                        bancada: infoConcejal ? infoConcejal.bancada : 'Institucional',
+                        comision: infoConcejal ? infoConcejal.comision : (p.comision || 'Plenaria'),
+                        aprobadas: [],
+                        archivadas: [],
+                        enTramite: []
+                    };
+                }
+
+                if (p.estado === 'Aprobado') {
+                    mapaAutores[nombreAutor].aprobadas.push(p);
+                } else if (p.estado === 'Archivado') {
+                    mapaAutores[nombreAutor].archivadas.push(p);
+                } else {
+                    mapaAutores[nombreAutor].enTramite.push(p);
+                }
+            });
+
+            const listaAutores = Object.values(mapaAutores).sort((a, b) => {
+                if (b.aprobadas.length !== a.aprobadas.length) {
+                    return b.aprobadas.length - a.aprobadas.length;
+                }
+                return (b.aprobadas.length + b.archivadas.length + b.enTramite.length) -
+                       (a.aprobadas.length + a.archivadas.length + a.enTramite.length);
+            });
+
+            const maxAprobadas = listaAutores.length > 0 ? listaAutores[0].aprobadas.length : 0;
+            const ganadores = maxAprobadas > 0
+                ? listaAutores.filter(a => a.aprobadas.length === maxAprobadas)
+                : [];
+
+            let bloqueDestacadoHtml = '';
+            if (ganadores.length === 1) {
+                const g = ganadores[0];
+                bloqueDestacadoHtml = `
+                    <div style="background:#fefce8; border:2px solid #ca8a04; border-radius:10px; padding:16px; margin-bottom:24px;">
+                        <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:1.5px; color:#854d0e;">
+                            ★ Reconocimiento al Mérito Legislativo e Iniciativa Parlamentaria
+                        </p>
+                        <h3 style="margin:6px 0 4px 0; font-size:20px; font-weight:900; color:#0f172a; text-transform:uppercase;">
+                            H.C. ${g.nombre}
+                        </h3>
+                        <p style="margin:0; font-size:13px; color:#334155;">
+                            Bancada <strong>${g.bancada}</strong> • Comisión <strong>${g.comision}</strong> — Obtuvo el mayor número de iniciativas aprobadas en el recinto con un total de <strong>${g.aprobadas.length} ${g.aprobadas.length === 1 ? 'iniciativa aprobada' : 'iniciativas aprobadas'}</strong>.
+                        </p>
+                    </div>
+                `;
+            } else if (ganadores.length > 1) {
+                const nombresEmpate = ganadores.map(g => `H.C. ${g.nombre} (${g.bancada})`).join(' y ');
+                bloqueDestacadoHtml = `
+                    <div style="background:#fefce8; border:2px solid #ca8a04; border-radius:10px; padding:16px; margin-bottom:24px;">
+                        <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:1.5px; color:#854d0e;">
+                            ★ Reconocimiento Compartido al Mérito Legislativo (Empate en Iniciativas Aprobadas)
+                        </p>
+                        <h3 style="margin:6px 0 4px 0; font-size:18px; font-weight:900; color:#0f172a;">
+                            ${nombresEmpate}
+                        </h3>
+                        <p style="margin:0; font-size:13px; color:#334155;">
+                            Lideran el balance legislativo con <strong>${maxAprobadas} ${maxAprobadas === 1 ? 'iniciativa aprobada' : 'iniciativas aprobadas'}</strong> cada uno.
+                        </p>
+                    </div>
+                `;
+            } else {
+                bloqueDestacadoHtml = `
+                    <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:14px; margin-bottom:24px;">
+                        <p style="margin:0; font-size:13px; color:#475569;">
+                            <em>Aún no se registran proposiciones o proyectos con estado <strong>Aprobado</strong> para asignar el reconocimiento al mayor número de iniciativas aprobadas.</em>
+                        </p>
+                    </div>
+                `;
+            }
+
+            const filasTablaAutores = listaAutores.length > 0
+                ? listaAutores.map((autor, index) => {
+                    const totalAutor = autor.aprobadas.length + autor.archivadas.length + autor.enTramite.length;
+                    const detalleAprobadas = autor.aprobadas.length > 0
+                        ? autor.aprobadas.map(item => `
+                            <li style="margin-bottom:4px;">
+                                <strong>[${item.codigo_radicado}]</strong> ${item.tipo_documento || 'Iniciativa'}: <em>“${item.titulo}”</em> (${item.comision})
+                            </li>
+                        `).join('')
+                        : '<span style="color:#64748b; font-style:italic;">Sin iniciativas aprobadas</span>';
+
+                    return `
+                        <tr>
+                            <td style="border:1px solid #94a3b8; padding:8px; text-align:center; font-weight:bold;">${index + 1}</td>
+                            <td style="border:1px solid #94a3b8; padding:8px;">
+                                <strong>H.C. ${autor.nombre}</strong><br>
+                                <span style="font-size:11px; color:#475569;">Bancada ${autor.bancada} • Com. ${autor.comision}</span>
+                            </td>
+                            <td style="border:1px solid #94a3b8; padding:8px; text-align:center; font-weight:bold; color:#047857; background:#ecfdf5;">
+                                ${autor.aprobadas.length}
+                            </td>
+                            <td style="border:1px solid #94a3b8; padding:8px; text-align:center; color:#be123c;">
+                                ${autor.archivadas.length}
+                            </td>
+                            <td style="border:1px solid #94a3b8; padding:8px; text-align:center; font-weight:bold;">
+                                ${totalAutor}
+                            </td>
+                            <td style="border:1px solid #94a3b8; padding:8px; font-size:12px;">
+                                ${autor.aprobadas.length > 0 ? `<ul style="margin:0; padding-left:16px;">${detalleAprobadas}</ul>` : detalleAprobadas}
+                            </td>
+                        </tr>
+                    `;
+                }).join('')
+                : `<tr><td colspan="6" style="border:1px solid #94a3b8; padding:16px; text-align:center; color:#64748b;">No hay proposiciones ni proyectos radicados en el sistema.</td></tr>`;
+
+            const listaArchivadasHtml = archivados.length > 0
+                ? `<ul style="margin:6px 0 0 0; padding-left:18px; font-size:12.5px;">
+                    ${archivados.map(a => `
+                        <li style="margin-bottom:4px;">
+                            <strong>[${a.codigo_radicado}]</strong> ${a.tipo_documento || 'Iniciativa'} — <em>“${a.titulo}”</em> | Autor: <strong>H.C. ${a.autor}</strong>
+                        </li>
+                    `).join('')}
+                   </ul>`
+                : `<p style="font-size:12.5px; color:#64748b; font-style:italic; margin:4px 0 0 0;">No se registran proposiciones o proyectos archivados.</p>`;
+
+            contenedor.innerHTML = `
+                <div style="text-align:center; border-bottom:3px double #0f172a; padding-bottom:14px; margin-bottom:20px;">
+                    <p style="margin:0; font-size:11px; font-weight:bold; letter-spacing:2px; text-transform:uppercase; color:#475569;">
+                        República de Colombia • Departamento del Tolima
+                    </p>
+                    <h1 style="margin:4px 0; font-size:22px; font-weight:900; text-transform:uppercase; color:#0f172a;">
+                        CONCEJO MUNICIPAL DE IBAGUÉ
+                    </h1>
+                    <p style="margin:0; font-size:12px; font-weight:bold; text-transform:uppercase; color:#92400e;">
+                        Fundación Creer y Merecer • Secretaría General
+                    </p>
+                    <p style="margin:8px 0 0 0; font-size:12px; color:#334155;">
+                        <strong>ACTA CONSOLIDADA DE INICIATIVAS LEGISLATIVAS Y PROPOSICIONES</strong><br>
+                        Referencia: ${nombreSesion} • Fecha de expedición: ${fechaHoy}
+                    </p>
+                </div>
+
+                ${bloqueDestacadoHtml}
+
+                <div style="display:flex; justify-content:space-between; gap:10px; margin-bottom:20px; text-align:center;">
+                    <div style="flex:1; border:1px solid #cbd5e1; padding:10px; border-radius:8px; background:#f8fafc;">
+                        <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#475569; display:block;">Total Radicadas</span>
+                        <strong style="font-size:20px; color:#0f172a;">${totalRadicados}</strong>
+                    </div>
+                    <div style="flex:1; border:1px solid #6ee7b7; padding:10px; border-radius:8px; background:#ecfdf5;">
+                        <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#047857; display:block;">Aprobadas</span>
+                        <strong style="font-size:20px; color:#047857;">${aprobados.length}</strong>
+                    </div>
+                    <div style="flex:1; border:1px solid #fda4af; padding:10px; border-radius:8px; background:#fff1f2;">
+                        <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#be123c; display:block;">Archivadas</span>
+                        <strong style="font-size:20px; color:#be123c;">${archivados.length}</strong>
+                    </div>
+                    <div style="flex:1; border:1px solid #fcd34d; padding:10px; border-radius:8px; background:#fffbeb;">
+                        <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#b45309; display:block;">En Trámite</span>
+                        <strong style="font-size:20px; color:#b45309;">${enTramite.length}</strong>
+                    </div>
+                </div>
+
+                <h4 style="margin:0 0 10px 0; font-size:14px; font-weight:900; text-transform:uppercase; color:#0f172a; border-bottom:1px solid #cbd5e1; padding-bottom:4px;">
+                    1. Consolidado por Honorable Concejal y Relación de Iniciativas Aprobadas
+                </h4>
+                <table style="width:100%; border-collapse:collapse; margin-bottom:24px; font-size:13px;">
+                    <thead>
+                        <tr style="background:#0f172a; color:#ffffff; font-size:11px; text-transform:uppercase;">
+                            <th style="border:1px solid #0f172a; padding:8px; width:40px;">#</th>
+                            <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Honorable Concejal</th>
+                            <th style="border:1px solid #0f172a; padding:8px; width:75px;">Aprob.</th>
+                            <th style="border:1px solid #0f172a; padding:8px; width:75px;">Archiv.</th>
+                            <th style="border:1px solid #0f172a; padding:8px; width:65px;">Total</th>
+                            <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Proposiciones / Proyectos Aprobados</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filasTablaAutores}
+                    </tbody>
+                </table>
+
+                <h4 style="margin:0 0 6px 0; font-size:14px; font-weight:900; text-transform:uppercase; color:#0f172a; border-bottom:1px solid #cbd5e1; padding-bottom:4px;">
+                    2. Constancia de Proposiciones y Proyectos Archivados
+                </h4>
+                ${listaArchivadasHtml}
+
+                <div style="margin-top:48px; display:flex; justify-content:space-between; gap:40px; text-align:center; font-size:12px;">
+                    <div style="flex:1; border-top:1px solid #0f172a; padding-top:8px;">
+                        <strong>PRESIDENCIA DEL CONCEJO MUNICIPAL</strong><br>
+                        <span style="color:#475569;">Concejo Municipal de Ibagué</span>
+                    </div>
+                    <div style="flex:1; border-top:1px solid #0f172a; padding-top:8px;">
+                        <strong>SECRETARÍA GENERAL</strong><br>
+                        <span style="color:#475569;">Certificación y Registro Legislativo</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function descargarWordIniciativas() {
+            const contenido = document.getElementById('contenido-documento-iniciativas').innerHTML;
+            const htmlCompleto = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office'
+                      xmlns:w='urn:schemas-microsoft-com:office:word'
+                      xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'><title>Acta de Iniciativas - Concejo de Ibagué</title></head>
+                <body style="font-family: 'Times New Roman', serif; color:#0f172a;">
+                    ${contenido}
+                </body>
+                </html>
+            `;
+            const blob = new Blob(['\ufeff', htmlCompleto], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const enlace = document.createElement('a');
+            enlace.href = url;
+            enlace.download = `Acta_Iniciativas_Concejo_Ibague_${new Date().toISOString().slice(0, 10)}.doc`;
+            document.body.appendChild(enlace);
+            enlace.click();
+            document.body.removeChild(enlace);
+            URL.revokeObjectURL(url);
+            notificar('📄 Documento Word (.doc) descargado correctamente');
+        }
+
+        function imprimirActaIniciativas() {
+            const contenido = document.getElementById('contenido-documento-iniciativas').innerHTML;
+            const ventana = window.open('', '_blank', 'width=900,height=700');
+            ventana.document.write(`
+                <html>
+                <head>
+                    <title>Acta Oficial de Iniciativas - Concejo Municipal de Ibagué</title>
+                    <style>
+                        body { font-family: Georgia, 'Times New Roman', serif; padding: 24px; color: #0f172a; }
+                        @media print { body { padding: 0; } }
+                    </style>
+                </head>
+                <body>${contenido}</body>
+                </html>
+            `);
+            ventana.document.close();
+            ventana.focus();
+            setTimeout(() => {
+                ventana.print();
+            }, 300);
         }
     </script>
 </body>
