@@ -450,7 +450,7 @@ app.get('/api/eventos', (req, res) => {
 
 app.get('/api/configuracion-visual', async (req, res) => {
     try {
-        if (cacheConfigVisual && cacheConfigVisual.id) {
+        if (cacheConfigVisual && cacheConfigVisual.logo_base64) {
             return res.json(cacheConfigVisual);
         }
 
@@ -494,7 +494,10 @@ app.put('/api/configuracion-visual', verificarAdmin, async (req, res) => {
         const actualRes = await pool.query('SELECT * FROM configuracion_visual WHERE id = 1');
         const actual = actualRes.rows[0] || {};
 
-        const nuevoLogo = logo_base64 !== undefined ? logo_base64 : actual.logo_base64;
+        // Solo actualiza el logo si llega una imagen nueva válida (evita que los sliders lo borren)
+        const tieneLogoNuevo = typeof logo_base64 === 'string' && logo_base64.trim().startsWith('data:image');
+        const nuevoLogo = tieneLogoNuevo ? logo_base64.trim() : (actual.logo_base64 || null);
+
         const nuevaVis = marca_agua_visible !== undefined
             ? Boolean(marca_agua_visible)
             : (actual.marca_agua_visible !== null ? Boolean(actual.marca_agua_visible) : true);
