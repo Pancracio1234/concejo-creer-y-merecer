@@ -56,7 +56,7 @@ function normalizar(texto) {
 }
 
 // =====================================================================
-// INICIALIZACIÓN Y MIGRACIÓN AUTOMÁTICA DE TABLAS EN POSTGRESQL
+// INICIALIZACIÓN, LIMPIEZA TOTAL DE DUPLICADOS Y MIGRACIÓN AUTOMÁTICA
 // =====================================================================
 async function inicializarBaseDatos() {
     const client = await pool.connect();
@@ -177,8 +177,49 @@ async function inicializarBaseDatos() {
             INSERT INTO configuracion_visual (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
         `);
 
-        // Migraciones seguras y limpieza automática de turnos duplicados existentes
+        // =================================================================
+        // LIMPIEZA PROFUNDA DE DUPLICADOS EN TODAS LAS TABLAS DE POSTGRESQL
+        // =================================================================
         await client.query(`
+            -- 1. Limpiar espacios extras en nombres de integrantes
+            UPDATE integrantes SET nombre_completo = TRIM(REGEXP_REPLACE(nombre_completo, '\\s+', ' ', 'g'));
+
+            -- 2. Reasignar asistencias, intervenciones, votos y proyectos al id_integrante más antiguo de cada concejal
+            WITH canonicos AS (
+                SELECT MIN(id_integrante) AS id_principal,
+                       LOWER(TRIM(nombre_completo)) AS clave_nombre
+                FROM integrantes
+                GROUP BY LOWER(TRIM(nombre_completo))
+            ),
+            duplicados AS (
+                SELECT i.id_integrante AS id_dup, c.id_principal
+                FROM integrantes i
+                JOIN canonicos c ON LOWER(TRIM(i.nombre_completo)) = c.clave_nombre
+                WHERE i.id_integrante <> c.id_principal
+            )
+            UPDATE proyectos p
+            SET id_autor = d.id_principal
+            FROM duplicados d
+            WHERE p.id_autor = d.id_dup;
+
+            -- 3. Eliminar integrantes duplicados (por cascada limpia asistencias, intervenciones y votos repetidos)
+            DELETE FROM integrantes a
+            USING integrantes b
+            WHERE a.id_integrante > b.id_integrante
+              AND LOWER(TRIM(a.nombre_completo)) = LOWER(TRIM(b.nombre_completo));
+
+            -- 4. Crear índice único por nombre normalizado de integrante para evitar futuras duplicaciones
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_unico_nombre_integrante
+            ON integrantes (LOWER(TRIM(nombre_completo)));
+
+            -- 5. Eliminar asistencias duplicadas si existieran
+            DELETE FROM asistencias a
+            USING asistencias b
+            WHERE a.id_asistencia > b.id_asistencia
+              AND a.id_sesion = b.id_sesion
+              AND a.id_integrante = b.id_integrante;
+
+            -- 6. Ajustar restricciones de intervenciones y eliminar turnos duplicados
             ALTER TABLE intervenciones ADD COLUMN IF NOT EXISTS motivo_detalle TEXT;
             ALTER TABLE intervenciones ALTER COLUMN tipo_intervencion TYPE VARCHAR(120);
             ALTER TABLE intervenciones DROP CONSTRAINT IF EXISTS intervenciones_estado_check;
@@ -198,6 +239,20 @@ async function inicializarBaseDatos() {
             ON intervenciones (id_sesion, id_integrante)
             WHERE estado IN ('Pendiente', 'En Espera', 'En Curso');
 
+            -- 7. Eliminar proyectos duplicados por código y título
+            DELETE FROM proyectos a
+            USING proyectos b
+            WHERE a.id_proyecto > b.id_proyecto
+              AND LOWER(TRIM(a.codigo_radicado)) = LOWER(TRIM(b.codigo_radicado))
+              AND LOWER(TRIM(a.titulo)) = LOWER(TRIM(b.titulo));
+
+            -- 8. Eliminar votos duplicados
+            DELETE FROM votos a
+            USING votos b
+            WHERE a.id_voto > b.id_voto
+              AND a.id_votacion = b.id_votacion
+              AND a.id_integrante = b.id_integrante;
+
             ALTER TABLE proyectos ADD COLUMN IF NOT EXISTS visible_publico BOOLEAN DEFAULT TRUE;
             ALTER TABLE proyectos ADD COLUMN IF NOT EXISTS archivo_nombre VARCHAR(255);
             ALTER TABLE proyectos ADD COLUMN IF NOT EXISTS archivo_contenido TEXT;
@@ -211,7 +266,7 @@ async function inicializarBaseDatos() {
             ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS fecha_apertura TIMESTAMP DEFAULT NOW();
         `);
 
-        console.log('✅ Base de datos PostgreSQL sincronizada y turnos duplicados limpiados.');
+        console.log('✅ Base de datos limpia: todos los concejales, asistencias, turnos y listas quedaron únicos.');
     } catch (err) {
         console.error('❌ Error al inicializar PostgreSQL:', err);
     } finally {
@@ -294,6 +349,7 @@ app.post('/api/sesion/login', async (req, res) => {
                 LEFT JOIN bancadas b ON i.id_bancada = b.id_bancada
                 LEFT JOIN comisiones c ON i.id_comision = c.id_comision
                 WHERE i.activo = TRUE
+                ORDER BY i.id_integrante ASC
             `);
 
             const nomBuscado = normalizar(primer_nombre);
@@ -413,21 +469,28 @@ app.put('/api/configuracion-visual', verificarAdmin, async (req, res) => {
 });
 
 // =====================================================================
-// 3. INTEGRANTES / CURULES
+// 3. INTEGRANTES / CURULES (DEDUPLICADO EN TODAS LAS ZONAS)
 // =====================================================================
 app.get('/api/integrantes', async (req, res) => {
     try {
         const result = await pool.query(`
-            SELECT i.id_integrante, i.nombre_completo, i.id_bancada, i.id_comision, i.es_directiva,
+            SELECT DISTINCT ON (LOWER(TRIM(i.nombre_completo)))
+                   i.id_integrante, i.nombre_completo, i.id_bancada, i.id_comision, i.es_directiva,
                    COALESCE(b.nombre, 'Independientes') AS bancada,
                    COALESCE(c.nombre, 'Sin Comisión') AS comision
             FROM integrantes i
             LEFT JOIN bancadas b ON i.id_bancada = b.id_bancada
             LEFT JOIN comisiones c ON i.id_comision = c.id_comision
             WHERE i.activo = TRUE
-            ORDER BY i.es_directiva DESC, i.nombre_completo ASC
+            ORDER BY LOWER(TRIM(i.nombre_completo)), i.id_integrante ASC
         `);
-        res.json(result.rows);
+
+        const ordenados = result.rows.sort((a, b) => {
+            if (a.es_directiva !== b.es_directiva) return b.es_directiva ? 1 : -1;
+            return a.nombre_completo.localeCompare(b.nombre_completo, 'es');
+        });
+
+        res.json(ordenados);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -440,14 +503,23 @@ app.post('/api/integrantes', verificarAdmin, async (req, res) => {
             return res.status(400).json({ error: 'El nombre completo es obligatorio.' });
         }
 
+        const nombreLimpio = nombre_completo.trim().replace(/\s+/g, ' ');
         const comId = id_comision ? parseInt(id_comision, 10) : null;
         const banId = id_bancada ? parseInt(id_bancada, 10) : 3;
+
+        const existe = await pool.query(
+            'SELECT id_integrante FROM integrantes WHERE LOWER(TRIM(nombre_completo)) = LOWER($1)',
+            [nombreLimpio]
+        );
+        if (existe.rows.length > 0) {
+            return res.status(400).json({ error: `La curul de "${nombreLimpio}" ya está registrada.` });
+        }
 
         const inserted = await pool.query(`
             INSERT INTO integrantes (nombre_completo, id_bancada, id_comision, es_directiva)
             VALUES ($1, $2, $3, $4)
             RETURNING *
-        `, [nombre_completo.trim(), banId, comId, Boolean(es_directiva)]);
+        `, [nombreLimpio, banId, comId, Boolean(es_directiva)]);
 
         const nuevo = inserted.rows[0];
 
@@ -478,13 +550,14 @@ app.put('/api/integrantes/:id', verificarAdmin, async (req, res) => {
         const { nombre_completo, id_bancada, id_comision, es_directiva } = req.body;
         const comId = id_comision ? parseInt(id_comision, 10) : null;
         const banId = id_bancada ? parseInt(id_bancada, 10) : 3;
+        const nombreLimpio = nombre_completo.trim().replace(/\s+/g, ' ');
 
         const updated = await pool.query(`
             UPDATE integrantes
             SET nombre_completo = $1, id_bancada = $2, id_comision = $3, es_directiva = $4
             WHERE id_integrante = $5
             RETURNING *
-        `, [nombre_completo.trim(), banId, comId, Boolean(es_directiva), id]);
+        `, [nombreLimpio, banId, comId, Boolean(es_directiva), id]);
 
         emitirEventoTiempoReal('integrantes');
         res.json(updated.rows[0]);
@@ -504,7 +577,7 @@ app.delete('/api/integrantes/:id', verificarAdmin, async (req, res) => {
 });
 
 // =====================================================================
-// 4. SESIONES Y LLAMADO A LISTA / QUÓRUM
+// 4. SESIONES Y LLAMADO A LISTA / QUÓRUM (DEDUPLICADO)
 // =====================================================================
 app.get('/api/sesiones', async (req, res) => {
     try {
@@ -531,8 +604,8 @@ app.post('/api/sesiones', verificarAdmin, async (req, res) => {
         const nuevaSesion = sesRes.rows[0];
 
         const intQuery = comId
-            ? await client.query('SELECT id_integrante FROM integrantes WHERE activo = TRUE AND id_comision = $1', [comId])
-            : await client.query('SELECT id_integrante FROM integrantes WHERE activo = TRUE');
+            ? await client.query('SELECT DISTINCT id_integrante FROM integrantes WHERE activo = TRUE AND id_comision = $1', [comId])
+            : await client.query('SELECT DISTINCT id_integrante FROM integrantes WHERE activo = TRUE');
 
         for (const row of intQuery.rows) {
             await client.query(`
@@ -566,7 +639,8 @@ app.delete('/api/sesiones/:id', verificarAdmin, async (req, res) => {
 app.get('/api/asistencias/:id_sesion', verificarAdmin, async (req, res) => {
     try {
         const result = await pool.query(`
-            SELECT a.id_asistencia, a.id_sesion, a.id_integrante, a.estado,
+            SELECT DISTINCT ON (a.id_integrante)
+                   a.id_asistencia, a.id_sesion, a.id_integrante, a.estado,
                    i.nombre_completo, i.es_directiva,
                    COALESCE(b.nombre, 'Independientes') AS bancada,
                    COALESCE(c.nombre, 'Sin Comisión') AS comision
@@ -575,9 +649,15 @@ app.get('/api/asistencias/:id_sesion', verificarAdmin, async (req, res) => {
             LEFT JOIN bancadas b ON i.id_bancada = b.id_bancada
             LEFT JOIN comisiones c ON i.id_comision = c.id_comision
             WHERE a.id_sesion = $1
-            ORDER BY i.es_directiva DESC, i.nombre_completo ASC
+            ORDER BY a.id_integrante, a.id_asistencia ASC
         `, [req.params.id_sesion]);
-        res.json(result.rows);
+
+        const ordenados = result.rows.sort((a, b) => {
+            if (a.es_directiva !== b.es_directiva) return b.es_directiva ? 1 : -1;
+            return a.nombre_completo.localeCompare(b.nombre_completo, 'es');
+        });
+
+        res.json(ordenados);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -631,7 +711,6 @@ app.get('/api/intervenciones/:id_sesion', async (req, res) => {
             ORDER BY iv.id_intervencion ASC
         `, [req.params.id_sesion]);
 
-        // Garantiza orden correlativo 1, 2, 3... sin saltos ni números repetidos
         const ordenados = result.rows
             .sort((a, b) => a.orden_turno - b.orden_turno || a.id_intervencion - b.id_intervencion)
             .map((fila, idx) => ({
@@ -645,7 +724,6 @@ app.get('/api/intervenciones/:id_sesion', async (req, res) => {
     }
 });
 
-// Ruta protegida con bloqueo en memoria + validación SQL para garantizar 1 solo turno
 app.post('/api/intervenciones/solicitar', verificarConcejal, async (req, res) => {
     const id_integrante = req.concejal.id_integrante;
     const llaveBloqueo = `${req.body.id_sesion}-${id_integrante}`;
@@ -714,7 +792,6 @@ app.post('/api/intervenciones/solicitar', verificarConcejal, async (req, res) =>
     }
 });
 
-// Permitir al concejal cancelar su propia solicitud pendiente
 app.delete('/api/intervenciones/solicitar/:id', verificarConcejal, async (req, res) => {
     try {
         const { id } = req.params;
@@ -739,7 +816,6 @@ app.delete('/api/intervenciones/solicitar/:id', verificarConcejal, async (req, r
     }
 });
 
-// Inscripción manual por Administrador / Mesa Directiva
 app.post('/api/intervenciones', verificarAdmin, async (req, res) => {
     try {
         const { id_sesion, id_integrante, tipo_intervencion, tiempo_asignado_seg, motivo_detalle } = req.body;
@@ -765,6 +841,9 @@ app.post('/api/intervenciones', verificarAdmin, async (req, res) => {
         emitirEventoTiempoReal('intervenciones');
         res.status(201).json(inserted.rows[0]);
     } catch (err) {
+        if (err.code === '23505') {
+            return res.status(400).json({ error: 'Ese concejal ya tiene un turno activo en esta sesión.' });
+        }
         res.status(500).json({ error: err.message });
     }
 });
@@ -802,7 +881,8 @@ app.get('/api/proyectos', async (req, res) => {
         const puedeVerPrivados = sesion && (sesion.rol === 'admin' || sesion.rol === 'concejal');
 
         const query = `
-            SELECT p.id_proyecto, p.codigo_radicado, p.titulo, p.descripcion,
+            SELECT DISTINCT ON (p.id_proyecto)
+                   p.id_proyecto, p.codigo_radicado, p.titulo, p.descripcion,
                    COALESCE(i.nombre_completo, p.autor, 'Mesa Directiva') AS autor,
                    p.id_autor, p.id_comision_asignada,
                    COALESCE(c.nombre, 'Plenaria') AS comision,
@@ -1084,7 +1164,8 @@ app.get('/api/votaciones/:id/votos', async (req, res) => {
         const votacionActualizada = await evaluarYCerrarSiExpiro(votRes.rows[0]);
 
         const votosRes = await pool.query(`
-            SELECT vo.id_voto, vo.id_votacion, vo.id_integrante, vo.opcion, vo.fecha_voto,
+            SELECT DISTINCT ON (vo.id_integrante)
+                   vo.id_voto, vo.id_votacion, vo.id_integrante, vo.opcion, vo.fecha_voto,
                    i.nombre_completo,
                    COALESCE(b.nombre, 'Independientes') AS bancada,
                    COALESCE(c.nombre, 'Sin Comisión') AS comision
@@ -1093,7 +1174,7 @@ app.get('/api/votaciones/:id/votos', async (req, res) => {
             LEFT JOIN bancadas b ON i.id_bancada = b.id_bancada
             LEFT JOIN comisiones c ON i.id_comision = c.id_comision
             WHERE vo.id_votacion = $1
-            ORDER BY vo.fecha_voto ASC
+            ORDER BY vo.id_integrante, vo.fecha_voto ASC
         `, [req.params.id]);
 
         res.json({ votacion: votacionActualizada, votos: votosRes.rows });
