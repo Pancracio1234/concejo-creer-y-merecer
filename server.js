@@ -177,10 +177,13 @@ async function inicializarBaseDatos() {
                 marca_agua_visible BOOLEAN DEFAULT TRUE,
                 marca_agua_estilo VARCHAR(40) DEFAULT 'oro',
                 marca_agua_opacidad INT DEFAULT 13,
-                marca_agua_tamano INT DEFAULT 560
+                marca_agua_tamano INT DEFAULT 560,
+                actualizado_en TIMESTAMP DEFAULT NOW()
             );
 
-            INSERT INTO configuracion_visual (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+            INSERT INTO configuracion_visual (id, marca_agua_visible, marca_agua_estilo, marca_agua_opacidad, marca_agua_tamano)
+            VALUES (1, TRUE, 'oro', 13, 560)
+            ON CONFLICT (id) DO NOTHING;
         `);
 
         await client.query(`
@@ -257,15 +260,29 @@ async function inicializarBaseDatos() {
             ALTER TABLE proyectos ADD COLUMN IF NOT EXISTS archivo_contenido TEXT;
             ALTER TABLE proyectos ADD COLUMN IF NOT EXISTS tipo_documento VARCHAR(80) DEFAULT 'Proyecto de Acuerdo';
             ALTER TABLE proyectos ADD COLUMN IF NOT EXISTS autor VARCHAR(180) DEFAULT 'Mesa Directiva';
+            ALTER TABLE proyectos ALTER COLUMN id_autor DROP NOT NULL;
 
             ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS ronda_numero INT DEFAULT 1;
             ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS resultado_final VARCHAR(80);
             ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS mensaje_veredicto TEXT;
             ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS duracion_seg INT DEFAULT 120;
             ALTER TABLE votaciones ADD COLUMN IF NOT EXISTS fecha_apertura TIMESTAMP DEFAULT NOW();
+
+            ALTER TABLE configuracion_visual ADD COLUMN IF NOT EXISTS logo_base64 TEXT;
+            ALTER TABLE configuracion_visual ADD COLUMN IF NOT EXISTS marca_agua_visible BOOLEAN DEFAULT TRUE;
+            ALTER TABLE configuracion_visual ADD COLUMN IF NOT EXISTS marca_agua_estilo VARCHAR(40) DEFAULT 'oro';
+            ALTER TABLE configuracion_visual ADD COLUMN IF NOT EXISTS marca_agua_opacidad INT DEFAULT 13;
+            ALTER TABLE configuracion_visual ADD COLUMN IF NOT EXISTS marca_agua_tamano INT DEFAULT 560;
+            ALTER TABLE configuracion_visual ADD COLUMN IF NOT EXISTS actualizado_en TIMESTAMP DEFAULT NOW();
         `);
 
-        console.log('✅ Base de datos limpia e indexada.');
+        // Precargar configuración visual en caché al arrancar
+        const cfgRes = await client.query('SELECT * FROM configuracion_visual WHERE id = 1');
+        if (cfgRes.rows.length > 0) {
+            cacheConfigVisual = cfgRes.rows[0];
+        }
+
+        console.log('✅ Base de datos limpia, indexada y configuración visual lista.');
     } catch (err) {
         console.error('❌ Error al inicializar PostgreSQL:', err);
     } finally {
@@ -422,12 +439,19 @@ app.get('/api/eventos', (req, res) => {
     });
 });
 
+// Ruta PÚBLICA para que Administradores, Concejales y Observadores vean el logo
 app.get('/api/configuracion-visual', async (req, res) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     try {
-        if (cacheConfigVisual && cacheConfigVisual.id) {
+        if (cacheConfigVisual && cacheConfigVisual.id && cacheConfigVisual.logo_base64) {
             return res.json(cacheConfigVisual);
         }
-        await pool.query('INSERT INTO configuracion_visual (id) VALUES (1) ON CONFLICT (id) DO NOTHING');
+
+        await pool.query(`
+            INSERT INTO configuracion_visual (id, marca_agua_visible, marca_agua_estilo, marca_agua_opacidad, marca_agua_tamano)
+            VALUES (1, TRUE, 'oro', 13, 560)
+            ON CONFLICT (id) DO NOTHING
+        `);
         const result = await pool.query('SELECT * FROM configuracion_visual WHERE id = 1');
         cacheConfigVisual = result.rows[0] || {
             id: 1,
@@ -439,10 +463,12 @@ app.get('/api/configuracion-visual', async (req, res) => {
         };
         res.json(cacheConfigVisual);
     } catch (err) {
+        console.error('Error leyendo configuracion_visual:', err);
         res.status(500).json({ error: err.message });
     }
 });
 
+// Ruta PROTEGIDA (solo Administrador puede subir o cambiar el logo/marca de agua)
 app.put('/api/configuracion-visual', verificarAdmin, async (req, res) => {
     try {
         const {
@@ -453,24 +479,42 @@ app.put('/api/configuracion-visual', verificarAdmin, async (req, res) => {
             marca_agua_tamano
         } = req.body;
 
-        await pool.query('INSERT INTO configuracion_visual (id) VALUES (1) ON CONFLICT (id) DO NOTHING');
+        await pool.query(`
+            INSERT INTO configuracion_visual (id, marca_agua_visible, marca_agua_estilo, marca_agua_opacidad, marca_agua_tamano)
+            VALUES (1, TRUE, 'oro', 13, 560)
+            ON CONFLICT (id) DO NOTHING
+        `);
+
         const actualRes = await pool.query('SELECT * FROM configuracion_visual WHERE id = 1');
         const actual = actualRes.rows[0] || {};
 
-        const nuevoLogo = (logo_base64 !== undefined && logo_base64 !== null) ? logo_base64 : actual.logo_base64;
-        const nuevaVis = marca_agua_visible !== undefined ? Boolean(marca_agua_visible) : Boolean(actual.marca_agua_visible);
-        const nuevoEstilo = marca_agua_estilo !== undefined ? marca_agua_estilo : (actual.marca_agua_estilo || 'oro');
-        const nuevaOpac = marca_agua_opacidad !== undefined ? parseInt(marca_agua_opacidad, 10) : (actual.marca_agua_opacidad || 13);
-        const nuevoTam = marca_agua_tamano !== undefined ? parseInt(marca_agua_tamano, 10) : (actual.marca_agua_tamano || 560);
+        const nuevoLogo = logo_base64 !== undefined ? logo_base64 : actual.logo_base64;
+        const nuevaVis = marca_agua_visible !== undefined
+            ? Boolean(marca_agua_visible)
+            : (actual.marca_agua_visible !== null ? Boolean(actual.marca_agua_visible) : true);
+        const nuevoEstilo = marca_agua_estilo !== undefined
+            ? marca_agua_estilo
+            : (actual.marca_agua_estilo || 'oro');
+        const nuevaOpac = marca_agua_opacidad !== undefined
+            ? parseInt(marca_agua_opacidad, 10)
+            : (actual.marca_agua_opacidad ?? 13);
+        const nuevoTam = marca_agua_tamano !== undefined
+            ? parseInt(marca_agua_tamano, 10)
+            : (actual.marca_agua_tamano ?? 560);
 
         const updated = await pool.query(`
-            UPDATE configuracion_visual
-            SET logo_base64 = $1,
-                marca_agua_visible = $2,
-                marca_agua_estilo = $3,
-                marca_agua_opacidad = $4,
-                marca_agua_tamano = $5
-            WHERE id = 1
+            INSERT INTO configuracion_visual (
+                id, logo_base64, marca_agua_visible, marca_agua_estilo,
+                marca_agua_opacidad, marca_agua_tamano, actualizado_en
+            )
+            VALUES (1, $1, $2, $3, $4, $5, NOW())
+            ON CONFLICT (id) DO UPDATE SET
+                logo_base64 = EXCLUDED.logo_base64,
+                marca_agua_visible = EXCLUDED.marca_agua_visible,
+                marca_agua_estilo = EXCLUDED.marca_agua_estilo,
+                marca_agua_opacidad = EXCLUDED.marca_agua_opacidad,
+                marca_agua_tamano = EXCLUDED.marca_agua_tamano,
+                actualizado_en = NOW()
             RETURNING *
         `, [nuevoLogo, nuevaVis, nuevoEstilo, nuevaOpac, nuevoTam]);
 
@@ -478,7 +522,8 @@ app.put('/api/configuracion-visual', verificarAdmin, async (req, res) => {
         res.json(cacheConfigVisual);
         emitirEventoTiempoReal('config_visual');
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Error guardando configuracion_visual:', err);
+        res.status(500).json({ error: 'Error al guardar el logo en PostgreSQL: ' + err.message });
     }
 });
 
