@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Secretaría General • Asamblea Departamental del Tolima | Fundación Creer y Merecer</title>
+    <title>Secretaría General • Concejo Municipal de Ibagué | Fundación Creer y Merecer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -309,27 +309,27 @@
                     <i class="fa-solid fa-landmark text-[#f3cf7a] text-2xl"></i>
                 </div>
                 <span class="block text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#f3cf7a]">
-                    Fundación Creer y Merecer • Modelo Asamblea
+                    Fundación Creer y Merecer • Modelo Concejo
                 </span>
                 <h2 class="font-solemne texto-oro-metalico text-2xl md:text-3xl font-black uppercase mt-1">
-                    Asamblea Departamental del Tolima
+                    Concejo Municipal de Ibagué
                 </h2>
                 <p class="text-xs text-slate-300 mt-1">
-                    Inicie sesión una única vez para ingresar al recinto departamental electrónico
+                    Inicie sesión una única vez para ingresar al recinto electrónico
                 </p>
             </div>
 
             <!-- Selector de Rol -->
             <div class="grid grid-cols-2 gap-2 p-1.5 bg-[#060d1c] rounded-2xl border border-[#f3cf7a]/35 mb-5">
                 <button type="button" id="btn-tab-rol-concejal" onclick="seleccionarRolLogin('concejal')" class="py-2.5 px-3 rounded-xl text-xs font-extrabold uppercase tracking-wider transition btn-oro">
-                    <i class="fa-solid fa-user-tie mr-1.5"></i> Diputado
+                    <i class="fa-solid fa-user-tie mr-1.5"></i> Concejal
                 </button>
                 <button type="button" id="btn-tab-rol-admin" onclick="seleccionarRolLogin('admin')" class="py-2.5 px-3 rounded-xl text-xs font-extrabold uppercase tracking-wider transition text-slate-300 hover:text-white">
                     <i class="fa-solid fa-shield-halved mr-1.5"></i> Administrador
                 </button>
             </div>
 
-            <!-- FORMULARIO DIPUTADO -->
+            <!-- FORMULARIO CONCEJAL -->
             <div id="form-login-rol-concejal" class="space-y-4">
                 <div class="bg-[#060d1c]/80 p-3 rounded-xl border border-[#f3cf7a]/25 text-xs text-slate-200">
                     <i class="fa-solid fa-circle-info text-[#f3cf7a] mr-1.5"></i>
@@ -350,7 +350,7 @@
                     <input type="password" id="login-unico-pass-concejal" placeholder="••••••••" onkeydown="if(event.key==='Enter') ejecutarLoginUnico()" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm">
                 </div>
                 <button type="button" id="btn-submit-login-concejal" onclick="ejecutarLoginUnico()" class="w-full btn-oro font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider">
-                    <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Ingresar como Honorable Diputado
+                    <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Ingresar como Honorable Concejal
                 </button>
             </div>
 
@@ -368,7 +368,7 @@
                     <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Cargo / Rol</label>
                     <select id="login-unico-admin-cargo" class="w-full border text-white rounded-xl px-3.5 py-2.5 text-sm font-semibold">
                         <option value="Secretaría General">Secretaría General</option>
-                        <option value="Presidencia de la Asamblea">Presidencia de la Asamblea</option>
+                        <option value="Presidencia del Concejo">Presidencia del Concejo</option>
                         <option value="Vicepresidencia">Vicepresidencia</option>
                         <option value="Coordinación Logística">Coordinación Logística</option>
                     </select>
@@ -446,7 +446,7 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- ENCABEZADO SOLEMNE • ASAMBLEA DEPARTAMENTAL DEL TOLIMA                -->
+    <!-- ENCABEZADO SOLEMNE • CONCEJO MUNICIPAL DE IBAGUÉ                      -->
     <!-- ===================================================================== -->
     <header class="bg-gradient-to-b from-[#0a162e] via-[#081226] to-[#060d1c] md:sticky md:top-0 z-40 shadow-xl">
         <div class="cinta-republica w-full"></div>
@@ -456,7 +456,7 @@
                 <div class="flex items-center gap-2 md:gap-3 text-[#f3cf7a]">
                     <span class="flex items-center gap-1.5 md:gap-2">
                         <span id="indicador-en-vivo-dot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                        <span class="hidden sm:inline">REPÚBLICA DE COLOMBIA •</span> DEPARTAMENTO DEL TOLIMA
+                        <span class="hidden sm:inline">REPÚBLICA DE COLOMBIA •</span> MUNICIPIO DE IBAGUÉ
                     </span>
                     <span class="hidden md:inline text-slate-600">|</span>
                     <span id="estado-conexion-vivo" class="hidden md:inline text-emerald-400 font-bold">EN VIVO SINCRONIZADO</span>
@@ -500,14 +500,14 @@
                     <div class="min-w-0">
                         <div class="flex items-center gap-2 flex-wrap">
                             <span class="bg-gradient-to-r from-[#f3cf7a]/25 to-[#cfa349]/10 text-[#fff3c4] border border-[#f3cf7a]/55 text-[9px] md:text-[10px] font-bold uppercase px-3 py-0.5 rounded-full tracking-[0.16em]">
-                                Fundación Creer y Merecer • Modelo Asamblea
+                                Fundación Creer y Merecer • Modelo Concejo
                             </span>
                             <span class="hidden sm:inline-block font-editorial italic text-base text-[#f3cf7a]/90">
                                 “Coherencia, Independencia y Liderazgo”
                             </span>
                         </div>
                         <h1 class="font-solemne texto-oro-metalico text-xl sm:text-2xl md:text-4xl font-black uppercase leading-tight mt-1">
-                            ASAMBLEA DEPARTAMENTAL DEL TOLIMA
+                            CONCEJO MUNICIPAL DE IBAGUÉ
                         </h1>
                         <p class="text-[11px] md:text-xs text-slate-300 font-medium tracking-wide mt-0.5 line-clamp-1 sm:line-clamp-none">
                             Sistema Electrónico de Llamado a Lista, Quórum Reglamentario, Votación Nominal y Orden del Día
@@ -571,7 +571,7 @@
                     <i class="fa-solid fa-landmark"></i>
                 </div>
                 <div>
-                    <p class="font-solemne text-base md:text-2xl uppercase text-[#fff3c4] font-bold">Recinto de la Asamblea Departamental en Receso</p>
+                    <p class="font-solemne text-base md:text-2xl uppercase text-[#fff3c4] font-bold">Recinto del Concejo Municipal en Receso</p>
                     <p class="text-xs md:text-sm text-slate-200 mt-0.5">A la espera de que Secretaría General o Presidencia instale la sesión.</p>
                 </div>
             </div>
@@ -581,7 +581,7 @@
         </div>
 
         <!-- ===================================================================== -->
-        <!-- TAB 1: TABLERO ELECTRÓNICO DE QUÓRUM POR BANCADAS (OCULTO A DIPUTADO) -->
+        <!-- TAB 1: TABLERO ELECTRÓNICO DE QUÓRUM POR BANCADAS (OCULTO A CONCEJAL) -->
         <!-- ===================================================================== -->
         <section id="tab-asistencia" class="tab-content oculto-concejal">
             
@@ -647,7 +647,7 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 2: COMISIONES PERMANENTES (OCULTO A DIPUTADO)                     -->
+        <!-- TAB 2: COMISIONES PERMANENTES (OCULTO A CONCEJAL)                     -->
         <!-- ===================================================================== -->
         <section id="tab-comisiones" class="tab-content oculto-concejal hidden">
             
@@ -655,20 +655,20 @@
                 <div class="flex flex-wrap justify-between items-center gap-4">
                     <div>
                         <span class="text-[10px] font-extrabold uppercase tracking-[0.24em] text-[#f3cf7a] block mb-1">
-                            Reglamento Interno de la Asamblea Departamental
+                            Reglamento Interno del Concejo Municipal
                         </span>
                         <h2 class="font-solemne text-lg md:text-3xl uppercase text-white font-bold">
                             Conformación de Comisiones Permanentes
                         </h2>
                         <p class="text-xs text-slate-300 mt-1">
-                            Distribución oficial de los Honorables Diputados por comisión constitucional, bancada política y estado en sesión.
+                            Distribución oficial de los Honorables Concejales por comisión constitucional, bancada política y estado en sesión.
                         </p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
                         <div class="relative flex-1 sm:flex-initial">
                             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-[#f3cf7a] text-xs"></i>
-                            <input type="text" id="buscar-en-comisiones" oninput="renderizarTableroComisiones()" placeholder="Buscar Honorable Diputado..." class="border text-white text-xs rounded-xl pl-9 pr-3.5 py-2.5 w-full sm:w-60">
+                            <input type="text" id="buscar-en-comisiones" oninput="renderizarTableroComisiones()" placeholder="Buscar Honorable Concejal..." class="border text-white text-xs rounded-xl pl-9 pr-3.5 py-2.5 w-full sm:w-60">
                         </div>
                         <button onclick="mostrarTab('integrantes')" class="solo-admin w-full sm:w-auto btn-oro text-xs font-extrabold uppercase tracking-wider px-4 py-2.5 rounded-xl">
                             <i class="fa-solid fa-user-plus mr-1.5"></i> Gestionar Curules
@@ -679,7 +679,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mt-5 md:mt-6 pt-4 md:pt-5 border-t border-[#f3cf7a]/25">
                     <div class="kpi-card p-4 rounded-2xl border-2 border-[#f3cf7a]/60 flex justify-between items-center">
                         <div>
-                            <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#f3cf7a]">Plan de Desarrollo Departamental y Bienes</span>
+                            <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#f3cf7a]">Plan de Desarrollo y Bienes</span>
                             <h3 class="font-solemne text-base md:text-lg uppercase font-bold text-white mt-0.5">Comisión Primera</h3>
                         </div>
                         <div class="text-right">
@@ -690,7 +690,7 @@
 
                     <div class="kpi-card p-4 rounded-2xl border-2 border-sky-400/60 flex justify-between items-center">
                         <div>
-                            <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-sky-300">Presupuesto y Hacienda Departamental</span>
+                            <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-sky-300">Presupuesto y Hacienda Municipal</span>
                             <h3 class="font-solemne text-base md:text-lg uppercase font-bold text-white mt-0.5">Comisión Segunda</h3>
                         </div>
                         <div class="text-right">
@@ -717,7 +717,7 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 3: CONTROL DE USO DE LA PALABRA (DIPUTADO PIDE TURNO CON MOTIVO)  -->
+        <!-- TAB 3: CONTROL DE USO DE LA PALABRA (CONCEJAL PIDE TURNO CON MOTIVO)  -->
         <!-- ===================================================================== -->
         <section id="tab-intervenciones" class="tab-content hidden">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 items-start">
@@ -749,7 +749,7 @@
                             En Espera de Orador
                         </h3>
                         <p id="crono-bancada" class="text-xs md:text-sm text-slate-300 font-medium mt-1.5">
-                            Orden de oradores del recinto de la Asamblea Departamental
+                            Orden de oradores del recinto del Concejo Municipal
                         </p>
                     </div>
 
@@ -812,7 +812,7 @@
                         </span>
                     </div>
 
-                    <!-- CAJA PARA QUE EL DIPUTADO PIDA LA PALABRA CON SU SESIÓN ÚNICA -->
+                    <!-- CAJA PARA QUE EL CONCEJAL PIDA LA PALABRA CON SU SESIÓN ÚNICA -->
                     <div class="solo-concejal space-y-3 mb-5 bg-[#060d1c]/90 p-4 rounded-2xl border-2 border-[#f3cf7a]/45">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-extrabold uppercase tracking-wider text-[#fff3c4]">
@@ -836,7 +836,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Detalle / Tema específico de su intervención</label>
-                            <input type="text" id="conc-motivo-detalle" placeholder="Ej: Sobre el artículo 3 del Proyecto de Ordenanza..." class="w-full border rounded-xl px-3 py-2 text-xs text-white">
+                            <input type="text" id="conc-motivo-detalle" placeholder="Ej: Sobre el artículo 3 del Proyecto de Acuerdo..." class="w-full border rounded-xl px-3 py-2 text-xs text-white">
                         </div>
                         <button type="button" onclick="solicitarPalabraConcejal()" class="w-full btn-oro font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider">
                             <i class="fa-solid fa-microphone-lines mr-1.5"></i> Pedir Turno Ahora
@@ -847,12 +847,12 @@
                     <div class="solo-admin space-y-3 mb-5 bg-[#060d1c]/80 p-3.5 md:p-4 rounded-2xl border border-[#f3cf7a]/25">
                         <div>
                             <div class="flex justify-between items-center mb-1">
-                                <label class="block text-xs font-bold uppercase text-slate-300">Honorable Diputado</label>
+                                <label class="block text-xs font-bold uppercase text-slate-300">Honorable Concejal</label>
                                 <span id="contador-oradores-disponibles" class="text-[10px] font-bold text-[#f3cf7a]"></span>
                             </div>
                             <div class="relative mb-2">
                                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#f3cf7a] text-xs"></i>
-                                <input type="text" id="filtro-nombre-orador" oninput="filtrarSelectOradores()" placeholder="Filtrar diputado por nombre..." class="w-full border rounded-xl pl-8 pr-7 py-2 text-xs text-white placeholder-slate-400">
+                                <input type="text" id="filtro-nombre-orador" oninput="filtrarSelectOradores()" placeholder="Filtrar concejal por nombre..." class="w-full border rounded-xl pl-8 pr-7 py-2 text-xs text-white placeholder-slate-400">
                                 <button type="button" id="btn-limpiar-filtro-orador" onclick="limpiarFiltroSelectOradores()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs" title="Limpiar búsqueda">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
@@ -906,10 +906,10 @@
                             Sistema Electrónico de Votación Nominal
                         </span>
                         <h2 class="font-solemne text-lg md:text-3xl uppercase text-white font-bold">
-                            Urna de Votación de la Asamblea Departamental
+                            Urna de Votación del Concejo Municipal
                         </h2>
                         <p class="text-xs text-slate-300 mt-1">
-                            Cada Honorable Diputado dispone de un solo voto definitivo dentro del tiempo reglamentario fijado para la urna.
+                            Cada Honorable Concejal dispone de un solo voto definitivo dentro del tiempo reglamentario fijado para la urna.
                         </p>
                     </div>
 
@@ -927,7 +927,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                         <div class="md:col-span-4">
                             <label class="block text-xs font-bold uppercase text-[#fff3c4] mb-1">
-                                <i class="fa-solid fa-scale-balanced mr-1"></i> Ordenanza / Proposición Radicada
+                                <i class="fa-solid fa-scale-balanced mr-1"></i> Acuerdo / Proposición Radicada
                             </label>
                             <select id="vot-select-proyecto" onchange="autocompletarDatosDesdeProyecto()" class="w-full border text-white rounded-xl px-3 py-2.5 text-sm font-semibold">
                                 <option value="">-- Seleccionar proyecto del Orden del Día --</option>
@@ -988,18 +988,18 @@
                         </span>
                     </div>
 
-                    <!-- SI NO HA INICIADO SESIÓN COMO DIPUTADO -->
+                    <!-- SI NO HA INICIADO SESIÓN COMO CONCEJAL -->
                     <div id="cabina-sin-sesion" class="space-y-4">
                         <div class="bg-[#060d1c]/90 p-4 rounded-xl border border-[#f3cf7a]/35 text-xs text-slate-200 leading-relaxed">
                             <i class="fa-solid fa-user-lock text-[#f3cf7a] mr-1.5"></i>
-                            Para depositar su voto debe haber iniciado sesión como <strong>Honorable Diputado</strong> al ingresar a la aplicación.
+                            Para depositar su voto debe haber iniciado sesión como <strong>Honorable Concejal</strong> al ingresar a la aplicación.
                         </div>
                         <button type="button" onclick="abrirPortalLogin()" class="w-full btn-oro font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider">
-                            <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Iniciar Sesión de Diputado
+                            <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Iniciar Sesión de Concejal
                         </button>
                     </div>
 
-                    <!-- SI YA TIENE SESIÓN DE DIPUTADO INICIADA -->
+                    <!-- SI YA TIENE SESIÓN DE CONCEJAL INICIADA -->
                     <div id="cabina-concejal-autenticado" class="hidden space-y-5">
                         <div class="bg-[#060d1c] p-4 rounded-2xl border-2 border-[#f3cf7a]/60">
                             <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
@@ -1089,7 +1089,7 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 5: PROYECTOS DE ORDENANZA Y PROPOSICIONES                         -->
+        <!-- TAB 5: PROYECTOS DE ACUERDO Y PROPOSICIONES (PÚBLICAS Y PRIVADAS)     -->
         <!-- ===================================================================== -->
         <section id="tab-proyectos" class="tab-content hidden">
             
@@ -1117,7 +1117,7 @@
                 </div>
             </div>
 
-            <!-- FORMULARIO PARA DIPUTADOS: RADICACIÓN CON SESIÓN ÚNICA YA ACTIVA -->
+            <!-- FORMULARIO PARA CONCEJALES: RADICACIÓN CON SESIÓN ÚNICA YA ACTIVA -->
             <div id="panel-form-proposicion-concejal" class="solo-concejal hidden panel-institucional p-4 md:p-6 rounded-2xl mb-6 border-2 border-[#f3cf7a]">
                 <div class="flex justify-between items-center mb-4 border-b border-[#f3cf7a]/25 pb-3">
                     <div>
@@ -1145,7 +1145,7 @@
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Visibilidad del Documento</label>
                         <select id="prop-conc-visibilidad" class="w-full border text-white rounded-xl px-3 py-2 text-sm font-semibold">
-                            <option value="false">Privada (Solo Diputados y Secretaría)</option>
+                            <option value="false">Privada (Solo Concejales y Secretaría)</option>
                             <option value="true">Pública (Visible para todos)</option>
                         </select>
                     </div>
@@ -1179,13 +1179,13 @@
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Tipo de Acto</label>
                         <select id="proy-tipo" class="w-full border text-white rounded-xl px-3 py-2 text-sm font-semibold">
-                            <option value="Proyecto de Ordenanza">Proyecto de Ordenanza</option>
+                            <option value="Proyecto de Acuerdo">Proyecto de Acuerdo</option>
                             <option value="Proposición">Proposición</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Número de Radicado</label>
-                        <input type="text" id="proy-codigo" placeholder="Ej: PO-001-2026" class="w-full border text-white rounded-xl px-3 py-2 text-sm">
+                        <input type="text" id="proy-codigo" placeholder="Ej: PA-001-2026" class="w-full border text-white rounded-xl px-3 py-2 text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Comisión Asignada</label>
@@ -1196,14 +1196,14 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Diputado Ponente / Autor</label>
+                        <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Concejal Ponente / Autor</label>
                         <select id="proy-autor" class="w-full border text-white rounded-xl px-3 py-2 text-sm"></select>
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Visibilidad</label>
                         <select id="proy-visibilidad" class="w-full border text-white rounded-xl px-3 py-2 text-sm font-semibold">
                             <option value="true">Público (Todos)</option>
-                            <option value="false">Privado (Solo Diputados / Admin)</option>
+                            <option value="false">Privado (Solo Concejales / Admin)</option>
                         </select>
                     </div>
                 </div>
@@ -1211,7 +1211,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Epígrafe / Título Oficial</label>
-                        <input type="text" id="proy-titulo" placeholder="Por medio de la cual se..." class="w-full border text-white rounded-xl px-3 py-2 text-sm">
+                        <input type="text" id="proy-titulo" placeholder="Por medio del cual se..." class="w-full border text-white rounded-xl px-3 py-2 text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Documento Adjunto (PDF, .docx o .txt)</label>
@@ -1268,11 +1268,11 @@
         </section>
 
         <!-- ===================================================================== -->
-        <!-- TAB 6: ADMINISTRACIÓN DE CURULES (OCULTO A DIPUTADO)                  -->
+        <!-- TAB 6: ADMINISTRACIÓN DE CURULES (OCULTO A CONCEJAL)                  -->
         <!-- ===================================================================== -->
         <section id="tab-integrantes" class="tab-content oculto-concejal hidden">
             <div class="solo-admin panel-institucional p-4 md:p-6 rounded-2xl mb-6 border-t-4 border-t-[#f3cf7a]">
-                <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-white mb-1">Acreditación de Curul / Honorable Diputado</h3>
+                <h3 class="font-solemne text-lg md:text-xl uppercase font-bold text-white mb-1">Acreditación de Curul / Honorable Concejal</h3>
                 <p class="text-xs text-slate-300 mb-4">El registro se sincroniza automáticamente con el tablero de quórum, votación y comisiones.</p>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
@@ -1313,7 +1313,7 @@
                 <div class="bg-[#071126] p-4 border-b border-[#f3cf7a]/25 flex flex-wrap justify-between items-center gap-3">
                     <div>
                         <h3 class="font-solemne text-base md:text-lg uppercase text-white font-bold">Libro Oficial de Curules, Bancadas y Comisiones</h3>
-                        <p class="text-xs text-slate-300">Directorio oficial de los Honorables Diputados acreditados.</p>
+                        <p class="text-xs text-slate-300">Directorio oficial de los Honorables Concejales acreditados.</p>
                     </div>
                     <input type="text" id="buscar-integrante" oninput="renderizarGestionIntegrantes()" placeholder="Filtrar por nombre..." class="border text-white text-xs rounded-xl px-3.5 py-2.5 w-full sm:w-64">
                 </div>
@@ -1322,7 +1322,7 @@
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-[#050b18] text-[11px] uppercase font-bold text-[#fff3c4] border-b border-[#f3cf7a]/30 tracking-wider">
                             <tr>
-                                <th class="p-3 md:p-4">Honorable Diputado</th>
+                                <th class="p-3 md:p-4">Honorable Concejal</th>
                                 <th class="p-3 md:p-4">Bancada</th>
                                 <th class="p-3 md:p-4">Comisión Permanente</th>
                                 <th class="p-3 md:p-4 text-center">Mesa Directiva (P)</th>
@@ -1343,7 +1343,7 @@
             <div class="flex items-center gap-3">
                 <img id="img-logo-footer" src="" alt="Emblema" class="w-9 h-9 rounded-full border-2 border-[#f3cf7a] object-cover hidden">
                 <div>
-                    <p class="font-solemne font-bold text-white text-xs uppercase tracking-wider">Asamblea Departamental del Tolima • Fundación Creer y Merecer</p>
+                    <p class="font-solemne font-bold text-white text-xs uppercase tracking-wider">Concejo Municipal de Ibagué • Fundación Creer y Merecer</p>
                     <p class="text-[11px] text-slate-400">Colectivo Juvenil • Formación Democrática y Control Político</p>
                 </div>
             </div>
@@ -1375,7 +1375,7 @@
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-200 mb-1">Curules Convocadas al Llamado a Lista</label>
                     <select id="nueva-sesion-comision" class="w-full border text-white rounded-xl px-3 py-2.5 text-sm">
-                        <option value="">Plenaria (Todos los Honorables Diputados)</option>
+                        <option value="">Plenaria (Todos los Honorables Concejales)</option>
                         <option value="1">Exclusivamente Comisión Primera</option>
                         <option value="2">Exclusivamente Comisión Segunda</option>
                     </select>
@@ -1430,7 +1430,7 @@
         }
 
         // =====================================================================
-        // ESTADO DE SESIÓN ÚNICA (ADMIN O DIPUTADO) Y CONTROL ANTI-LAG
+        // ESTADO DE SESIÓN ÚNICA (ADMIN O CONCEJAL) Y CONTROL ANTI-LAG
         // =====================================================================
         let adminToken = localStorage.getItem('concejo_admin_token') || null;
         let concejalToken = localStorage.getItem('concejo_concejal_token') || null;
@@ -1569,7 +1569,7 @@
                 notificar(
                     data.rol === 'admin'
                         ? `🛡️ Bienvenido Administrador: ${usuarioActual.nombre_admin}`
-                        : `✅ Bienvenido H.D. ${usuarioActual.nombre_completo}`
+                        : `✅ Bienvenido H.C. ${usuarioActual.nombre_completo}`
                 );
             } catch (err) {
                 alert('Error de conexión al iniciar sesión: ' + err.message);
@@ -1653,8 +1653,8 @@
                     etiquetaRol.innerText = 'ADMIN';
                     nombreBarra.innerText = `${usuarioActual.nombre_admin} (${usuarioActual.cargo_admin})`;
                 } else {
-                    etiquetaRol.innerText = 'DIPUTADO';
-                    nombreBarra.innerText = `H.D. ${usuarioActual.nombre_completo}`;
+                    etiquetaRol.innerText = 'CONCEJAL';
+                    nombreBarra.innerText = `H.C. ${usuarioActual.nombre_completo}`;
                 }
             } else {
                 btnAbrir.classList.remove('hidden');
@@ -1708,7 +1708,7 @@
                 return Promise.resolve({
                     ok: false,
                     status: 401,
-                    json: async () => ({ error: 'Debe iniciar sesión como Honorable Diputado.' })
+                    json: async () => ({ error: 'Debe iniciar sesión como Honorable Concejal.' })
                 });
             }
             const headers = {
@@ -2190,7 +2190,7 @@
         }
 
         // =====================================================================
-        // 1. DIPUTADOS Y COMISIONES
+        // 1. CONCEJALES Y COMISIONES
         // =====================================================================
         function normalizarTexto(txt) {
             return (txt || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -2213,7 +2213,7 @@
                 selectOrador.innerHTML = '<option value="" class="bg-slate-900">-- Sin coincidencias para ese nombre --</option>';
             } else {
                 selectOrador.innerHTML = filtrados.map(i =>
-                    `<option value="${i.id_integrante}" class="bg-slate-900">H.D. ${escapeHTML(i.nombre_completo)} — ${escapeHTML(i.bancada)} (${escapeHTML(i.comision)})</option>`
+                    `<option value="${i.id_integrante}" class="bg-slate-900">H.C. ${escapeHTML(i.nombre_completo)} — ${escapeHTML(i.bancada)} (${escapeHTML(i.comision)})</option>`
                 ).join('');
                 if (filtrados.some(i => String(i.id_integrante) === String(valorPrevio))) {
                     selectOrador.value = valorPrevio;
@@ -2250,7 +2250,7 @@
                     const autorPrevio = selectAutor.value;
                     selectAutor.innerHTML = '<option value="" class="bg-slate-900">-- Mesa Directiva / Bancada --</option>' +
                         integrantesGlobal.map(i =>
-                            `<option value="${i.id_integrante}" class="bg-slate-900">H.D. ${escapeHTML(i.nombre_completo)} (${escapeHTML(i.bancada)})</option>`
+                            `<option value="${i.id_integrante}" class="bg-slate-900">H.C. ${escapeHTML(i.nombre_completo)} (${escapeHTML(i.bancada)})</option>`
                         ).join('');
                     if (autorPrevio) selectAutor.value = autorPrevio;
                 }
@@ -2315,7 +2315,7 @@
                             </span>
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="font-bold text-sm md:text-[15px] text-white">H.D. ${escapeHTML(i.nombre_completo)}</span>
+                                    <span class="font-bold text-sm md:text-[15px] text-white">H.C. ${escapeHTML(i.nombre_completo)}</span>
                                     ${i.es_directiva ? '<span class="bg-[#f3cf7a] text-slate-950 text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded">Mesa Directiva (P)</span>' : ''}
                                 </div>
                                 <div class="flex items-center gap-2 flex-wrap mt-1.5">
@@ -2334,7 +2334,7 @@
             const seccionesComisiones = [
                 {
                     titulo: 'Comisión Primera Permanente',
-                    subtitulo: 'Plan de Desarrollo Departamental, Ordenamiento Territorial, Educación, Cultura y Asuntos Sociales',
+                    subtitulo: 'Plan de Desarrollo Municipal, Ordenamiento Territorial, Educación, Cultura y Asuntos Sociales',
                     gradiente: 'from-[#29200b] via-[#1b2238] to-[#0c1933] border-[#f3cf7a]',
                     icono: 'fa-landmark',
                     colorAcento: 'text-[#fff3c4]',
@@ -2342,7 +2342,7 @@
                 },
                 {
                     titulo: 'Comisión Segunda Permanente',
-                    subtitulo: 'Presupuesto, Hacienda Departamental, Crédito Público, Rentas y Control Fiscal',
+                    subtitulo: 'Presupuesto, Hacienda Municipal, Crédito Público, Rentas y Control Fiscal',
                     gradiente: 'from-[#0d2747] via-[#122645] to-[#0c1933] border-sky-400',
                     icono: 'fa-scale-balanced',
                     colorAcento: 'text-sky-300',
@@ -2356,7 +2356,7 @@
                         <div>
                             <div class="flex items-center gap-2 ${sec.colorAcento} text-[10px] font-bold uppercase tracking-[0.2em] mb-1">
                                 <i class="fa-solid ${sec.icono}"></i>
-                                <span>Asamblea Departamental del Tolima</span>
+                                <span>Concejo Municipal de Ibagué</span>
                             </div>
                             <h3 class="font-solemne text-lg md:text-2xl uppercase font-bold text-white">${sec.titulo}</h3>
                             <p class="text-xs text-slate-200 mt-1">${sec.subtitulo}</p>
@@ -2368,7 +2368,7 @@
                     <div class="p-3.5 md:p-4 space-y-2.5 flex-1">
                         ${sec.lista.length > 0 
                             ? sec.lista.map((item, idx) => generarTarjetaConcejalComision(item, idx)).join('') 
-                            : '<p class="text-center text-xs text-slate-400 py-10">No hay Honorables Diputados asignados a esta comisión.</p>'
+                            : '<p class="text-center text-xs text-slate-400 py-10">No hay Honorables Concejales asignados a esta comisión.</p>'
                         }
                     </div>
                 </div>
@@ -2379,7 +2379,7 @@
                     <div class="panel-institucional rounded-2xl overflow-hidden border border-slate-600/60">
                         <div class="bg-[#0a162e] p-4 border-b border-white/15 flex justify-between items-center">
                             <h3 class="font-solemne text-sm md:text-base uppercase font-bold text-slate-200">
-                                <i class="fa-solid fa-user-clock mr-2 text-[#f3cf7a]"></i>Diputados Pendientes de Asignación a Comisión (${sinComision.length})
+                                <i class="fa-solid fa-user-clock mr-2 text-[#f3cf7a]"></i>Concejales Pendientes de Asignación a Comisión (${sinComision.length})
                             </h3>
                         </div>
                         <div class="p-3.5 md:p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -2405,7 +2405,7 @@
                 })
             });
             if (res.ok) {
-                notificar('🎙️ Honorable Diputado inscrito en el Uso de la Palabra (3 min)');
+                notificar('🎙️ Honorable Concejal inscrito en el Uso de la Palabra (3 min)');
                 await cargarIntervenciones();
             }
         }
@@ -2421,7 +2421,7 @@
                     return `
                         <tr class="hover:bg-white/[0.05] transition">
                             <td class="p-3 md:p-4 whitespace-nowrap">
-                                <span class="font-bold text-white">H.D. ${escapeHTML(i.nombre_completo)}</span>
+                                <span class="font-bold text-white">H.C. ${escapeHTML(i.nombre_completo)}</span>
                                 ${i.es_directiva ? '<span class="ml-2 bg-[#f3cf7a] text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded">MESA (P)</span>' : ''}
                             </td>
                             <td class="p-3 md:p-4 whitespace-nowrap">
@@ -2456,7 +2456,7 @@
                     return `
                         <tr class="hover:bg-white/[0.05] transition">
                             <td class="p-3 md:p-4 whitespace-nowrap">
-                                <span class="font-bold text-white">H.D. ${escapeHTML(i.nombre_completo)}</span>
+                                <span class="font-bold text-white">H.C. ${escapeHTML(i.nombre_completo)}</span>
                             </td>
                             <td class="p-3 md:p-4 whitespace-nowrap">
                                 <span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${
@@ -2481,7 +2481,7 @@
             const id_comision = document.getElementById('nuevo-int-comision').value || null;
             const es_directiva = document.getElementById('nuevo-int-directiva').checked;
 
-            if (!nombre_completo.trim()) return alert('Ingrese los nombres y apellidos del Honorable Diputado.');
+            if (!nombre_completo.trim()) return alert('Ingrese los nombres y apellidos del Honorable Concejal.');
 
             const res = await fetchAdmin('/api/integrantes', {
                 method: 'POST',
@@ -2532,7 +2532,7 @@
         }
 
         async function eliminarIntegrante(id_integrante, nombre) {
-            if (!confirm(`¿Confirma retirar la curul del H.D. "${nombre}"?`)) return;
+            if (!confirm(`¿Confirma retirar la curul del H.C. "${nombre}"?`)) return;
             const res = await fetchAdmin(`/api/integrantes/${id_integrante}`, { method: 'DELETE' });
             if (res.ok) {
                 notificar('🗑️ Registro retirado');
@@ -2623,7 +2623,7 @@
                 cerrarModalSesion();
                 document.getElementById('nueva-sesion-titulo').value = '';
                 sesionActual = data.id_sesion;
-                notificar('✅ Sesión de la Asamblea Departamental instalada');
+                notificar('✅ Sesión del Concejo Municipal instalada');
                 await cargarSesiones();
             } catch (err) {
                 alert('Error de red con el servidor: ' + err.message);
@@ -2740,7 +2740,7 @@
                                     <span class="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0 ${ledClass}"></span>
                                     <div>
                                         <p class="font-bold text-sm text-white leading-snug">
-                                            H.D. ${escapeHTML(m.nombre_completo)}
+                                            H.C. ${escapeHTML(m.nombre_completo)}
                                             ${m.es_directiva ? '<span class="ml-1.5 bg-[#f3cf7a] text-slate-950 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded">Mesa (P)</span>' : ''}
                                         </p>
                                         <span class="inline-block mt-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-white/10 text-slate-300 border border-white/15">
@@ -2891,7 +2891,7 @@
         async function agregarIntervencion() {
             if (!sesionActual) return alert('Primero debe abrir una sesión');
             const id_integrante = document.getElementById('select-orador').value;
-            if (!id_integrante) return alert('Seleccione un Honorable Diputado válido.');
+            if (!id_integrante) return alert('Seleccione un Honorable Concejal válido.');
             const tipo_intervencion = document.getElementById('select-tipo-intervencion').value;
             const tiempo_asignado_seg = document.getElementById('input-segundos').value;
 
@@ -2915,7 +2915,7 @@
             if (!esModoAdmin) {
                 const enCurso = nuevas.find(i => i.estado === 'En Curso');
                 if (enCurso) {
-                    document.getElementById('crono-nombre').innerText = `H.D. ${enCurso.nombre_completo}`;
+                    document.getElementById('crono-nombre').innerText = `H.C. ${enCurso.nombre_completo}`;
                     document.getElementById('crono-bancada').innerText = `${enCurso.bancada} — Comisión ${enCurso.comision}`;
                     const badge = document.getElementById('crono-tipo-badge');
                     badge.innerText = enCurso.tipo_intervencion;
@@ -3016,7 +3016,7 @@
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <span class="font-mono-digital font-extrabold text-xs text-slate-950 bg-[#f3cf7a] px-2 py-0.5 rounded">#${item.orden_turno}</span>
-                                <span class="font-bold text-sm text-white truncate">H.D. ${escapeHTML(item.nombre_completo)}</span>
+                                <span class="font-bold text-sm text-white truncate">H.C. ${escapeHTML(item.nombre_completo)}</span>
                                 ${esMio ? '<span class="bg-emerald-500/25 text-emerald-200 border border-emerald-400/50 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded">Tu turno</span>' : ''}
                                 <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${badgeEstado}">${escapeHTML(item.estado || 'Pendiente')}</span>
                             </div>
@@ -3036,7 +3036,7 @@
             if (!item) return;
             seleccionarOrador(
                 item.id_intervencion,
-                `H.D. ${item.nombre_completo}`,
+                `H.C. ${item.nombre_completo}`,
                 `${item.bancada} — Comisión ${item.comision}`,
                 item.tipo_intervencion,
                 item.tiempo_asignado_seg
@@ -3046,7 +3046,7 @@
         async function retirarIntervencionPorId(id_intervencion) {
             const item = intervencionesGlobal.find(i => i.id_intervencion === id_intervencion);
             if (!item) return;
-            if (!confirm(`¿Retirar del orden de oradores a H.D. ${item.nombre_completo}?`)) return;
+            if (!confirm(`¿Retirar del orden de oradores a H.C. ${item.nombre_completo}?`)) return;
             const res = await fetchAdmin(`/api/intervenciones/${id_intervencion}`, { method: 'DELETE' });
             if (res.ok) {
                 if (intervencionActivaId === id_intervencion) {
@@ -3257,7 +3257,7 @@
             const valorActual = selectProy.value;
             selectProy.innerHTML = '<option value="">-- Seleccionar proyecto o proposición radicada --</option>' +
                 proyectosGlobal.map(p => {
-                    const tipo = p.tipo_documento || 'Proyecto de Ordenanza';
+                    const tipo = p.tipo_documento || 'Proyecto de Acuerdo';
                     return `<option value="${p.id_proyecto}" class="bg-slate-900">${escapeHTML(tipo)} • ${escapeHTML(p.codigo_radicado)} — ${escapeHTML(p.titulo)} (${escapeHTML(p.comision)})</option>`;
                 }).join('');
 
@@ -3274,7 +3274,7 @@
             const proyecto = proyectosGlobal.find(p => String(p.id_proyecto) === String(idProy));
             if (!proyecto) return;
 
-            const tipo = proyecto.tipo_documento || 'Proyecto de Ordenanza';
+            const tipo = proyecto.tipo_documento || 'Proyecto de Acuerdo';
             document.getElementById('vot-titulo').value = `${tipo} No. ${proyecto.codigo_radicado}: ${proyecto.titulo}`;
             document.getElementById('vot-descripcion').value = `Ponente: ${proyecto.autor} • Radicado: ${proyecto.codigo_radicado}`;
 
@@ -3319,7 +3319,7 @@
             if (esModoConcejal && usuarioActual) {
                 sinSesionBox.classList.add('hidden');
                 panelAuth.classList.remove('hidden');
-                document.getElementById('concejal-logueado-nombre').innerText = `H.D. ${usuarioActual.nombre_completo}`;
+                document.getElementById('concejal-logueado-nombre').innerText = `H.C. ${usuarioActual.nombre_completo}`;
                 document.getElementById('concejal-logueado-detalle').innerText = `Bancada ${usuarioActual.bancada} • ${usuarioActual.comision}`;
             } else {
                 sinSesionBox.classList.remove('hidden');
@@ -3641,7 +3641,7 @@
             }
 
             if (votos.length === 0) {
-                listaEl.innerHTML = '<div class="text-center py-8 bg-[#060d1c] rounded-xl border border-dashed border-[#f3cf7a]/25 text-xs text-slate-300">Ningún Honorable Diputado ha depositado su voto todavía.</div>';
+                listaEl.innerHTML = '<div class="text-center py-8 bg-[#060d1c] rounded-xl border border-dashed border-[#f3cf7a]/25 text-xs text-slate-300">Ningún Honorable Concejal ha depositado su voto todavía.</div>';
                 return;
             }
 
@@ -3656,7 +3656,7 @@
                 return `
                     <div class="bg-[#071022]/95 p-3 rounded-xl border border-white/15 flex justify-between items-center gap-2">
                         <div class="min-w-0">
-                            <p class="font-bold text-sm text-white truncate">H.D. ${escapeHTML(v.nombre_completo)}</p>
+                            <p class="font-bold text-sm text-white truncate">H.C. ${escapeHTML(v.nombre_completo)}</p>
                             <p class="text-[11px] text-slate-300 truncate">Bancada ${escapeHTML(v.bancada)} • ${escapeHTML(v.comision)}</p>
                         </div>
                         <span class="px-3 py-1 rounded-lg border text-xs font-extrabold uppercase shrink-0 ${badgeVoto}">
@@ -3685,7 +3685,7 @@
                 if (!res.ok) {
                     return alert(data.error || 'No se pudo registrar el voto.');
                 }
-                notificar(`🗳️ Voto definitivo (${opcion}) registrado para H.D. ${usuarioActual.nombre_completo}`);
+                notificar(`🗳️ Voto definitivo (${opcion}) registrado para H.C. ${usuarioActual.nombre_completo}`);
                 await cargarDetalleVotacion();
             } catch (err) {
                 alert('Error de red al emitir voto: ' + err.message);
@@ -3716,7 +3716,7 @@
         }
 
         // =====================================================================
-        // 6. PROYECTOS DE ORDENANZA Y PROPOSICIONES (PÚBLICAS Y PRIVADAS)
+        // 6. PROYECTOS DE ACUERDO Y PROPOSICIONES (PÚBLICAS Y PRIVADAS)
         // =====================================================================
         function toggleFormularioProposicionConcejal() {
             if (!esModoConcejal) return abrirPortalLogin();
@@ -3999,7 +3999,7 @@
             if (res.ok) {
                 notificar(nuevoEstado
                     ? '🌐 Documento marcado como PÚBLICO'
-                    : '🔒 Documento marcado como PRIVADO (solo Diputados y Admin)');
+                    : '🔒 Documento marcado como PRIVADO (solo Concejales y Admin)');
                 await cargarProyectos(false);
             }
         }
@@ -4105,8 +4105,8 @@
             contenedor.innerHTML = `
                 <div id="hoja-documento" style="font-size: ${zoomTexto}px;" class="bg-white max-w-4xl w-full p-8 md:p-12 rounded-xl shadow-lg border border-slate-300 text-slate-900 leading-relaxed">
                     <div class="border-b-2 border-slate-900 pb-4 mb-6 text-center">
-                        <p class="text-xs font-extrabold uppercase tracking-widest text-slate-500">República de Colombia • Departamento del Tolima • Asamblea Departamental</p>
-                        <h2 class="text-xl md:text-2xl font-black uppercase text-slate-900 mt-1">${escapeHTML(p.tipo_documento || 'Proyecto de Ordenanza')} N.° ${escapeHTML(p.codigo_radicado)}</h2>
+                        <p class="text-xs font-extrabold uppercase tracking-widest text-slate-500">República de Colombia • Municipio de Ibagué • Concejo Municipal</p>
+                        <h2 class="text-xl md:text-2xl font-black uppercase text-slate-900 mt-1">${escapeHTML(p.tipo_documento || 'Proyecto de Acuerdo')} N.° ${escapeHTML(p.codigo_radicado)}</h2>
                         <p class="text-sm font-bold text-slate-700 mt-2">“${escapeHTML(p.titulo)}”</p>
                     </div>
                     <div class="whitespace-pre-wrap font-serif text-slate-800">${escapeHTML(p.descripcion || 'Este documento no contiene texto transcrito.')}</div>
@@ -4226,7 +4226,7 @@
                             ★ Reconocimiento al Mérito Legislativo e Iniciativa Parlamentaria
                         </p>
                         <h3 style="margin:6px 0 4px 0; font-size:20px; font-weight:900; color:#0f172a; text-transform:uppercase;">
-                            H.D. ${escapeHTML(g.nombre)}
+                            H.C. ${escapeHTML(g.nombre)}
                         </h3>
                         <p style="margin:0; font-size:13px; color:#334155;">
                             Bancada <strong>${escapeHTML(g.bancada)}</strong> • Comisión <strong>${escapeHTML(g.comision)}</strong> — Obtuvo el mayor número de iniciativas aprobadas en el recinto con un total de <strong>${g.aprobadas.length} ${g.aprobadas.length === 1 ? 'iniciativa aprobada' : 'iniciativas aprobadas'}</strong>.
@@ -4234,7 +4234,7 @@
                     </div>
                 `;
             } else if (ganadores.length > 1) {
-                const nombresEmpate = ganadores.map(g => `H.D. ${escapeHTML(g.nombre)} (${escapeHTML(g.bancada)})`).join(' y ');
+                const nombresEmpate = ganadores.map(g => `H.C. ${escapeHTML(g.nombre)} (${escapeHTML(g.bancada)})`).join(' y ');
                 bloqueDestacadoHtml = `
                     <div style="background:#fefce8; border:2px solid #ca8a04; border-radius:10px; padding:16px; margin-bottom:24px;">
                         <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:1.5px; color:#854d0e;">
@@ -4252,195 +4252,212 @@
                 bloqueDestacadoHtml = `
                     <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:14px; margin-bottom:24px;">
                         <p style="margin:0; font-size:13px; color:#475569;">
-                            <strong>Nota de Secretaría General:</strong> Aún no se registran proposiciones o proyectos de ordenanza con estado <em>“Aprobado”</em> en el sistema.
+                            Aún no se registran proposiciones o proyectos de acuerdo con estado <strong>Aprobado</strong> en el sistema.
                         </p>
                     </div>
                 `;
             }
 
-            const filasRankingHtml = listaAutores.map((autor, idx) => {
+            const filasTablaAutores = listaAutores.length > 0 ? listaAutores.map((autor, idx) => {
                 const totalAutor = autor.aprobadas.length + autor.archivadas.length + autor.enTramite.length;
-                const esLider = maxAprobadas > 0 && autor.aprobadas.length === maxAprobadas;
-                const titulosAprobados = autor.aprobadas.length > 0
+                const esTop = maxAprobadas > 0 && autor.aprobadas.length === maxAprobadas;
+                const bgFila = esTop ? 'background:#fef9c3;' : (idx % 2 === 1 ? 'background:#f8fafc;' : '');
+                const detalleAprobadas = autor.aprobadas.length > 0
                     ? autor.aprobadas.map(p => `• [${escapeHTML(p.codigo_radicado)}] ${escapeHTML(p.titulo)}`).join('<br>')
-                    : '<span style="color:#94a3b8;">Ninguna aprobada</span>';
+                    : '<span style="color:#94a3b8; font-style:italic;">Ninguna aprobada</span>';
 
                 return `
-                    <tr style="background:${esLider ? '#fef9c3' : '#ffffff'};">
+                    <tr style="${bgFila}">
                         <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:bold;">${idx + 1}</td>
                         <td style="border:1px solid #cbd5e1; padding:8px;">
-                            <strong>H.D. ${escapeHTML(autor.nombre)}</strong>${esLider ? ' ★' : ''}<br>
+                            <strong>H.C. ${escapeHTML(autor.nombre)}</strong><br>
                             <span style="font-size:11px; color:#475569;">${escapeHTML(autor.bancada)} • Com. ${escapeHTML(autor.comision)}</span>
                         </td>
-                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:900; color:#15803d; font-size:15px;">${autor.aprobadas.length}</td>
-                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#b91c1c;">${autor.archivadas.length}</td>
-                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#475569;">${totalAutor}</td>
-                        <td style="border:1px solid #cbd5e1; padding:8px; font-size:11px; line-height:1.4;">${titulosAprobados}</td>
+                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:900; color:#15803d; font-size:15px;">
+                            ${autor.aprobadas.length}
+                        </td>
+                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#b91c1c; font-weight:bold;">
+                            ${autor.archivadas.length}
+                        </td>
+                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; color:#334155;">
+                            ${totalAutor}
+                        </td>
+                        <td style="border:1px solid #cbd5e1; padding:8px; font-size:12px;">
+                            ${detalleAprobadas}
+                        </td>
                     </tr>
                 `;
-            }).join('');
+            }).join('') : `
+                <tr>
+                    <td colspan="6" style="border:1px solid #cbd5e1; padding:16px; text-align:center; color:#64748b;">
+                        No hay documentos radicados registrados.
+                    </td>
+                </tr>
+            `;
 
-            const filasDetalleAprobadasHtml = aprobados.length > 0
-                ? aprobados.map((p, idx) => `
-                    <tr>
-                        <td style="border:1px solid #cbd5e1; padding:8px; text-align:center; font-weight:bold;">${idx + 1}</td>
-                        <td style="border:1px solid #cbd5e1; padding:8px; font-weight:bold;">${escapeHTML(p.codigo_radicado)}</td>
-                        <td style="border:1px solid #cbd5e1; padding:8px;">${escapeHTML(p.tipo_documento || 'Proyecto de Ordenanza')}</td>
-                        <td style="border:1px solid #cbd5e1; padding:8px;">
-                            <strong>${escapeHTML(p.titulo)}</strong>
-                            ${p.descripcion ? `<div style="font-size:11px; color:#475569; margin-top:4px;">${escapeHTML(p.descripcion)}</div>` : ''}
-                        </td>
-                        <td style="border:1px solid #cbd5e1; padding:8px;"><strong>H.D. ${escapeHTML(p.autor)}</strong></td>
-                        <td style="border:1px solid #cbd5e1; padding:8px;">${escapeHTML(p.comision)}</td>
-                    </tr>
-                `).join('')
-                : `<tr><td colspan="6" style="border:1px solid #cbd5e1; padding:14px; text-align:center; color:#64748b;">No existen iniciativas aprobadas registradas hasta el momento.</td></tr>`;
+            const listadoAprobadosHtml = aprobados.length > 0 ? aprobados.map((p, idx) => `
+                <div style="border-left:4px solid #16a34a; background:#f0fdf4; padding:10px 14px; margin-bottom:10px; border-radius:4px;">
+                    <p style="margin:0; font-size:11px; font-weight:bold; color:#166534; text-transform:uppercase;">
+                        ${idx + 1}. ${escapeHTML(p.tipo_documento || 'Proposición')} • Radicado ${escapeHTML(p.codigo_radicado)} • Comisión ${escapeHTML(p.comision)}
+                    </p>
+                    <p style="margin:4px 0; font-size:14px; font-weight:bold; color:#0f172a;">
+                        “${escapeHTML(p.titulo)}”
+                    </p>
+                    <p style="margin:0; font-size:12px; color:#334155;">
+                        <strong>Ponente / Autor:</strong> H.C. ${escapeHTML(p.autor)}
+                    </p>
+                    ${p.descripcion ? `<p style="margin:6px 0 0 0; font-size:12px; color:#1e293b; white-space:pre-wrap;">${escapeHTML(p.descripcion)}</p>` : ''}
+                </div>
+            `).join('') : '<p style="font-size:13px; color:#64748b;">No existen proposiciones o proyectos aprobados todavía.</p>';
 
             contenedor.innerHTML = `
-                <div style="text-align:center; border-bottom:3px double #0f172a; padding-bottom:14px; margin-bottom:20px;">
-                    <p style="margin:0; font-size:11px; font-weight:bold; letter-spacing:2px; text-transform:uppercase; color:#475569;">
-                        República de Colombia • Departamento del Tolima • Asamblea Departamental
-                    </p>
-                    <p style="margin:3px 0 0 0; font-size:11px; font-weight:bold; letter-spacing:1.5px; text-transform:uppercase; color:#92400e;">
-                        Fundación Creer y Merecer • Modelo Asamblea Departamental del Tolima
-                    </p>
-                    <h1 style="margin:10px 0 4px 0; font-size:21px; font-weight:900; text-transform:uppercase; color:#0f172a;">
-                        Acta Oficial de Balance Legislativo e Iniciativas Aprobadas
-                    </h1>
-                    <p style="margin:0; font-size:12px; color:#334155;">
-                        <strong>Sesión:</strong> ${escapeHTML(nombreSesion)} &nbsp;|&nbsp; <strong>Fecha de Expedición:</strong> ${escapeHTML(fechaHoy)}
-                    </p>
-                </div>
-
-                <table style="width:100%; border-collapse:collapse; margin-bottom:20px; text-align:center;">
-                    <tr>
-                        <td style="border:1px solid #cbd5e1; background:#f8fafc; padding:10px;">
-                            <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#475569; display:block;">Total Radicadas</span>
-                            <strong style="font-size:20px; color:#0f172a;">${totalRadicados}</strong>
-                        </td>
-                        <td style="border:1px solid #86efac; background:#f0fdf4; padding:10px;">
-                            <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#166534; display:block;">Aprobadas</span>
-                            <strong style="font-size:20px; color:#15803d;">${aprobados.length}</strong>
-                        </td>
-                        <td style="border:1px solid #fca5a5; background:#fef2f2; padding:10px;">
-                            <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#991b1b; display:block;">Archivadas</span>
-                            <strong style="font-size:20px; color:#b91c1c;">${archivados.length}</strong>
-                        </td>
-                        <td style="border:1px solid #fde68a; background:#fffbeb; padding:10px;">
-                            <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#92400e; display:block;">En Debate / Radicadas</span>
-                            <strong style="font-size:20px; color:#b45309;">${enTramite.length}</strong>
-                        </td>
-                    </tr>
-                </table>
-
-                ${bloqueDestacadoHtml}
-
-                <h2 style="font-size:15px; font-weight:800; text-transform:uppercase; color:#0f172a; border-left:4px solid #ca8a04; padding-left:10px; margin:20px 0 10px 0;">
-                    1. Cuadro de Honor y Estadística por Diputado Proponente
-                </h2>
-                <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:26px;">
-                    <thead>
-                        <tr style="background:#0f172a; color:#ffffff;">
-                            <th style="border:1px solid #0f172a; padding:8px; width:45px;">Puesto</th>
-                            <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Honorable Diputado / Bancada</th>
-                            <th style="border:1px solid #0f172a; padding:8px; width:75px;">Aprobadas</th>
-                            <th style="border:1px solid #0f172a; padding:8px; width:75px;">Archivadas</th>
-                            <th style="border:1px solid #0f172a; padding:8px; width:70px;">Total</th>
-                            <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Detalle de Iniciativas Aprobadas</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${filasRankingHtml || '<tr><td colspan="6" style="border:1px solid #cbd5e1; padding:12px; text-align:center;">Sin registros disponibles.</td></tr>'}
-                    </tbody>
-                </table>
-
-                <h2 style="font-size:15px; font-weight:800; text-transform:uppercase; color:#0f172a; border-left:4px solid #15803d; padding-left:10px; margin:20px 0 10px 0;">
-                    2. Relación Oficial de Proposiciones y Proyectos Aprobados (${aprobados.length})
-                </h2>
-                <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:32px;">
-                    <thead>
-                        <tr style="background:#14532d; color:#ffffff;">
-                            <th style="border:1px solid #14532d; padding:8px; width:40px;">N.°</th>
-                            <th style="border:1px solid #14532d; padding:8px; width:100px;">Radicado</th>
-                            <th style="border:1px solid #14532d; padding:8px; width:115px;">Tipo de Acto</th>
-                            <th style="border:1px solid #14532d; padding:8px; text-align:left;">Título y Contenido</th>
-                            <th style="border:1px solid #14532d; padding:8px; width:150px;">Autor / Ponente</th>
-                            <th style="border:1px solid #14532d; padding:8px; width:90px;">Comisión</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${filasDetalleAprobadasHtml}
-                    </tbody>
-                </table>
-
-                <div style="margin-top:42px; display:flex; justify-content:space-between; gap:30px; text-align:center; font-size:12px;">
-                    <div style="flex:1; border-top:1px solid #0f172a; padding-top:8px;">
-                        <strong>PRESIDENCIA DE LA ASAMBLEA</strong><br>
-                        <span style="font-size:11px; color:#475569;">Asamblea Departamental del Tolima</span>
+                <div id="acta-exportable-word">
+                    <div style="text-align:center; border-bottom:3px double #0f172a; padding-bottom:16px; margin-bottom:20px;">
+                        <p style="margin:0; font-size:11px; font-weight:bold; text-transform:uppercase; letter-spacing:2px; color:#475569;">
+                            República de Colombia • Municipio de Ibagué • Fundación Creer y Merecer
+                        </p>
+                        <h1 style="margin:6px 0; font-size:22px; font-weight:900; text-transform:uppercase; color:#0f172a;">
+                            CONCEJO MUNICIPAL DE IBAGUÉ
+                        </h1>
+                        <h2 style="margin:0; font-size:14px; font-weight:bold; text-transform:uppercase; color:#1e3a8a;">
+                            Acta Oficial de Proposiciones Aprobadas y Mérito Legislativo
+                        </h2>
+                        <p style="margin:6px 0 0 0; font-size:12px; color:#475569;">
+                            <strong>Sesión:</strong> ${escapeHTML(nombreSesion)} &nbsp;|&nbsp; <strong>Fecha de expedición:</strong> ${escapeHTML(fechaHoy)}
+                        </p>
                     </div>
-                    <div style="flex:1; border-top:1px solid #0f172a; padding-top:8px;">
-                        <strong>SECRETARÍA GENERAL</strong><br>
-                        <span style="font-size:11px; color:#475569;">Certificación y Fe Pública Legislativa</span>
+
+                    <table style="width:100%; border-collapse:collapse; margin-bottom:22px; text-align:center;">
+                        <tr>
+                            <td style="border:1px solid #cbd5e1; padding:10px; background:#f8fafc; width:25%;">
+                                <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#475569; display:block;">Total Radicados</span>
+                                <strong style="font-size:20px; color:#0f172a;">${totalRadicados}</strong>
+                            </td>
+                            <td style="border:1px solid #86efac; padding:10px; background:#f0fdf4; width:25%;">
+                                <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#166534; display:block;">Aprobadas</span>
+                                <strong style="font-size:20px; color:#15803d;">${aprobados.length}</strong>
+                            </td>
+                            <td style="border:1px solid #fecaca; padding:10px; background:#fef2f2; width:25%;">
+                                <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#991b1b; display:block;">Archivadas</span>
+                                <strong style="font-size:20px; color:#b91c1c;">${archivados.length}</strong>
+                            </td>
+                            <td style="border:1px solid #fde68a; padding:10px; background:#fffbeb; width:25%;">
+                                <span style="font-size:10px; text-transform:uppercase; font-weight:bold; color:#92400e; display:block;">En Trámite</span>
+                                <strong style="font-size:20px; color:#b45309;">${enTramite.length}</strong>
+                            </td>
+                        </tr>
+                    </table>
+
+                    ${bloqueDestacadoHtml}
+
+                    <h3 style="font-size:14px; font-weight:800; text-transform:uppercase; color:#0f172a; border-bottom:1px solid #94a3b8; padding-bottom:4px; margin-bottom:10px;">
+                        1. Consolidado y Ranking por Honorable Concejal
+                    </h3>
+                    <table style="width:100%; border-collapse:collapse; margin-bottom:24px; font-size:13px;">
+                        <thead>
+                            <tr style="background:#0f172a; color:#ffffff;">
+                                <th style="border:1px solid #0f172a; padding:8px; width:40px;">Pos.</th>
+                                <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Honorable Concejal</th>
+                                <th style="border:1px solid #0f172a; padding:8px; width:85px;">Aprobadas</th>
+                                <th style="border:1px solid #0f172a; padding:8px; width:85px;">Archivadas</th>
+                                <th style="border:1px solid #0f172a; padding:8px; width:75px;">Total</th>
+                                <th style="border:1px solid #0f172a; padding:8px; text-align:left;">Iniciativas Aprobadas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${filasTablaAutores}
+                        </tbody>
+                    </table>
+
+                    <h3 style="font-size:14px; font-weight:800; text-transform:uppercase; color:#0f172a; border-bottom:1px solid #94a3b8; padding-bottom:4px; margin-bottom:12px;">
+                        2. Relación Detallada de Iniciativas Aprobadas (${aprobados.length})
+                    </h3>
+                    <div style="margin-bottom:32px;">
+                        ${listadoAprobadosHtml}
                     </div>
+
+                    <table style="width:100%; border-collapse:collapse; margin-top:36px; text-align:center;">
+                        <tr>
+                            <td style="width:50%; padding:16px;">
+                                <div style="border-top:1px solid #0f172a; width:80%; margin:0 auto; padding-top:6px;">
+                                    <strong style="font-size:12px; text-transform:uppercase;">Presidencia del Concejo</strong><br>
+                                    <span style="font-size:11px; color:#475569;">Concejo Municipal de Ibagué</span>
+                                </div>
+                            </td>
+                            <td style="width:50%; padding:16px;">
+                                <div style="border-top:1px solid #0f172a; width:80%; margin:0 auto; padding-top:6px;">
+                                    <strong style="font-size:12px; text-transform:uppercase;">Secretaría General</strong><br>
+                                    <span style="font-size:11px; color:#475569;">Certificación y Registro de Actas</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             `;
         }
 
         function descargarWordIniciativas() {
-            const contenidoHtml = document.getElementById('contenido-documento-iniciativas').innerHTML;
-            const documentoWord = `
+            const contenido = document.getElementById('acta-exportable-word');
+            if (!contenido) return;
+
+            const preHtml = `
                 <html xmlns:o='urn:schemas-microsoft-com:office:office'
                       xmlns:w='urn:schemas-microsoft-com:office:word'
                       xmlns='http://www.w3.org/TR/REC-html40'>
                 <head>
-                    <meta charset="utf-8">
-                    <title>Acta Oficial de Iniciativas Aprobadas - Asamblea Departamental del Tolima</title>
+                    <meta charset='utf-8'>
+                    <title>Acta de Proposiciones Aprobadas - Concejo Municipal de Ibagué</title>
                     <style>
-                        body { font-family: 'Times New Roman', Georgia, serif; font-size: 12pt; color: #0f172a; }
-                        table { width: 100%; border-collapse: collapse; }
-                        th, td { border: 1px solid #94a3b8; padding: 6pt; }
+                        body { font-family: 'Times New Roman', Georgia, serif; color: #0f172a; line-height: 1.45; }
+                        table { border-collapse: collapse; width: 100%; }
                     </style>
                 </head>
                 <body>
-                    ${contenidoHtml}
-                </body>
-                </html>
             `;
+            const postHtml = '</body></html>';
+            const htmlCompleto = preHtml + contenido.innerHTML + postHtml;
 
-            const blob = new Blob(['\ufeff', documentoWord], { type: 'application/msword;charset=utf-8' });
+            const blob = new Blob(['\ufeff', htmlCompleto], {
+                type: 'application/msword;charset=utf-8'
+            });
+
             const url = URL.createObjectURL(blob);
             const enlace = document.createElement('a');
             const fechaArchivo = new Date().toISOString().slice(0, 10);
             enlace.href = url;
-            enlace.download = `Acta_Iniciativas_Aprobadas_Asamblea_Tolima_${fechaArchivo}.doc`;
+            enlace.download = `Acta_Iniciativas_Concejo_Ibague_${fechaArchivo}.doc`;
             document.body.appendChild(enlace);
             enlace.click();
             document.body.removeChild(enlace);
             URL.revokeObjectURL(url);
+
             notificar('📄 Documento Word (.doc) descargado correctamente');
         }
 
         function imprimirActaIniciativas() {
-            const contenidoHtml = document.getElementById('contenido-documento-iniciativas').innerHTML;
-            const ventanaImpresion = window.open('', '_blank', 'width=960,height=780');
+            const contenido = document.getElementById('acta-exportable-word');
+            if (!contenido) return;
+
+            const ventanaImpresion = window.open('', '_blank', 'width=900,height=700');
             if (!ventanaImpresion) {
                 return alert('Por favor permita las ventanas emergentes para imprimir o guardar en PDF.');
             }
+
             ventanaImpresion.document.write(`
                 <!DOCTYPE html>
                 <html lang="es">
                 <head>
                     <meta charset="UTF-8">
-                    <title>Acta de Iniciativas Aprobadas - Asamblea Departamental del Tolima</title>
+                    <title>Acta Oficial - Concejo Municipal de Ibagué</title>
                     <style>
-                        body { font-family: Georgia, 'Times New Roman', serif; margin: 24px; color: #0f172a; }
+                        body { font-family: Georgia, 'Times New Roman', serif; color: #0f172a; padding: 24px; line-height: 1.45; }
                         @media print {
-                            body { margin: 12mm; }
+                            body { padding: 0; }
                         }
                     </style>
                 </head>
                 <body>
-                    ${contenidoHtml}
+                    ${contenido.innerHTML}
                     <script>
                         window.onload = function() {
                             window.print();
